@@ -1,0 +1,83 @@
+{
+  "_meta": {
+    "$description": "Composite text styles. Source: Figma file ymEnGYUGvRRVKhHiUSGMVF, node 27:110. Figma Variables export only includes typography primitives (size, line-height, family, weight names) — these composites live in Figma Text Styles and were extracted via the Figma MCP. Re-fetch via `npm run import-text-styles` after changes."
+  },
+  "Heading": {
+    "Heading 1": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "32px", "lineHeight": "48px", "letterSpacing": "0px" }
+    },
+    "Heading 2": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "28px", "lineHeight": "40px", "letterSpacing": "0px" }
+    },
+    "Heading 3": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "20px", "lineHeight": "28px", "letterSpacing": "0px" }
+    },
+    "Heading 4": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 600, "fontSize": "16px", "lineHeight": "24px", "letterSpacing": "0px" }
+    },
+    "Display": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 400, "fontSize": "20px", "lineHeight": "28px", "letterSpacing": "0px" }
+    }
+  },
+  "Subtitle": {
+    "Subtitle 1": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "16px", "lineHeight": "24px", "letterSpacing": "0px" }
+    },
+    "Subtitle 2": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "14px", "lineHeight": "20px", "letterSpacing": "0px" }
+    },
+    "Subtitle 3": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "12px", "lineHeight": "16px", "letterSpacing": "0px" }
+    }
+  },
+  "Body": {
+    "Body accent": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 400, "fontSize": "16px", "lineHeight": "24px", "letterSpacing": "0px" }
+    },
+    "Body default": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 400, "fontSize": "14px", "lineHeight": "20px", "letterSpacing": "0px" }
+    },
+    "Body additional": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 400, "fontSize": "12px", "lineHeight": "16px", "letterSpacing": "0px" }
+    }
+  },
+  "Button": {
+    "Button default": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "14px", "lineHeight": "20px", "letterSpacing": "0.2px" }
+    },
+    "Button additional": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "12px", "lineHeight": "16px", "letterSpacing": "0.2px" }
+    },
+    "LinkButton default": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "14px", "lineHeight": "16px", "letterSpacing": "0.2px" }
+    },
+    "LinkButton additional": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 500, "fontSize": "12px", "lineHeight": "16px", "letterSpacing": "0px" }
+    }
+  },
+  "Other": {
+    "Caption": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 400, "fontSize": "11px", "lineHeight": "16px", "letterSpacing": "0.25px" }
+    },
+    "Overline": {
+      "$type": "typography",
+      "$value": { "fontFamily": "Noto Sans Georgian", "fontWeight": 600, "fontSize": "11px", "lineHeight": "12px", "letterSpacing": "0.25px" }
+    }
+  }
+}

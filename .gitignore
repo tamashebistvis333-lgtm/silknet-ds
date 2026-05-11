@@ -1,0 +1,19 @@
+node_modules/
+
+# Generated artifacts (re-built from sources via npm run sync / build)
+build/
+packages/*/dist/
+apps/*/build/
+apps/*/dist/
+
+# Env / OS
+.DS_Store
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp

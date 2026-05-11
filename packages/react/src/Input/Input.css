@@ -1,0 +1,119 @@
+/* Floating-label Input. Mirrors the showcase 1:1, using :placeholder-shown
+   and :has() so the floating-label behavior is purely declarative — no JS
+   state management needed for the visual transition. */
+
+.silk-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-2);
+  transition: opacity 0.15s ease;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+/* box-sizing reset for the entire input subtree — Figma's 52px is the full
+   visual height including padding & border (Tailwind defaults to border-box).
+   Without this, content-box defaults make the input render at ~68px. */
+.silk-input,
+.silk-input *,
+.silk-input-group {
+  box-sizing: border-box;
+}
+
+.silk-input {
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-3);
+  padding: var(--digits-spacing-2) var(--digits-spacing-4);
+  height: 52px;
+  background: var(--background-input-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--digits-radius-s);
+  cursor: text;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.15s;
+}
+
+.silk-input:hover:not(:focus-within) { background: var(--background-input-hover); }
+.silk-input:active:not(:focus-within) { background: var(--background-input-pressed); }
+
+.silk-input:focus-within {
+  background: var(--background-layer);
+  border-color: var(--background-primary-accent);
+  box-shadow: 0 0 0 4px var(--primary-16);
+}
+
+/* Error: pink bg + pink border. */
+.silk-input--error {
+  background: var(--background-error);
+  border-color: var(--border-error);
+}
+/* Active-Error: focused while errored — red border + red glow. */
+.silk-input--error:focus-within {
+  background: var(--background-layer);
+  border-color: var(--background-error-accent);
+  box-shadow: 0 0 0 4px var(--red-16);
+}
+
+.silk-input-group:has(.silk-input__field:disabled) {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Side icons */
+.silk-input__icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  align-self: center;
+  color: var(--text-additional);
+  display: inline-flex;
+}
+.silk-input__icon > svg { width: 100%; height: 100%; display: block; }
+
+/* Floating label inner */
+.silk-input__inner {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: var(--digits-spacing-1);
+  align-content: center;
+  height: 100%;
+}
+.silk-input__label {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: var(--font-size-body-body-accent);
+  line-height: var(--font-height-body-body-accent);
+  color: var(--text-additional);
+  pointer-events: none;
+  transition: font-size 0.15s ease, line-height 0.15s ease, font-weight 0.15s ease;
+}
+.silk-input__field {
+  border: 0;
+  background: transparent;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  color: var(--text-default);
+  width: 100%;
+  caret-color: var(--background-primary-accent);
+  height: 0;
+  overflow: hidden;
+  transition: height 0.15s ease;
+}
+.silk-input__field::placeholder { color: transparent; }
+
+/* Floated state: focused or filled. */
+.silk-input:focus-within .silk-input__label,
+.silk-input:has(.silk-input__field:not(:placeholder-shown)) .silk-input__label {
+  font-size: var(--font-size-subtitle-subtitle-3);
+  line-height: var(--font-height-subtitle-subtitle-3);
+  font-weight: 500;
+}
+.silk-input:focus-within .silk-input__field,
+.silk-input:has(.silk-input__field:not(:placeholder-shown)) .silk-input__field {
+  height: 20px; /* matches body-default line-height */
+}

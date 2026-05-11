@@ -1,0 +1,87 @@
+/* TextArea: multi-line variant of Input. Same floating-label pattern, taller
+   container, top-aligned content. Uses the same .silk-input-group wrapper for
+   layout / disabled-fade behavior. */
+
+/* box-sizing reset matching Figma's border-box convention. */
+.silk-textarea,
+.silk-textarea * {
+  box-sizing: border-box;
+}
+
+.silk-textarea {
+  display: flex;
+  align-items: stretch;
+  gap: var(--digits-spacing-3);
+  padding: 14px var(--digits-spacing-4);
+  min-height: 104px;
+  background: var(--background-input-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--digits-radius-s);
+  cursor: text;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.15s;
+}
+
+.silk-textarea:hover:not(:focus-within)  { background: var(--background-input-hover); }
+.silk-textarea:active:not(:focus-within) { background: var(--background-input-pressed); }
+.silk-textarea:focus-within {
+  background: var(--background-layer);
+  border-color: var(--background-primary-accent);
+  box-shadow: 0 0 0 4px var(--primary-16);
+}
+
+.silk-textarea--error {
+  background: var(--background-error);
+  border-color: var(--border-error);
+}
+.silk-textarea--error:focus-within {
+  background: var(--background-layer);
+  border-color: var(--background-error-accent);
+  box-shadow: 0 0 0 4px var(--red-16);
+}
+
+.silk-input-group:has(.silk-textarea__field:disabled) {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.silk-textarea__inner {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-1);
+}
+.silk-textarea__label {
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: var(--font-size-body-body-accent);
+  line-height: var(--font-height-body-body-accent);
+  color: var(--text-additional);
+  pointer-events: none;
+  transition: font-size 0.15s ease, line-height 0.15s ease, font-weight 0.15s ease;
+}
+.silk-textarea__field {
+  flex: 1;
+  min-width: 0;
+  min-height: 60px;
+  resize: vertical;
+  border: 0;
+  background: transparent;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  color: var(--text-default);
+  caret-color: var(--background-primary-accent);
+}
+.silk-textarea__field::placeholder { color: transparent; }
+
+.silk-textarea:focus-within .silk-textarea__label,
+.silk-textarea:has(.silk-textarea__field:not(:placeholder-shown)) .silk-textarea__label {
+  font-size: var(--font-size-subtitle-subtitle-3);
+  line-height: var(--font-height-subtitle-subtitle-3);
+  font-weight: 500;
+}

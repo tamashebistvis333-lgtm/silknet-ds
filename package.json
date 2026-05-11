@@ -1,0 +1,34 @@
+{
+  "name": "silknet-ds",
+  "version": "0.1.0",
+  "description": "Silknet design system — cross-platform design tokens (iOS, Android, Web) + React component library.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "author": "Sandro Tarkhnishvili <s.tarkhana@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandrotarkhnishvili/silknet-ds.git"
+  },
+  "homepage": "https://github.com/sandrotarkhnishvili/silknet-ds#readme",
+  "bugs": "https://github.com/sandrotarkhnishvili/silknet-ds/issues",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "import": "node scripts/import-figma.js",
+    "build": "node build.js",
+    "clean": "rm -rf build",
+    "showcase": "node scripts/generate-showcase.js",
+    "sync": "npm run import && npm run clean && npm run build && npm run showcase",
+    "watch": "node scripts/watch-figma.js",
+    "build:packages": "npm run build && npm run build -w @silknet-ds/tokens && npm run build -w @silknet-ds/react",
+    "build:playground": "npm run build:packages && npm run build -w @silknet-ds/playground",
+    "dev": "npm run dev -w @silknet-ds/playground",
+    "typecheck": "npm run typecheck -w @silknet-ds/react"
+  },
+  "devDependencies": {
+    "style-dictionary": "^4.3.0"
+  }
+}

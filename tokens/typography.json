@@ -1,0 +1,176 @@
+{
+  "Font": {
+    "Family": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "Noto Sans Georgian"
+      }
+    },
+    "weight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": "regular"
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "medium"
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": "semibold"
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "bold"
+      }
+    },
+    "size": {
+      "Heading": {
+        "Heading 1": {
+          "$type": "dimension",
+          "$value": "32px"
+        },
+        "Heading 2": {
+          "$type": "dimension",
+          "$value": "28px"
+        },
+        "Heading 3": {
+          "$type": "dimension",
+          "$value": "20px"
+        },
+        "Heading 4": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "Display": {
+          "Display": {
+            "$type": "dimension",
+            "$value": "20px"
+          }
+        }
+      },
+      "Subtitle": {
+        "Subtitle 1": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "Subtitle 2": {
+          "$type": "dimension",
+          "$value": "14px"
+        },
+        "Subtitle 3": {
+          "$type": "dimension",
+          "$value": "12px"
+        }
+      },
+      "Body": {
+        "Body accent": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "Body default": {
+          "$type": "dimension",
+          "$value": "14px"
+        },
+        "Body additional": {
+          "$type": "dimension",
+          "$value": "12px"
+        }
+      },
+      "Button": {
+        "Button default": {
+          "$type": "dimension",
+          "$value": "14px"
+        },
+        "Button additional": {
+          "$type": "dimension",
+          "$value": "12px"
+        }
+      },
+      "Other": {
+        "Caption": {
+          "$type": "dimension",
+          "$value": "11px"
+        },
+        "Overline": {
+          "$type": "dimension",
+          "$value": "11px"
+        }
+      }
+    },
+    "Height": {
+      "Heading": {
+        "Heading 1": {
+          "$type": "dimension",
+          "$value": "48px"
+        },
+        "Heading 2": {
+          "$type": "dimension",
+          "$value": "40px"
+        },
+        "Heading 3": {
+          "$type": "dimension",
+          "$value": "28px"
+        },
+        "Heading 4": {
+          "$type": "dimension",
+          "$value": "24px"
+        },
+        "Display": {
+          "Display": {
+            "$type": "dimension",
+            "$value": "28px"
+          }
+        }
+      },
+      "Subtitle": {
+        "Subtitle 1": {
+          "$type": "dimension",
+          "$value": "24px"
+        },
+        "Subtitle 2": {
+          "$type": "dimension",
+          "$value": "20px"
+        },
+        "Subtitle 3": {
+          "$type": "dimension",
+          "$value": "16px"
+        }
+      },
+      "Body": {
+        "Body accent": {
+          "$type": "dimension",
+          "$value": "24px"
+        },
+        "Body default": {
+          "$type": "dimension",
+          "$value": "20px"
+        },
+        "Body additional": {
+          "$type": "dimension",
+          "$value": "16px"
+        }
+      },
+      "Button": {
+        "Button default": {
+          "$type": "dimension",
+          "$value": "20px"
+        },
+        "Button additional": {
+          "$type": "dimension",
+          "$value": "16px"
+        }
+      },
+      "Other": {
+        "Caption": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "Overline": {
+          "$type": "dimension",
+          "$value": "12px"
+        }
+      }
+    }
+  }
+}

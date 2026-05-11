@@ -1,0 +1,28 @@
+/* IconButton: square Button with uniform padding and centered icon. Reuses
+   the .silk-button base classes via composition (the .tsx applies both
+   .silk-button and .silk-icon-button classes). */
+
+.silk-icon-button {
+  /* override gap: no spacing between content slots */
+  gap: 0;
+  aspect-ratio: 1;
+  padding: var(--digits-spacing-3);
+}
+.silk-icon-button.silk-button--xs { padding: var(--digits-spacing-1); }
+.silk-icon-button.silk-button--sm { padding: var(--digits-spacing-2); }
+.silk-icon-button.silk-button--md { padding: var(--digits-spacing-3); }
+.silk-icon-button.silk-button--lg { padding: var(--digits-spacing-4); }
+
+.silk-icon-button > svg,
+.silk-icon-button > .silk-button__icon > svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.silk-icon-button.silk-button--xs > svg,
+.silk-icon-button.silk-button--sm > svg,
+.silk-icon-button.silk-button--xs > .silk-button__icon > svg,
+.silk-icon-button.silk-button--sm > .silk-button__icon > svg {
+  width: 16px;
+  height: 16px;
+}

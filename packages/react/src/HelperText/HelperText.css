@@ -1,0 +1,29 @@
+/* Helper Text — used standalone or by Input/TextArea. Default state is bare
+   text; semantic states (success/info/warning/error) use the matching color
+   token and prepend a 16px icon.
+   Note: Figma's source uses `--text-warrning` (typo, double r). Honored 1:1. */
+
+.silk-helper {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--digits-spacing-2);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-size: var(--font-size-other-caption);
+  line-height: var(--font-height-other-caption);
+  letter-spacing: 0.25px;
+}
+
+.silk-helper__icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  display: inline-flex;
+}
+.silk-helper__icon > svg { width: 100%; height: 100%; display: block; }
+
+.silk-helper--default { color: var(--text-additional); }
+.silk-helper--success { color: var(--text-success); }
+.silk-helper--info    { color: var(--text-info); }
+.silk-helper--warning { color: var(--text-warrning); /* Figma source spelling */ }
+.silk-helper--error   { color: var(--text-error); }

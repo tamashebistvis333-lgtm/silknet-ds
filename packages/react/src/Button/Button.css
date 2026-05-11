@@ -1,0 +1,130 @@
+/* Silknet Button. Porting `.btn` from showcase but with the `silk-` prefix
+   to avoid collisions in consumer apps. All values come from CSS variables
+   defined in @silknet-ds/tokens — never hardcode hex/px here. */
+
+.silk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  /* Defaults = medium size */
+  padding: var(--digits-spacing-3) var(--digits-spacing-4);
+  gap: var(--digits-spacing-3);
+  font-size: var(--font-size-button-button-default);
+  line-height: var(--font-height-button-button-default);
+  border-radius: var(--digits-radius-s);
+  transition: filter 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+  background-clip: padding-box;
+  text-decoration: none;
+}
+.silk-button:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+/* Sizes */
+.silk-button--xs {
+  padding: var(--digits-spacing-1) var(--digits-spacing-2);
+  gap: var(--digits-spacing-2);
+  font-size: var(--font-size-button-button-additional);
+  line-height: var(--font-height-button-button-additional);
+  border-radius: var(--digits-radius-xs);
+}
+.silk-button--sm {
+  padding: var(--digits-spacing-2) var(--digits-spacing-3);
+  gap: var(--digits-spacing-2);
+  font-size: var(--font-size-button-button-additional);
+  line-height: var(--font-height-button-button-additional);
+  border-radius: var(--digits-radius-xs);
+}
+.silk-button--md {
+  /* default values from .silk-button */
+}
+.silk-button--lg {
+  padding: var(--digits-spacing-4) var(--digits-spacing-5);
+}
+
+/* Variants — base */
+.silk-button--primary       { background: var(--background-primary-accent);   color: var(--text-contrast); }
+.silk-button--primary-soft  { background: var(--background-primary-soft);     color: var(--text-primary); }
+.silk-button--secondary     { background: var(--background-layer);            color: var(--text-secondary); border: 1px solid var(--border-default); }
+.silk-button--ghost         { background: transparent;                        color: var(--text-secondary); }
+.silk-button--success       { background: var(--background-success-accent);   color: var(--text-contrast); }
+.silk-button--warning       { background: var(--background-warning-accent);   color: var(--text-contrast); }
+.silk-button--error         { background: var(--background-error-accent);     color: var(--text-contrast); }
+.silk-button--info          { background: var(--background-info-accent);      color: var(--text-contrast); }
+.silk-button--silkfest      { background: var(--background-silkfest-accent);  color: var(--text-contrast); }
+.silk-button--link {
+  background: transparent;
+  color: var(--background-primary-accent);
+  padding: 0;
+  gap: var(--digits-spacing-1);
+  border-radius: var(--digits-radius-xs);
+}
+
+/* Hover/active overlay matches Figma (Background/layer-hover at 8%, layer-
+   pressed at 16%). For filled variants we stack a translucent black
+   linear-gradient over the variant color so the source token stays the
+   driver. Ghost/secondary instead reveal a subtle background; link uses
+   color-mix to darken its text color (no background to overlay). */
+
+.silk-button:hover:not(:disabled):not(.silk-button--link):not(.silk-button--ghost):not(.silk-button--secondary) {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08));
+}
+.silk-button:active:not(:disabled):not(.silk-button--link):not(.silk-button--ghost):not(.silk-button--secondary) {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.16));
+}
+
+.silk-button--ghost:hover:not(:disabled)     { background: var(--background-layer-hover); }
+.silk-button--ghost:active:not(:disabled)    { background: var(--background-layer-pressed); }
+.silk-button--secondary:hover:not(:disabled) { background: var(--background-surface-hover); }
+.silk-button--secondary:active:not(:disabled){ background: var(--background-surface-pressed); }
+
+.silk-button--link:hover:not(:disabled) {
+  color: color-mix(in srgb, var(--background-primary-accent) 92%, black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.silk-button--link:active:not(:disabled) {
+  color: color-mix(in srgb, var(--background-primary-accent) 84%, black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Disabled — uniform across variants except link (no background swap). */
+.silk-button:disabled {
+  background: var(--background-disabled) !important;
+  background-image: none !important;
+  color: var(--text-additional) !important;
+  border-color: transparent !important;
+  cursor: not-allowed;
+}
+.silk-button--link:disabled {
+  background: transparent !important;
+  color: var(--text-disabled) !important;
+  text-decoration: none !important;
+}
+
+/* Icon slots — passed via leftIcon/rightIcon props. SVGs scale with button. */
+.silk-button__icon {
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+.silk-button__icon > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.silk-button--xs .silk-button__icon,
+.silk-button--sm .silk-button__icon {
+  width: 16px;
+  height: 16px;
+}

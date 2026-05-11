@@ -1,0 +1,2899 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Silknet DS — Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../build/css/tokens.light.css">
+  <link rel="stylesheet" href="../build/css/tokens.dark.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans Georgian', system-ui, -apple-system, sans-serif;
+      background: var(--background-layer, #fff);
+      color: var(--text-default, #111);
+      transition: background .18s ease, color .18s ease;
+    }
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--background-layer, #fff) 82%, transparent);
+      border-bottom: 1px solid var(--border-default, rgba(0,0,0,.08));
+      padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .header__title { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+    .header__title small { font-weight: 400; opacity: .6; margin-left: 8px; }
+    .toggles { display: flex; gap: 4px; padding: 4px; border-radius: 999px;
+      background: var(--background-surface, rgba(0,0,0,.04));
+      border: 1px solid var(--border-default, rgba(0,0,0,.08)); }
+    .toggle { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px;
+      border: 0; background: transparent; cursor: pointer;
+      color: var(--text-secondary, #555); }
+    .toggle[aria-pressed="true"] { background: var(--background-layer, #fff);
+      color: var(--text-default, #111); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+
+    main { padding: 32px; max-width: 1280px; margin: 0 auto; }
+    section { margin-bottom: 64px; }
+    .section__head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+    .section__title { font-size: 22px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+    .section__sub { font-size: 13px; opacity: .55; }
+    .group { margin-bottom: 32px; }
+    .group__title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+      opacity: .55; margin: 0 0 12px; }
+
+    /* Swatches (semantic colors) */
+    .grid { display: grid; gap: 14px; }
+    .grid--swatches { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .swatch { display: flex; gap: 14px; align-items: center;
+      padding: 12px; border-radius: 12px;
+      background: var(--background-surface, rgba(0,0,0,.02));
+      border: 1px solid var(--border-default, rgba(0,0,0,.06)); }
+    .swatch__chip { width: 56px; height: 56px; border-radius: 10px; flex: none;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+    .swatch__meta { min-width: 0; flex: 1; }
+    .swatch__name { font-size: 13px; font-weight: 500; }
+    .swatch__var { display: block; font-size: 11px; opacity: .55; margin-top: 2px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .swatch__values { font-size: 11px; opacity: .7; margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
+      vertical-align: middle; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); }
+    .dot--light { background: #fff; }
+    .dot--dark { background: #1a1a1a; }
+
+    /* Palettes */
+    .palette { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+      border-radius: 10px; overflow: hidden; min-height: 64px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+    .palette__cell { position: relative; display: flex; align-items: flex-end; justify-content: center;
+      padding: 6px 4px; font-size: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    /* Fill sits on top of the cell background (white or checker for alpha)
+       so transparent values composite over it as the user would see in app. */
+    .palette__cell-fill { position: absolute; inset: 0; pointer-events: none; }
+    .palette__label { position: relative; z-index: 1; mix-blend-mode: difference; color: #fff; opacity: .9; }
+    /* Transparent colors: render over a checkered backdrop so alpha is visible. */
+    .palette__cell--alpha {
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, #d6d6d6 25%, transparent 25%),
+        linear-gradient(-45deg, #d6d6d6 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #d6d6d6 75%),
+        linear-gradient(-45deg, transparent 75%, #d6d6d6 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+    }
+    [data-theme="dark"] .palette__cell--alpha {
+      background-color: #1a1a1a;
+      background-image:
+        linear-gradient(45deg, #2e2e2e 25%, transparent 25%),
+        linear-gradient(-45deg, #2e2e2e 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #2e2e2e 75%),
+        linear-gradient(-45deg, transparent 75%, #2e2e2e 75%);
+    }
+
+    /* Typography */
+    .type-stack { display: flex; flex-direction: column; gap: 20px; }
+    .type-row { display: grid; grid-template-columns: 1fr 220px; gap: 24px; align-items: end;
+      padding: 16px 0; border-bottom: 1px dashed var(--border-default, rgba(0,0,0,.1)); }
+    .type-row__sample { line-height: 1.1; font-weight: 500; }
+    .type-row__meta { text-align: right; }
+    .type-row__name { font-size: 12px; font-weight: 600; opacity: .8; }
+    .type-row__specs { font-size: 11px; opacity: .55; margin-top: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .type-row__specs code { display: block; }
+
+    /* Family & weights */
+    .kv__row { display: flex; gap: 16px; padding: 8px 0; }
+    .kv__k { opacity: .6; font-size: 13px; font-family: ui-monospace, monospace; }
+    .kv__v { font-size: 16px; font-weight: 500; }
+    .grid--weights { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .weight-card { padding: 16px; border-radius: 12px; text-align: center;
+      background: var(--background-surface, rgba(0,0,0,.02));
+      border: 1px solid var(--border-default, rgba(0,0,0,.06)); }
+    .weight-card__sample { font-size: 36px; line-height: 1; }
+    .weight-card__name { font-size: 12px; opacity: .7; margin-top: 8px; text-transform: capitalize; }
+    .weight-card code { display: block; font-size: 10px; opacity: .5; margin-top: 4px;
+      font-family: ui-monospace, monospace; }
+
+    /* Dimensions */
+    .dim-stack { display: flex; flex-direction: column; gap: 8px; }
+    .dim-row { display: grid; grid-template-columns: 1fr 80px 60px; gap: 12px; align-items: center;
+      padding: 6px 0; }
+    .dim-row__bar { height: 14px; border-radius: 4px; background: var(--text-default, #333); opacity: .8; max-width: 100%; }
+    .dim-row__name { font-size: 13px; font-weight: 500; }
+    .dim-row__val { font-size: 11px; opacity: .55; text-align: right;
+      font-family: ui-monospace, monospace; }
+
+    .grid--radii { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .rad-card { text-align: center; padding: 16px;
+      background: var(--background-surface, rgba(0,0,0,.02));
+      border: 1px solid var(--border-default, rgba(0,0,0,.06));
+      border-radius: 12px; }
+    .rad-card__chip { width: 64px; height: 64px; margin: 0 auto;
+      background: var(--text-default, #333); opacity: .8;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+    .rad-card__name { font-size: 12px; font-weight: 600; margin-top: 10px; }
+    .rad-card__val { font-size: 11px; opacity: .55; font-family: ui-monospace, monospace; }
+
+    /* ─── Button component ─────────────────────────────────────────────── */
+    /* Base — defaults match medium size. Modifiers override per size.      */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 0; cursor: pointer; user-select: none; white-space: nowrap;
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-weight: 500; letter-spacing: 0.2px;
+      padding: var(--digits-spacing-3) var(--digits-spacing-4);
+      gap: var(--digits-spacing-3);
+      font-size: var(--font-size-button-button-default);
+      line-height: var(--font-height-button-button-default);
+      border-radius: var(--digits-radius-s);
+      transition: filter .12s ease;
+      background-clip: padding-box;
+    }
+    .btn:focus-visible { outline: 2px solid var(--background-primary-accent); outline-offset: 2px; }
+
+    /* Sizes */
+    .btn--xs {
+      padding: var(--digits-spacing-1) var(--digits-spacing-2);
+      gap: var(--digits-spacing-2);
+      font-size: var(--font-size-button-button-additional);
+      line-height: var(--font-height-button-button-additional);
+      border-radius: var(--digits-radius-xs);
+    }
+    .btn--sm {
+      padding: var(--digits-spacing-2) var(--digits-spacing-3);
+      gap: var(--digits-spacing-2);
+      font-size: var(--font-size-button-button-additional);
+      line-height: var(--font-height-button-button-additional);
+      border-radius: var(--digits-radius-xs);
+    }
+    .btn--md { /* default */ }
+    .btn--lg {
+      padding: var(--digits-spacing-4) var(--digits-spacing-5);
+    }
+
+    /* Variants — default state */
+    .btn--primary      { background: var(--background-primary-accent);  color: var(--text-contrast); }
+    .btn--primary-soft { background: var(--background-primary-soft);    color: var(--text-primary); }
+    .btn--secondary    { background: var(--background-layer);           color: var(--text-secondary); border: 1px solid var(--border-default); }
+    .btn--ghost        { background: transparent;                       color: var(--text-secondary); }
+    .btn--link         { background: transparent;                       color: var(--background-primary-accent); padding: 0; gap: var(--digits-spacing-1); border-radius: var(--digits-radius-xs); /* no underline at rest — appears on hover/pressed per Figma */ }
+    .btn--success      { background: var(--background-success-accent);  color: var(--text-contrast); }
+    .btn--warning      { background: var(--background-warning-accent);  color: var(--text-contrast); }
+    .btn--error        { background: var(--background-error-accent);    color: var(--text-contrast); }
+    .btn--info         { background: var(--background-info-accent);     color: var(--text-contrast); }
+    .btn--silkfest     { background: var(--background-silkfest-accent); color: var(--text-contrast); }
+
+    /* Real interaction states — Figma applies an alpha-black overlay over
+       the base color for hover (8%) and pressed (16%). Replicated via
+       stacked background-images so the variant's color stays the source. */
+    .btn:hover:not(:disabled):not(.btn--link):not(.btn--ghost):not(.btn--secondary) {
+      background-image: linear-gradient(rgba(0,0,0,.08), rgba(0,0,0,.08));
+    }
+    .btn:active:not(:disabled):not(.btn--link):not(.btn--ghost):not(.btn--secondary) {
+      background-image: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.16));
+    }
+    /* Ghost & secondary reveal a subtle bg on hover/active rather than
+       darkening (overlay barely shows on transparent/white). */
+    .btn--ghost:hover:not(:disabled)     { background: var(--background-layer-hover); }
+    .btn--ghost:active:not(:disabled)    { background: var(--background-layer-pressed); }
+    .btn--secondary:hover:not(:disabled) { background: var(--background-surface-hover); }
+    .btn--secondary:active:not(:disabled){ background: var(--background-surface-pressed); }
+    /* Link interactions: Figma layers Background/primary-accent with the
+       universal Background/layer-hover (rgba(0,0,0,.08)) and Background/
+       layer-pressed (rgba(0,0,0,.16)) overlays — same alpha-black overlay
+       pattern used across all filled buttons. We reproduce the result for
+       the text color via color-mix (you cannot literally overlay on a text
+       fill, but the math matches: primary + 8% black = #007ed8, primary +
+       16% black = #0073c5). Change the primary token and link follows. */
+    .btn--link:hover:not(:disabled) {
+      color: color-mix(in srgb, var(--background-primary-accent) 92%, black);
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .btn--link:active:not(:disabled) {
+      color: color-mix(in srgb, var(--background-primary-accent) 84%, black);
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+
+    /* Disabled — uniform across variants */
+    .btn:disabled {
+      background: var(--background-disabled) !important;
+      background-image: none !important;
+      color: var(--text-additional) !important;
+      border-color: transparent !important;
+      cursor: not-allowed;
+    }
+    .btn--link:disabled {
+      background: transparent !important;
+      color: var(--text-disabled) !important;
+      text-decoration: none !important;
+    }
+
+    /* Component playground toolbar */
+    .comp-toolbar {
+      display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+      padding: 12px 16px; margin-bottom: 16px;
+      background: var(--background-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 10px;
+    }
+    .comp-toolbar__group { display: flex; gap: 10px; align-items: center; }
+    .comp-toolbar__label { font-size: 11px; opacity: .6; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+    .comp-toolbar__check { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; cursor: pointer; }
+    .comp-toolbar__hint { margin-left: auto; font-size: 12px; opacity: .5; }
+
+    /* Segmented size picker */
+    .seg { display: inline-flex; padding: 3px;
+      background: var(--background-layer-hover);
+      border-radius: 8px; }
+    .seg__btn { font: inherit; font-size: 12px; font-weight: 500;
+      padding: 6px 12px; border: 0; border-radius: 6px;
+      background: transparent; color: var(--text-secondary); cursor: pointer;
+      letter-spacing: .04em; }
+    .seg__btn--active { background: var(--background-layer);
+      color: var(--text-default); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+
+    /* Component cards grid */
+    .comp-grid { display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .comp-card { display: flex; flex-direction: column; gap: 14px;
+      padding: 16px 16px 24px; min-height: 110px;
+      background: var(--background-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 12px; }
+    .comp-card__name { font-size: 11px; font-family: ui-monospace, monospace;
+      opacity: .55; text-transform: capitalize; }
+    .comp-card > .btn { align-self: center; margin-top: auto; }
+
+    /* Icon Button — square, uniform padding from button height − icon */
+    .btn--icon { padding: var(--digits-spacing-3); aspect-ratio: 1; gap: 0; }
+    .btn--icon.btn--xs { padding: var(--digits-spacing-1); }
+    .btn--icon.btn--sm { padding: var(--digits-spacing-2); }
+    .btn--icon.btn--md { padding: var(--digits-spacing-3); }
+    .btn--icon.btn--lg { padding: var(--digits-spacing-4); }
+    .btn--icon svg { width: 20px; height: 20px; display: block; }
+    .btn--icon.btn--xs svg, .btn--icon.btn--sm svg { width: 16px; height: 16px; }
+
+    /* ─── Input + Text Area (floating-label pattern) ──────────────────── */
+    .input-group {
+      display: flex; flex-direction: column; gap: var(--digits-spacing-2);
+      transition: opacity .15s ease;
+    }
+    .input-group .comp-card__name { /* re-uses card label style for the title */ }
+
+    .input, .textarea {
+      display: flex; gap: var(--digits-spacing-3);
+      padding: var(--digits-spacing-2) var(--digits-spacing-4);
+      background: var(--background-input-default);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--digits-radius-s);
+      cursor: text;
+      transition: background .12s, border-color .12s, box-shadow .15s;
+    }
+    .input    { align-items: center; height: 52px; }
+    .textarea { align-items: stretch; min-height: 104px; padding-top: 14px; padding-bottom: 14px; }
+
+    /* Hover & pressed — only when not focused, errored, or disabled. */
+    .input:hover:not(:focus-within),
+    .textarea:hover:not(:focus-within) { background: var(--background-input-hover); }
+    .input:active:not(:focus-within),
+    .textarea:active:not(:focus-within) { background: var(--background-input-pressed); }
+
+    /* Active (focused) — white bg, primary border, soft glow. */
+    .input:focus-within,
+    .textarea:focus-within {
+      background: var(--background-layer);
+      border-color: var(--background-primary-accent);
+      box-shadow: 0 0 0 4px var(--primary-16);
+    }
+
+    /* Error — pink bg + pink border. */
+    .input--error, .textarea--error {
+      background: var(--background-error);
+      border-color: var(--border-error);
+    }
+    /* Active-Error — focused while errored: white bg, red border, red glow. */
+    .input--error:focus-within,
+    .textarea--error:focus-within {
+      background: var(--background-layer);
+      border-color: var(--background-error-accent);
+      box-shadow: 0 0 0 4px var(--red-16);
+    }
+
+    /* Disabled — entire group fades. Pointer-events off so hover is inert. */
+    .input-group:has(.input__field:disabled),
+    .input-group:has(.textarea__field:disabled) {
+      opacity: 0.5; pointer-events: none;
+    }
+
+    /* Icons (left/right slots) */
+    .input__icon {
+      width: 20px; height: 20px; flex: none; align-self: center;
+      color: var(--text-additional);
+    }
+    .input__icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ─── Floating label inner (input) ───────────────────────────────── */
+    .input__inner {
+      flex: 1; min-width: 0;
+      display: grid; gap: var(--digits-spacing-1);
+      align-content: center;
+      height: 100%;
+    }
+    .input__label {
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: var(--font-size-body-body-accent);
+      line-height: var(--font-height-body-body-accent);
+      color: var(--text-additional);
+      pointer-events: none;
+      transition: font-size .15s ease, line-height .15s ease, font-weight .15s ease;
+    }
+    .input__field {
+      border: 0; background: transparent; outline: 0; padding: 0; margin: 0;
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: var(--font-size-body-body-default);
+      line-height: var(--font-height-body-body-default);
+      color: var(--text-default);
+      width: 100%;
+      caret-color: var(--background-primary-accent);
+      height: 0; overflow: hidden;
+      transition: height .15s ease;
+    }
+    .input__field::placeholder { color: transparent; }
+
+    /* Floated state — focused or has value */
+    .input:focus-within .input__label,
+    .input:has(.input__field:not(:placeholder-shown)) .input__label {
+      font-size: var(--font-size-subtitle-subtitle-3);
+      line-height: var(--font-height-subtitle-subtitle-3);
+      font-weight: 500;
+    }
+    .input:focus-within .input__field,
+    .input:has(.input__field:not(:placeholder-shown)) .input__field {
+      height: 20px; /* matches body-default line-height */
+    }
+
+    /* ─── Floating label inner (textarea) ─────────────────────────────── */
+    .textarea__inner {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: var(--digits-spacing-1);
+    }
+    .textarea__label {
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: var(--font-size-body-body-accent);
+      line-height: var(--font-height-body-body-accent);
+      color: var(--text-additional);
+      pointer-events: none;
+      transition: font-size .15s ease, line-height .15s ease, font-weight .15s ease;
+    }
+    .textarea__field {
+      flex: 1; min-width: 0; min-height: 60px; resize: vertical;
+      border: 0; background: transparent; outline: 0; padding: 0; margin: 0;
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: var(--font-size-body-body-default);
+      line-height: var(--font-height-body-body-default);
+      color: var(--text-default);
+      caret-color: var(--background-primary-accent);
+    }
+    .textarea__field::placeholder { color: transparent; }
+    .textarea:focus-within .textarea__label,
+    .textarea:has(.textarea__field:not(:placeholder-shown)) .textarea__label {
+      font-size: var(--font-size-subtitle-subtitle-3);
+      line-height: var(--font-height-subtitle-subtitle-3);
+      font-weight: 500;
+    }
+
+    .comp-grid--input { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
+    /* ─── Helper Text ──────────────────────────────────────────────────── */
+    .helper {
+      margin: 0;
+      display: inline-flex; align-items: center; gap: var(--digits-spacing-2);
+      font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+      font-size: var(--font-size-other-caption);
+      line-height: var(--font-height-other-caption);
+      letter-spacing: 0.25px;
+    }
+    .helper__icon { width: 16px; height: 16px; flex: none; display: none; }
+    .helper__icon svg { width: 100%; height: 100%; display: block; }
+    .helper--default { color: var(--text-additional); }
+    .helper--success { color: var(--text-success); }
+    .helper--info    { color: var(--text-info); }
+    .helper--warning { color: var(--text-warrning); /* Figma source spelling */ }
+    .helper--error   { color: var(--text-error); }
+    /* Show the icon for any non-default state */
+    .helper:not(.helper--default) .helper__icon { display: inline-flex; }
+
+    .helper-stack { display: flex; flex-direction: column; gap: 12px; }
+    .helper-row {
+      display: grid; grid-template-columns: 80px 1fr auto; gap: 16px; align-items: center;
+      padding: 8px 12px; border-radius: 8px;
+      background: var(--background-surface);
+      border: 1px solid var(--border-default);
+    }
+    .helper-row__label { font-size: 11px; opacity: .55; text-transform: capitalize;
+      font-family: ui-monospace, monospace; }
+    .helper-row__var { font-size: 11px; opacity: .5;
+      font-family: ui-monospace, monospace; }
+
+    footer { padding: 32px; text-align: center; opacity: .5; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header__title">Silknet DS <small>Token Showcase</small></div>
+    <div class="toggles" role="group" aria-label="Theme">
+      <button class="toggle" data-theme="light" aria-pressed="true">Light</button>
+      <button class="toggle" data-theme="dark" aria-pressed="false">Dark</button>
+      <button class="toggle" data-theme="system" aria-pressed="false">System</button>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Semantic Colors</h2>
+        <span class="section__sub">— 65 tokens, theme-aware</span>
+      </div>
+      
+    <div class="group">
+      <h3 class="group__title">Text</h3>
+      <div class="grid grid--swatches">
+        
+    <div class="swatch" data-name="Text.default">
+      <div class="swatch__chip" style="background: var(--text-default);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">default</div>
+        <code class="swatch__var">--text-default</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#323A3F</span>
+          <span><span class="dot dot--dark"></span>#F8F9F9</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.secondary">
+      <div class="swatch__chip" style="background: var(--text-secondary);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">secondary</div>
+        <code class="swatch__var">--text-secondary</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#4B565E</span>
+          <span><span class="dot dot--dark"></span>#E0E3E5</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.additional">
+      <div class="swatch__chip" style="background: var(--text-additional);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">additional</div>
+        <code class="swatch__var">--text-additional</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#69757E</span>
+          <span><span class="dot dot--dark"></span>#B0B9BF</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.disabled">
+      <div class="swatch__chip" style="background: var(--text-disabled);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">disabled</div>
+        <code class="swatch__var">--text-disabled</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E0E3E5</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.contrast">
+      <div class="swatch__chip" style="background: var(--text-contrast);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">contrast</div>
+        <code class="swatch__var">--text-contrast</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFFFFF</span>
+          <span><span class="dot dot--dark"></span>#000000</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.primary">
+      <div class="swatch__chip" style="background: var(--text-primary);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary</div>
+        <code class="swatch__var">--text-primary</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#006EBC</span>
+          <span><span class="dot dot--dark"></span>#99D0F7</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.success">
+      <div class="swatch__chip" style="background: var(--text-success);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">success</div>
+        <code class="swatch__var">--text-success</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#218557</span>
+          <span><span class="dot dot--dark"></span>#8CE2B4</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.error">
+      <div class="swatch__chip" style="background: var(--text-error);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">error</div>
+        <code class="swatch__var">--text-error</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B8323B</span>
+          <span><span class="dot dot--dark"></span>#F8A6AD</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.warrning">
+      <div class="swatch__chip" style="background: var(--text-warrning);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">warrning</div>
+        <code class="swatch__var">--text-warrning</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#996600</span>
+          <span><span class="dot dot--dark"></span>#FFD980</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.info">
+      <div class="swatch__chip" style="background: var(--text-info);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">info</div>
+        <code class="swatch__var">--text-info</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#1B6E98</span>
+          <span><span class="dot dot--dark"></span>#AEDDF4</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.orange">
+      <div class="swatch__chip" style="background: var(--text-orange);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">orange</div>
+        <code class="swatch__var">--text-orange</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#AA4418</span>
+          <span><span class="dot dot--dark"></span>#F8BDA0</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.purple">
+      <div class="swatch__chip" style="background: var(--text-purple);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">purple</div>
+        <code class="swatch__var">--text-purple</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#5B29BF</span>
+          <span><span class="dot dot--dark"></span>#BEA8F7</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.pink">
+      <div class="swatch__chip" style="background: var(--text-pink);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">pink</div>
+        <code class="swatch__var">--text-pink</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#BF2988</span>
+          <span><span class="dot dot--dark"></span>#F7A8DF</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.teal">
+      <div class="swatch__chip" style="background: var(--text-teal);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">teal</div>
+        <code class="swatch__var">--text-teal</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#168C8C</span>
+          <span><span class="dot dot--dark"></span>#96E3E3</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Text.silkfest">
+      <div class="swatch__chip" style="background: var(--text-silkfest);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">silkfest</div>
+        <code class="swatch__var">--text-silkfest</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#994500</span>
+          <span><span class="dot dot--dark"></span>#FFAB66</span>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Background</h3>
+      <div class="grid grid--swatches">
+        
+    <div class="swatch" data-name="Background.surface">
+      <div class="swatch__chip" style="background: var(--background-surface);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">surface</div>
+        <code class="swatch__var">--background-surface</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#F8F9F9</span>
+          <span><span class="dot dot--dark"></span>#1D2327</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.surface-hover">
+      <div class="swatch__chip" style="background: var(--background-surface-hover);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">surface-hover</div>
+        <code class="swatch__var">--background-surface-hover</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#EDEFF0</span>
+          <span><span class="dot dot--dark"></span>#323A3F</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.surface-pressed">
+      <div class="swatch__chip" style="background: var(--background-surface-pressed);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">surface-pressed</div>
+        <code class="swatch__var">--background-surface-pressed</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E0E3E5</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.layer">
+      <div class="swatch__chip" style="background: var(--background-layer);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">layer</div>
+        <code class="swatch__var">--background-layer</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFFFFF</span>
+          <span><span class="dot dot--dark"></span>#323A3F</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.layer-hover">
+      <div class="swatch__chip" style="background: var(--background-layer-hover);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">layer-hover</div>
+        <code class="swatch__var">--background-layer-hover</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#00000014</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.layer-pressed">
+      <div class="swatch__chip" style="background: var(--background-layer-pressed);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">layer-pressed</div>
+        <code class="swatch__var">--background-layer-pressed</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#00000029</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.primary-accent">
+      <div class="swatch__chip" style="background: var(--background-primary-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary-accent</div>
+        <code class="swatch__var">--background-primary-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#0089EB</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.success-accent">
+      <div class="swatch__chip" style="background: var(--background-success-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">success-accent</div>
+        <code class="swatch__var">--background-success-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#29AE6F</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.error-accent">
+      <div class="swatch__chip" style="background: var(--background-error-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">error-accent</div>
+        <code class="swatch__var">--background-error-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#DB3F49</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.warning-accent">
+      <div class="swatch__chip" style="background: var(--background-warning-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">warning-accent</div>
+        <code class="swatch__var">--background-warning-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E59F00</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.info-accent">
+      <div class="swatch__chip" style="background: var(--background-info-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">info-accent</div>
+        <code class="swatch__var">--background-info-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#2597D0</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.orange-accent">
+      <div class="swatch__chip" style="background: var(--background-orange-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">orange-accent</div>
+        <code class="swatch__var">--background-orange-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E15C19</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.purple-accent">
+      <div class="swatch__chip" style="background: var(--background-purple-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">purple-accent</div>
+        <code class="swatch__var">--background-purple-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#7743DE</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.pink-accent">
+      <div class="swatch__chip" style="background: var(--background-pink-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">pink-accent</div>
+        <code class="swatch__var">--background-pink-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#DE43A5</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.teal-accent">
+      <div class="swatch__chip" style="background: var(--background-teal-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">teal-accent</div>
+        <code class="swatch__var">--background-teal-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#27AAAA</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.silkfest-accent">
+      <div class="swatch__chip" style="background: var(--background-silkfest-accent);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">silkfest-accent</div>
+        <code class="swatch__var">--background-silkfest-accent</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#CC5C00</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.disabled">
+      <div class="swatch__chip" style="background: var(--background-disabled);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">disabled</div>
+        <code class="swatch__var">--background-disabled</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E0E3E5</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.primary">
+      <div class="swatch__chip" style="background: var(--background-primary);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary</div>
+        <code class="swatch__var">--background-primary</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E7F4FD</span>
+          <span><span class="dot dot--dark"></span>#001B2F</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.success">
+      <div class="swatch__chip" style="background: var(--background-success);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">success</div>
+        <code class="swatch__var">--background-success</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E4F6EC</span>
+          <span><span class="dot dot--dark"></span>#0E3525</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.error">
+      <div class="swatch__chip" style="background: var(--background-error);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">error</div>
+        <code class="swatch__var">--background-error</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FDEBEC</span>
+          <span><span class="dot dot--dark"></span>#3F1015</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.warning">
+      <div class="swatch__chip" style="background: var(--background-warning);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">warning</div>
+        <code class="swatch__var">--background-warning</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFF6E1</span>
+          <span><span class="dot dot--dark"></span>#4D3300</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.info">
+      <div class="swatch__chip" style="background: var(--background-info);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">info</div>
+        <code class="swatch__var">--background-info</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#E9F6FC</span>
+          <span><span class="dot dot--dark"></span>#0F3F57</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.orange">
+      <div class="swatch__chip" style="background: var(--background-orange);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">orange</div>
+        <code class="swatch__var">--background-orange</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FDECE3</span>
+          <span><span class="dot dot--dark"></span>#3E1909</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.purple">
+      <div class="swatch__chip" style="background: var(--background-purple);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">purple</div>
+        <code class="swatch__var">--background-purple</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#EFE9FC</span>
+          <span><span class="dot dot--dark"></span>#210F48</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.pink">
+      <div class="swatch__chip" style="background: var(--background-pink);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">pink</div>
+        <code class="swatch__var">--background-pink</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FCE9F5</span>
+          <span><span class="dot dot--dark"></span>#480F33</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.teal">
+      <div class="swatch__chip" style="background: var(--background-teal);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">teal</div>
+        <code class="swatch__var">--background-teal</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#EBFAFA</span>
+          <span><span class="dot dot--dark"></span>#053336</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.silkfest">
+      <div class="swatch__chip" style="background: var(--background-silkfest);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">silkfest</div>
+        <code class="swatch__var">--background-silkfest</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFE3CC</span>
+          <span><span class="dot dot--dark"></span>#331700</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.toggle-default">
+      <div class="swatch__chip" style="background: var(--background-toggle-default);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">toggle-default</div>
+        <code class="swatch__var">--background-toggle-default</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#EDEFF0</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.chip-default">
+      <div class="swatch__chip" style="background: var(--background-chip-default);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">chip-default</div>
+        <code class="swatch__var">--background-chip-default</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#F8F9F9</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.chip-selected">
+      <div class="swatch__chip" style="background: var(--background-chip-selected);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">chip-selected</div>
+        <code class="swatch__var">--background-chip-selected</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#4B565E</span>
+          <span><span class="dot dot--dark"></span>#F8F9F9</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.primary-soft">
+      <div class="swatch__chip" style="background: var(--background-primary-soft);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary-soft</div>
+        <code class="swatch__var">--background-primary-soft</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#33A1EF14</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.navigation">
+      <div class="swatch__chip" style="background: var(--background-navigation);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">navigation</div>
+        <code class="swatch__var">--background-navigation</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFFFFF3d</span>
+          <span><span class="dot dot--dark"></span>#B0B9BF0a</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.input.default">
+      <div class="swatch__chip" style="background: var(--background-input-default);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">input / default</div>
+        <code class="swatch__var">--background-input-default</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B0B9BF14</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.input.hover">
+      <div class="swatch__chip" style="background: var(--background-input-hover);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">input / hover</div>
+        <code class="swatch__var">--background-input-hover</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B0B9BF29</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="Background.input.pressed">
+      <div class="swatch__chip" style="background: var(--background-input-pressed);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">input / pressed</div>
+        <code class="swatch__var">--background-input-pressed</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B0B9BF3d</span>
+          
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">border</h3>
+      <div class="grid grid--swatches">
+        
+    <div class="swatch" data-name="border.default">
+      <div class="swatch__chip" style="background: var(--border-default);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">default</div>
+        <code class="swatch__var">--border-default</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B0B9BF52</span>
+          <span><span class="dot dot--dark"></span>#69757E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.subtle">
+      <div class="swatch__chip" style="background: var(--border-subtle);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">subtle</div>
+        <code class="swatch__var">--border-subtle</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#B0B9BF29</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.filled">
+      <div class="swatch__chip" style="background: var(--border-filled);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">filled</div>
+        <code class="swatch__var">--border-filled</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#69757E</span>
+          <span><span class="dot dot--dark"></span>#4B565E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.primary-focus">
+      <div class="swatch__chip" style="background: var(--border-primary-focus);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary-focus</div>
+        <code class="swatch__var">--border-primary-focus</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#0089EB</span>
+          
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.primary">
+      <div class="swatch__chip" style="background: var(--border-primary);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">primary</div>
+        <code class="swatch__var">--border-primary</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#CCE7FB</span>
+          <span><span class="dot dot--dark"></span>#00375E</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.success">
+      <div class="swatch__chip" style="background: var(--border-success);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">success</div>
+        <code class="swatch__var">--border-success</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#C6ECD7</span>
+          <span><span class="dot dot--dark"></span>#134C34</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.error">
+      <div class="swatch__chip" style="background: var(--border-error);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">error</div>
+        <code class="swatch__var">--border-error</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FBD0D3</span>
+          <span><span class="dot dot--dark"></span>#661B22</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.error-focus">
+      <div class="swatch__chip" style="background: var(--border-error-focus);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">error-focus</div>
+        <code class="swatch__var">--border-error-focus</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#DB3F49</span>
+          <span><span class="dot dot--dark"></span>#661B22</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.warning">
+      <div class="swatch__chip" style="background: var(--border-warning);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">warning</div>
+        <code class="swatch__var">--border-warning</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFE9B8</span>
+          <span><span class="dot dot--dark"></span>#734C00</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.info">
+      <div class="swatch__chip" style="background: var(--border-info);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">info</div>
+        <code class="swatch__var">--border-info</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#D2ECF9</span>
+          <span><span class="dot dot--dark"></span>#134E6C</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.orange">
+      <div class="swatch__chip" style="background: var(--border-orange);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">orange</div>
+        <code class="swatch__var">--border-orange</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FBDBCB</span>
+          <span><span class="dot dot--dark"></span>#59240D</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.purple">
+      <div class="swatch__chip" style="background: var(--border-purple);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">purple</div>
+        <code class="swatch__var">--border-purple</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#D9CAFA</span>
+          <span><span class="dot dot--dark"></span>#2F1669</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.pink">
+      <div class="swatch__chip" style="background: var(--border-pink);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">pink</div>
+        <code class="swatch__var">--border-pink</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#F9CBEA</span>
+          <span><span class="dot dot--dark"></span>#69164A</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.teal">
+      <div class="swatch__chip" style="background: var(--border-teal);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">teal</div>
+        <code class="swatch__var">--border-teal</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#C3EFEF</span>
+          <span><span class="dot dot--dark"></span>#0A4D52</span>
+        </div>
+      </div>
+    </div>
+    <div class="swatch" data-name="border.silkfest">
+      <div class="swatch__chip" style="background: var(--border-silkfest);"></div>
+      <div class="swatch__meta">
+        <div class="swatch__name">silkfest</div>
+        <code class="swatch__var">--border-silkfest</code>
+        <div class="swatch__values">
+          <span><span class="dot dot--light"></span>#FFC799</span>
+          <span><span class="dot dot--dark"></span>#4D2300</span>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Typography</h2>
+        <span class="section__sub">— composite text styles (family + weight + size + line-height + letter-spacing)</span>
+      </div>
+      
+        <div class="group">
+          <h3 class="group__title">Heading</h3>
+          <div class="type-stack">
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 32px; line-height: 48px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Heading 1</div>
+                <div class="type-row__specs">
+                  <span>32px / 48px · w500</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 28px; line-height: 40px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Heading 2</div>
+                <div class="type-row__specs">
+                  <span>28px / 40px · w500</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 20px; line-height: 28px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Heading 3</div>
+                <div class="type-row__specs">
+                  <span>20px / 28px · w500</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Heading 4</div>
+                <div class="type-row__specs">
+                  <span>16px / 24px · w600</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 28px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Display</div>
+                <div class="type-row__specs">
+                  <span>20px / 28px · w400</span>
+                </div>
+              </div>
+            </div></div>
+        </div>
+        <div class="group">
+          <h3 class="group__title">Subtitle</h3>
+          <div class="type-stack">
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Subtitle 1</div>
+                <div class="type-row__specs">
+                  <span>16px / 24px · w500</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Subtitle 2</div>
+                <div class="type-row__specs">
+                  <span>14px / 20px · w500</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Subtitle 3</div>
+                <div class="type-row__specs">
+                  <span>12px / 16px · w500</span>
+                </div>
+              </div>
+            </div></div>
+        </div>
+        <div class="group">
+          <h3 class="group__title">Body</h3>
+          <div class="type-stack">
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Body accent</div>
+                <div class="type-row__specs">
+                  <span>16px / 24px · w400</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 400; font-size: 14px; line-height: 20px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Body default</div>
+                <div class="type-row__specs">
+                  <span>14px / 20px · w400</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 400; font-size: 12px; line-height: 16px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Body additional</div>
+                <div class="type-row__specs">
+                  <span>12px / 16px · w400</span>
+                </div>
+              </div>
+            </div></div>
+        </div>
+        <div class="group">
+          <h3 class="group__title">Button</h3>
+          <div class="type-stack">
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: 0.2px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Button default</div>
+                <div class="type-row__specs">
+                  <span>14px / 20px · w500 · ls 0.2px</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: 0.2px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Button additional</div>
+                <div class="type-row__specs">
+                  <span>12px / 16px · w500 · ls 0.2px</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 14px; line-height: 16px; letter-spacing: 0.2px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">LinkButton default</div>
+                <div class="type-row__specs">
+                  <span>14px / 16px · w500 · ls 0.2px</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: 0px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">LinkButton additional</div>
+                <div class="type-row__specs">
+                  <span>12px / 16px · w500</span>
+                </div>
+              </div>
+            </div></div>
+        </div>
+        <div class="group">
+          <h3 class="group__title">Other</h3>
+          <div class="type-stack">
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 400; font-size: 11px; line-height: 16px; letter-spacing: 0.25px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Caption</div>
+                <div class="type-row__specs">
+                  <span>11px / 16px · w400 · ls 0.25px</span>
+                </div>
+              </div>
+            </div>
+            <div class="type-row">
+              <div class="type-row__sample" style="font-family: 'Noto Sans Georgian', system-ui, sans-serif; font-weight: 600; font-size: 11px; line-height: 12px; letter-spacing: 0.25px;">
+                ქართული ტექსტი — Sample Aa 123
+              </div>
+              <div class="type-row__meta">
+                <div class="type-row__name">Overline</div>
+                <div class="type-row__specs">
+                  <span>11px / 12px · w600 · ls 0.25px</span>
+                </div>
+              </div>
+            </div></div>
+        </div>
+      
+    <div class="group">
+      <h3 class="group__title">Family</h3>
+      <div class="kv">
+        <div class="kv__row"><div class="kv__k">Font.Family.family</div><div class="kv__v">Noto Sans Georgian</div></div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Weights</h3>
+      <div class="grid grid--weights">
+        
+          <div class="weight-card">
+            <div class="weight-card__sample" style="font-weight: 400;">Aa</div>
+            <div class="weight-card__name">regular <small>(400)</small></div>
+            <code>--font-weight-regular</code>
+          </div>
+          <div class="weight-card">
+            <div class="weight-card__sample" style="font-weight: 500;">Aa</div>
+            <div class="weight-card__name">medium <small>(500)</small></div>
+            <code>--font-weight-medium</code>
+          </div>
+          <div class="weight-card">
+            <div class="weight-card__sample" style="font-weight: 600;">Aa</div>
+            <div class="weight-card__name">semibold <small>(600)</small></div>
+            <code>--font-weight-semibold</code>
+          </div>
+          <div class="weight-card">
+            <div class="weight-card__sample" style="font-weight: 700;">Aa</div>
+            <div class="weight-card__name">bold <small>(700)</small></div>
+            <code>--font-weight-bold</code>
+          </div>
+      </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Spacing & Radius</h2>
+        <span class="section__sub">— semantic scale</span>
+      </div>
+      
+    <div class="group">
+      <h3 class="group__title">Spacing</h3>
+      <div class="dim-stack">
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 0px;"></div>
+          <div class="dim-row__name">0</div>
+          <div class="dim-row__val">0px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 4px;"></div>
+          <div class="dim-row__name">1</div>
+          <div class="dim-row__val">4px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 8px;"></div>
+          <div class="dim-row__name">2</div>
+          <div class="dim-row__val">8px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 12px;"></div>
+          <div class="dim-row__name">3</div>
+          <div class="dim-row__val">12px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 16px;"></div>
+          <div class="dim-row__name">4</div>
+          <div class="dim-row__val">16px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 20px;"></div>
+          <div class="dim-row__name">5</div>
+          <div class="dim-row__val">20px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 24px;"></div>
+          <div class="dim-row__name">6</div>
+          <div class="dim-row__val">24px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 28px;"></div>
+          <div class="dim-row__name">7</div>
+          <div class="dim-row__val">28px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 32px;"></div>
+          <div class="dim-row__name">8</div>
+          <div class="dim-row__val">32px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 36px;"></div>
+          <div class="dim-row__name">9</div>
+          <div class="dim-row__val">36px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 40px;"></div>
+          <div class="dim-row__name">10</div>
+          <div class="dim-row__val">40px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 44px;"></div>
+          <div class="dim-row__name">11</div>
+          <div class="dim-row__val">44px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 48px;"></div>
+          <div class="dim-row__name">12</div>
+          <div class="dim-row__val">48px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 52px;"></div>
+          <div class="dim-row__name">13</div>
+          <div class="dim-row__val">52px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 56px;"></div>
+          <div class="dim-row__name">14</div>
+          <div class="dim-row__val">56px</div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-row__bar" style="width: 14px;"></div>
+          <div class="dim-row__name">3_1</div>
+          <div class="dim-row__val">14px</div>
+        </div></div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Radius</h3>
+      <div class="grid grid--radii">
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 0px;"></div>
+          <div class="rad-card__name">0</div>
+          <div class="rad-card__val">0px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 4px;"></div>
+          <div class="rad-card__name">xxs</div>
+          <div class="rad-card__val">4px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 8px;"></div>
+          <div class="rad-card__name">xs</div>
+          <div class="rad-card__val">8px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 12px;"></div>
+          <div class="rad-card__name">s</div>
+          <div class="rad-card__val">12px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 16px;"></div>
+          <div class="rad-card__name">m</div>
+          <div class="rad-card__val">16px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 24px;"></div>
+          <div class="rad-card__name">l</div>
+          <div class="rad-card__val">24px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 32px;"></div>
+          <div class="rad-card__name">xl</div>
+          <div class="rad-card__val">32px</div>
+        </div>
+        <div class="rad-card">
+          <div class="rad-card__chip" style="border-radius: 48px;"></div>
+          <div class="rad-card__name">xxl</div>
+          <div class="rad-card__val">48px</div>
+        </div></div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Primitive Palette</h2>
+        <span class="section__sub">— 209 colors across 12 groups</span>
+      </div>
+      
+    <div class="group">
+      <h3 class="group__title">Primary</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#E7F4FD">
+                <span class="palette__cell-fill" style="background: var(--primary-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#CCE7FB">
+                <span class="palette__cell-fill" style="background: var(--primary-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#99D0F7">
+                <span class="palette__cell-fill" style="background: var(--primary-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#66B8F3">
+                <span class="palette__cell-fill" style="background: var(--primary-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#33A1EF">
+                <span class="palette__cell-fill" style="background: var(--primary-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#0089EB">
+                <span class="palette__cell-fill" style="background: var(--primary-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#006EBC">
+                <span class="palette__cell-fill" style="background: var(--primary-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#00528D">
+                <span class="palette__cell-fill" style="background: var(--primary-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#00375E">
+                <span class="palette__cell-fill" style="background: var(--primary-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#001B2F">
+                <span class="palette__cell-fill" style="background: var(--primary-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF0a">
+                <span class="palette__cell-fill" style="background: var(--primary-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF14">
+                <span class="palette__cell-fill" style="background: var(--primary-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF29">
+                <span class="palette__cell-fill" style="background: var(--primary-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF3d">
+                <span class="palette__cell-fill" style="background: var(--primary-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF52">
+                <span class="palette__cell-fill" style="background: var(--primary-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF66">
+                <span class="palette__cell-fill" style="background: var(--primary-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33A1EF7a">
+                <span class="palette__cell-fill" style="background: var(--primary-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Grey</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#F8F9F9">
+                <span class="palette__cell-fill" style="background: var(--grey-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#EDEFF0">
+                <span class="palette__cell-fill" style="background: var(--grey-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#E0E3E5">
+                <span class="palette__cell-fill" style="background: var(--grey-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#CDD2D6">
+                <span class="palette__cell-fill" style="background: var(--grey-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#B0B9BF">
+                <span class="palette__cell-fill" style="background: var(--grey-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#8E9AA3">
+                <span class="palette__cell-fill" style="background: var(--grey-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#69757E">
+                <span class="palette__cell-fill" style="background: var(--grey-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#4B565E">
+                <span class="palette__cell-fill" style="background: var(--grey-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#323A3F">
+                <span class="palette__cell-fill" style="background: var(--grey-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#1D2327">
+                <span class="palette__cell-fill" style="background: var(--grey-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF0a">
+                <span class="palette__cell-fill" style="background: var(--grey-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF14">
+                <span class="palette__cell-fill" style="background: var(--grey-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF29">
+                <span class="palette__cell-fill" style="background: var(--grey-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF3d">
+                <span class="palette__cell-fill" style="background: var(--grey-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF52">
+                <span class="palette__cell-fill" style="background: var(--grey-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF66">
+                <span class="palette__cell-fill" style="background: var(--grey-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#B0B9BF7a">
+                <span class="palette__cell-fill" style="background: var(--grey-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Green</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#E4F6EC">
+                <span class="palette__cell-fill" style="background: var(--green-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#C6ECD7">
+                <span class="palette__cell-fill" style="background: var(--green-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#8CE2B4">
+                <span class="palette__cell-fill" style="background: var(--green-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#5DD79A">
+                <span class="palette__cell-fill" style="background: var(--green-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#32C980">
+                <span class="palette__cell-fill" style="background: var(--green-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#29AE6F">
+                <span class="palette__cell-fill" style="background: var(--green-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#218557">
+                <span class="palette__cell-fill" style="background: var(--green-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#186A47">
+                <span class="palette__cell-fill" style="background: var(--green-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#134C34">
+                <span class="palette__cell-fill" style="background: var(--green-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#0E3525">
+                <span class="palette__cell-fill" style="background: var(--green-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C9800a">
+                <span class="palette__cell-fill" style="background: var(--green-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C98014">
+                <span class="palette__cell-fill" style="background: var(--green-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C98029">
+                <span class="palette__cell-fill" style="background: var(--green-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C9803d">
+                <span class="palette__cell-fill" style="background: var(--green-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C98052">
+                <span class="palette__cell-fill" style="background: var(--green-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C98066">
+                <span class="palette__cell-fill" style="background: var(--green-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#32C9807a">
+                <span class="palette__cell-fill" style="background: var(--green-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Red</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#FDEBEC">
+                <span class="palette__cell-fill" style="background: var(--red-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#FBD0D3">
+                <span class="palette__cell-fill" style="background: var(--red-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#F8A6AD">
+                <span class="palette__cell-fill" style="background: var(--red-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#F3747E">
+                <span class="palette__cell-fill" style="background: var(--red-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#F5515C">
+                <span class="palette__cell-fill" style="background: var(--red-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#DB3F49">
+                <span class="palette__cell-fill" style="background: var(--red-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#B8323B">
+                <span class="palette__cell-fill" style="background: var(--red-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#8F262E">
+                <span class="palette__cell-fill" style="background: var(--red-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#661B22">
+                <span class="palette__cell-fill" style="background: var(--red-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#3F1015">
+                <span class="palette__cell-fill" style="background: var(--red-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C0a">
+                <span class="palette__cell-fill" style="background: var(--red-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C14">
+                <span class="palette__cell-fill" style="background: var(--red-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C29">
+                <span class="palette__cell-fill" style="background: var(--red-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C3d">
+                <span class="palette__cell-fill" style="background: var(--red-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C52">
+                <span class="palette__cell-fill" style="background: var(--red-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C66">
+                <span class="palette__cell-fill" style="background: var(--red-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F5515C7a">
+                <span class="palette__cell-fill" style="background: var(--red-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Yellow</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#FFF6E1">
+                <span class="palette__cell-fill" style="background: var(--yellow-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#FFE9B8">
+                <span class="palette__cell-fill" style="background: var(--yellow-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#FFD980">
+                <span class="palette__cell-fill" style="background: var(--yellow-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#FFC84A">
+                <span class="palette__cell-fill" style="background: var(--yellow-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#FFB714">
+                <span class="palette__cell-fill" style="background: var(--yellow-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#E59F00">
+                <span class="palette__cell-fill" style="background: var(--yellow-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#BF8200">
+                <span class="palette__cell-fill" style="background: var(--yellow-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#996600">
+                <span class="palette__cell-fill" style="background: var(--yellow-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#734C00">
+                <span class="palette__cell-fill" style="background: var(--yellow-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#4D3300">
+                <span class="palette__cell-fill" style="background: var(--yellow-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB7140a">
+                <span class="palette__cell-fill" style="background: var(--yellow-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB71414">
+                <span class="palette__cell-fill" style="background: var(--yellow-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB71429">
+                <span class="palette__cell-fill" style="background: var(--yellow-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB7143d">
+                <span class="palette__cell-fill" style="background: var(--yellow-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB71452">
+                <span class="palette__cell-fill" style="background: var(--yellow-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB71466">
+                <span class="palette__cell-fill" style="background: var(--yellow-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFB7147a">
+                <span class="palette__cell-fill" style="background: var(--yellow-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Blue</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#E9F6FC">
+                <span class="palette__cell-fill" style="background: var(--blue-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#D2ECF9">
+                <span class="palette__cell-fill" style="background: var(--blue-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#AEDDF4">
+                <span class="palette__cell-fill" style="background: var(--blue-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#81CAEF">
+                <span class="palette__cell-fill" style="background: var(--blue-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#3DAEE6">
+                <span class="palette__cell-fill" style="background: var(--blue-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#2597D0">
+                <span class="palette__cell-fill" style="background: var(--blue-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#1C7FB0">
+                <span class="palette__cell-fill" style="background: var(--blue-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#1B6E98">
+                <span class="palette__cell-fill" style="background: var(--blue-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#134E6C">
+                <span class="palette__cell-fill" style="background: var(--blue-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#0F3F57">
+                <span class="palette__cell-fill" style="background: var(--blue-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE60a">
+                <span class="palette__cell-fill" style="background: var(--blue-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE614">
+                <span class="palette__cell-fill" style="background: var(--blue-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE629">
+                <span class="palette__cell-fill" style="background: var(--blue-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE63d">
+                <span class="palette__cell-fill" style="background: var(--blue-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE652">
+                <span class="palette__cell-fill" style="background: var(--blue-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE666">
+                <span class="palette__cell-fill" style="background: var(--blue-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#3DAEE67a">
+                <span class="palette__cell-fill" style="background: var(--blue-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Orange</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#FDECE3">
+                <span class="palette__cell-fill" style="background: var(--orange-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#FBDBCB">
+                <span class="palette__cell-fill" style="background: var(--orange-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#F8BDA0">
+                <span class="palette__cell-fill" style="background: var(--orange-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#F69A6C">
+                <span class="palette__cell-fill" style="background: var(--orange-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#F07436">
+                <span class="palette__cell-fill" style="background: var(--orange-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#E15C19">
+                <span class="palette__cell-fill" style="background: var(--orange-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#AA4418">
+                <span class="palette__cell-fill" style="background: var(--orange-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#7D3212">
+                <span class="palette__cell-fill" style="background: var(--orange-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#59240D">
+                <span class="palette__cell-fill" style="background: var(--orange-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#3E1909">
+                <span class="palette__cell-fill" style="background: var(--orange-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F074360a">
+                <span class="palette__cell-fill" style="background: var(--orange-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F0743614">
+                <span class="palette__cell-fill" style="background: var(--orange-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F0743629">
+                <span class="palette__cell-fill" style="background: var(--orange-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F074363d">
+                <span class="palette__cell-fill" style="background: var(--orange-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F0743652">
+                <span class="palette__cell-fill" style="background: var(--orange-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F0743666">
+                <span class="palette__cell-fill" style="background: var(--orange-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F074367a">
+                <span class="palette__cell-fill" style="background: var(--orange-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Purple</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#EFE9FC">
+                <span class="palette__cell-fill" style="background: var(--purple-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#D9CAFA">
+                <span class="palette__cell-fill" style="background: var(--purple-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#BEA8F7">
+                <span class="palette__cell-fill" style="background: var(--purple-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#A986F4">
+                <span class="palette__cell-fill" style="background: var(--purple-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#9364F1">
+                <span class="palette__cell-fill" style="background: var(--purple-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#7743DE">
+                <span class="palette__cell-fill" style="background: var(--purple-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#5B29BF">
+                <span class="palette__cell-fill" style="background: var(--purple-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#461F94">
+                <span class="palette__cell-fill" style="background: var(--purple-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#2F1669">
+                <span class="palette__cell-fill" style="background: var(--purple-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#210F48">
+                <span class="palette__cell-fill" style="background: var(--purple-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F10a">
+                <span class="palette__cell-fill" style="background: var(--purple-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F114">
+                <span class="palette__cell-fill" style="background: var(--purple-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F129">
+                <span class="palette__cell-fill" style="background: var(--purple-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F13d">
+                <span class="palette__cell-fill" style="background: var(--purple-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F152">
+                <span class="palette__cell-fill" style="background: var(--purple-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F166">
+                <span class="palette__cell-fill" style="background: var(--purple-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#9364F17a">
+                <span class="palette__cell-fill" style="background: var(--purple-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Pink</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#FCE9F5">
+                <span class="palette__cell-fill" style="background: var(--pink-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#F9CBEA">
+                <span class="palette__cell-fill" style="background: var(--pink-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#F7A8DF">
+                <span class="palette__cell-fill" style="background: var(--pink-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#F486CF">
+                <span class="palette__cell-fill" style="background: var(--pink-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#F164BD">
+                <span class="palette__cell-fill" style="background: var(--pink-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#DE43A5">
+                <span class="palette__cell-fill" style="background: var(--pink-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#BF2988">
+                <span class="palette__cell-fill" style="background: var(--pink-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#941F69">
+                <span class="palette__cell-fill" style="background: var(--pink-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#69164A">
+                <span class="palette__cell-fill" style="background: var(--pink-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#480F33">
+                <span class="palette__cell-fill" style="background: var(--pink-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD0a">
+                <span class="palette__cell-fill" style="background: var(--pink-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD14">
+                <span class="palette__cell-fill" style="background: var(--pink-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD29">
+                <span class="palette__cell-fill" style="background: var(--pink-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD3d">
+                <span class="palette__cell-fill" style="background: var(--pink-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD52">
+                <span class="palette__cell-fill" style="background: var(--pink-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD66">
+                <span class="palette__cell-fill" style="background: var(--pink-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#F164BD7a">
+                <span class="palette__cell-fill" style="background: var(--pink-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Teal</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#EBFAFA">
+                <span class="palette__cell-fill" style="background: var(--teal-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#C3EFEF">
+                <span class="palette__cell-fill" style="background: var(--teal-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#96E3E3">
+                <span class="palette__cell-fill" style="background: var(--teal-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#6AD7D7">
+                <span class="palette__cell-fill" style="background: var(--teal-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#33CCCC">
+                <span class="palette__cell-fill" style="background: var(--teal-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#27AAAA">
+                <span class="palette__cell-fill" style="background: var(--teal-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#168C8C">
+                <span class="palette__cell-fill" style="background: var(--teal-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#0F6E6E">
+                <span class="palette__cell-fill" style="background: var(--teal-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#0A4D52">
+                <span class="palette__cell-fill" style="background: var(--teal-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#053336">
+                <span class="palette__cell-fill" style="background: var(--teal-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC0a">
+                <span class="palette__cell-fill" style="background: var(--teal-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC14">
+                <span class="palette__cell-fill" style="background: var(--teal-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC29">
+                <span class="palette__cell-fill" style="background: var(--teal-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC3d">
+                <span class="palette__cell-fill" style="background: var(--teal-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC52">
+                <span class="palette__cell-fill" style="background: var(--teal-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC66">
+                <span class="palette__cell-fill" style="background: var(--teal-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#33CCCC7a">
+                <span class="palette__cell-fill" style="background: var(--teal-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Silkfest</h3>
+      <div class="palette">
+        
+              <div class="palette__cell" title="#FFE3CC">
+                <span class="palette__cell-fill" style="background: var(--silkfest-100);"></span>
+                <span class="palette__label">100</span>
+              </div>
+              <div class="palette__cell" title="#FFC799">
+                <span class="palette__cell-fill" style="background: var(--silkfest-200);"></span>
+                <span class="palette__label">200</span>
+              </div>
+              <div class="palette__cell" title="#FFAB66">
+                <span class="palette__cell-fill" style="background: var(--silkfest-300);"></span>
+                <span class="palette__label">300</span>
+              </div>
+              <div class="palette__cell" title="#FF8F33">
+                <span class="palette__cell-fill" style="background: var(--silkfest-400);"></span>
+                <span class="palette__label">400</span>
+              </div>
+              <div class="palette__cell" title="#FF7300">
+                <span class="palette__cell-fill" style="background: var(--silkfest-500);"></span>
+                <span class="palette__label">500</span>
+              </div>
+              <div class="palette__cell" title="#CC5C00">
+                <span class="palette__cell-fill" style="background: var(--silkfest-600);"></span>
+                <span class="palette__label">600</span>
+              </div>
+              <div class="palette__cell" title="#994500">
+                <span class="palette__cell-fill" style="background: var(--silkfest-700);"></span>
+                <span class="palette__label">700</span>
+              </div>
+              <div class="palette__cell" title="#662E00">
+                <span class="palette__cell-fill" style="background: var(--silkfest-800);"></span>
+                <span class="palette__label">800</span>
+              </div>
+              <div class="palette__cell" title="#4D2300">
+                <span class="palette__cell-fill" style="background: var(--silkfest-900);"></span>
+                <span class="palette__label">900</span>
+              </div>
+              <div class="palette__cell" title="#331700">
+                <span class="palette__cell-fill" style="background: var(--silkfest-950);"></span>
+                <span class="palette__label">950</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF73000a">
+                <span class="palette__cell-fill" style="background: var(--silkfest-4);"></span>
+                <span class="palette__label">4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF730014">
+                <span class="palette__cell-fill" style="background: var(--silkfest-8);"></span>
+                <span class="palette__label">8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF730029">
+                <span class="palette__cell-fill" style="background: var(--silkfest-16);"></span>
+                <span class="palette__label">16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF73003d">
+                <span class="palette__cell-fill" style="background: var(--silkfest-24);"></span>
+                <span class="palette__label">24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF730052">
+                <span class="palette__cell-fill" style="background: var(--silkfest-32);"></span>
+                <span class="palette__label">32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF730066">
+                <span class="palette__cell-fill" style="background: var(--silkfest-40);"></span>
+                <span class="palette__label">40%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FF73007a">
+                <span class="palette__cell-fill" style="background: var(--silkfest-48);"></span>
+                <span class="palette__label">48%</span>
+              </div>
+      </div>
+    </div>
+    <div class="group">
+      <h3 class="group__title">Alpha</h3>
+      <div class="palette">
+        
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF0a">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-4);"></span>
+                <span class="palette__label">White/4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF14">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-8);"></span>
+                <span class="palette__label">White/8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF1f">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-12);"></span>
+                <span class="palette__label">White/12%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF29">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-16);"></span>
+                <span class="palette__label">White/16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF3d">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-24);"></span>
+                <span class="palette__label">White/24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF52">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-32);"></span>
+                <span class="palette__label">White/32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFF7a">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-48);"></span>
+                <span class="palette__label">White/48%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFFa3">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-64);"></span>
+                <span class="palette__label">White/64%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFFcc">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-80);"></span>
+                <span class="palette__label">White/80%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#FFFFFFf5">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-96);"></span>
+                <span class="palette__label">White/96%</span>
+              </div>
+              <div class="palette__cell" title="#FFFFFF">
+                <span class="palette__cell-fill" style="background: var(--alpha-white-100);"></span>
+                <span class="palette__label">White/100%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#0000000a">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-4);"></span>
+                <span class="palette__label">Black/4%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#00000014">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-8);"></span>
+                <span class="palette__label">Black/8%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#0000001f">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-12);"></span>
+                <span class="palette__label">Black/12%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#00000029">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-16);"></span>
+                <span class="palette__label">Black/16%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#0000003d">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-24);"></span>
+                <span class="palette__label">Black/24%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#00000052">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-32);"></span>
+                <span class="palette__label">Black/32%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#0000007a">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-48);"></span>
+                <span class="palette__label">Black/48%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#000000a3">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-64);"></span>
+                <span class="palette__label">Black/64%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#000000cc">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-80);"></span>
+                <span class="palette__label">Black/80%</span>
+              </div>
+              <div class="palette__cell palette__cell--alpha" title="#000000f5">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-96);"></span>
+                <span class="palette__label">Black/96%</span>
+              </div>
+              <div class="palette__cell" title="#000000">
+                <span class="palette__cell-fill" style="background: var(--alpha-black-100);"></span>
+                <span class="palette__label">Black/100%</span>
+              </div>
+      </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Components — Button</h2>
+        <span class="section__sub">— 10 variants × 4 sizes × 4 states</span>
+      </div>
+      
+    <div class="comp-toolbar">
+      <div class="comp-toolbar__group">
+        <span class="comp-toolbar__label">Size</span>
+        <div class="seg" role="group" aria-label="Button size">
+          
+            <button class="seg__btn" data-size="xs">XS</button>
+          
+            <button class="seg__btn" data-size="sm">SM</button>
+          
+            <button class="seg__btn seg__btn--active" data-size="md">MD</button>
+          
+            <button class="seg__btn" data-size="lg">LG</button>
+          
+        </div>
+      </div>
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-disabled-toggle>
+        <span>Disabled</span>
+      </label>
+      <span class="comp-toolbar__hint">↳ hover & click any button to see real states</span>
+    </div>
+
+    <div class="comp-grid" data-component-grid>
+      
+    <div class="comp-card">
+      <span class="comp-card__name">primary</span>
+      <button class="btn btn--primary btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">primary-soft</span>
+      <button class="btn btn--primary-soft btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">secondary</span>
+      <button class="btn btn--secondary btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">ghost</span>
+      <button class="btn btn--ghost btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">success</span>
+      <button class="btn btn--success btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">warning</span>
+      <button class="btn btn--warning btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">error</span>
+      <button class="btn btn--error btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">info</span>
+      <button class="btn btn--info btn--md" data-btn>Button</button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">silkfest</span>
+      <button class="btn btn--silkfest btn--md" data-btn>Button</button>
+    </div>
+      
+    <div class="comp-card">
+      <span class="comp-card__name">link <small style="opacity:.5">— xs locked</small></span>
+      <button class="btn btn--link btn--xs">Button</button>
+    </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Components — Icon Button</h2>
+        <span class="section__sub">— 4 variants × 4 sizes × 4 states</span>
+      </div>
+      
+    <div class="comp-toolbar">
+      <div class="comp-toolbar__group">
+        <span class="comp-toolbar__label">Size</span>
+        <div class="seg" role="group" aria-label="Icon button size">
+          
+            <button class="seg__btn" data-icon-size="xs">XS</button>
+          
+            <button class="seg__btn" data-icon-size="sm">SM</button>
+          
+            <button class="seg__btn seg__btn--active" data-icon-size="md">MD</button>
+          
+            <button class="seg__btn" data-icon-size="lg">LG</button>
+          
+        </div>
+      </div>
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-icon-disabled-toggle>
+        <span>Disabled</span>
+      </label>
+    </div>
+
+    <div class="comp-grid" data-icon-grid>
+    <div class="comp-card">
+      <span class="comp-card__name">primary</span>
+      <button class="btn btn--icon btn--primary btn--md" data-icon-btn aria-label="primary icon button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">primary-soft</span>
+      <button class="btn btn--icon btn--primary-soft btn--md" data-icon-btn aria-label="primary-soft icon button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">secondary</span>
+      <button class="btn btn--icon btn--secondary btn--md" data-icon-btn aria-label="secondary icon button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="comp-card">
+      <span class="comp-card__name">ghost</span>
+      <button class="btn btn--icon btn--ghost btn--md" data-icon-btn aria-label="ghost icon button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div></div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Components — Input</h2>
+        <span class="section__sub">— single-line text field, 8 states</span>
+      </div>
+      
+    <div class="comp-toolbar">
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-input-error>
+        <span>Error</span>
+      </label>
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-input-disabled>
+        <span>Disabled</span>
+      </label>
+      <span class="comp-toolbar__hint">↳ click to focus → label floats up; type to fill</span>
+    </div>
+
+    <div class="comp-grid comp-grid--input">
+      
+    <div class="input-group" data-input-group>
+      <span class="comp-card__name">Plain</span>
+      <label class="input" data-input-wrap>
+        
+        <span class="input__inner">
+          <span class="input__label">სახელი</span>
+          <input class="input__field" type="text" placeholder=" " data-input>
+        </span>
+        
+      </label>
+      <p class="helper helper--default" data-input-helper>
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+        <span>დამხმარე ტექსტი</span>
+      </p>
+    </div>
+      
+    <div class="input-group" data-input-group>
+      <span class="comp-card__name">With left icon</span>
+      <label class="input" data-input-wrap>
+        <span class="input__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="input__inner">
+          <span class="input__label">სახელი</span>
+          <input class="input__field" type="text" placeholder=" " data-input>
+        </span>
+        
+      </label>
+      <p class="helper helper--default" data-input-helper>
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+        <span>დამხმარე ტექსტი</span>
+      </p>
+    </div>
+      
+    <div class="input-group" data-input-group>
+      <span class="comp-card__name">With both icons</span>
+      <label class="input" data-input-wrap>
+        <span class="input__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="input__inner">
+          <span class="input__label">სახელი</span>
+          <input class="input__field" type="text" placeholder=" " data-input>
+        </span>
+        <span class="input__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+      </label>
+      <p class="helper helper--default" data-input-helper>
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+        <span>დამხმარე ტექსტი</span>
+      </p>
+    </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Components — Text Area</h2>
+        <span class="section__sub">— multi-line text field, 8 states</span>
+      </div>
+      
+    <div class="comp-toolbar">
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-textarea-error>
+        <span>Error</span>
+      </label>
+      <label class="comp-toolbar__check">
+        <input type="checkbox" data-textarea-disabled>
+        <span>Disabled</span>
+      </label>
+      <span class="comp-toolbar__hint">↳ click to focus → label floats up; type to fill</span>
+    </div>
+
+    <div class="comp-grid comp-grid--input">
+      <div class="input-group" data-textarea-group>
+        <span class="comp-card__name">Default</span>
+        <label class="textarea" data-textarea-wrap>
+          <span class="textarea__inner">
+            <span class="textarea__label">ტექსტ არეა</span>
+            <textarea class="textarea__field" placeholder=" " data-textarea></textarea>
+          </span>
+        </label>
+        <p class="helper helper--default" data-textarea-helper>
+          <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+          <span>დამხმარე ტექსტი</span>
+        </p>
+      </div>
+    </div>
+    </section>
+
+    <section>
+      <div class="section__head">
+        <h2 class="section__title">Components — Helper Text</h2>
+        <span class="section__sub">— 5 semantic states</span>
+      </div>
+      <div class="helper-stack">
+    <div class="helper-row">
+      <div class="helper-row__label">default</div>
+      <p class="helper helper--default">
+        
+        <span>დამხმარე ტექსტი — helper text sample</span>
+      </p>
+      <code class="helper-row__var">--text-additional</code>
+    </div>
+    <div class="helper-row">
+      <div class="helper-row__label">success</div>
+      <p class="helper helper--success">
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span>დამხმარე ტექსტი — helper text sample</span>
+      </p>
+      <code class="helper-row__var">--text-success</code>
+    </div>
+    <div class="helper-row">
+      <div class="helper-row__label">info</div>
+      <p class="helper helper--info">
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <span>დამხმარე ტექსტი — helper text sample</span>
+      </p>
+      <code class="helper-row__var">--text-info</code>
+    </div>
+    <div class="helper-row">
+      <div class="helper-row__label">warning</div>
+      <p class="helper helper--warning">
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        <span>დამხმარე ტექსტი — helper text sample</span>
+      </p>
+      <code class="helper-row__var">--text-warrning</code>
+    </div>
+    <div class="helper-row">
+      <div class="helper-row__label">error</div>
+      <p class="helper helper--error">
+        <span class="helper__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+        <span>დამხმარე ტექსტი — helper text sample</span>
+      </p>
+      <code class="helper-row__var">--text-error</code>
+    </div></div>
+    </section>
+  </main>
+
+  <footer>Generated 2026-05-11T07:11:52.015Z — re-run <code>npm run sync</code> to refresh.</footer>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const buttons = Array.from(document.querySelectorAll('.toggle'));
+      const mql = matchMedia('(prefers-color-scheme: dark)');
+      let currentMode = 'light';
+
+      const applyTheme = () => {
+        const effective = currentMode === 'system' ? (mql.matches ? 'dark' : 'light') : currentMode;
+        if (effective === 'dark') root.setAttribute('data-theme', 'dark');
+        else root.removeAttribute('data-theme');
+      };
+      const setMode = (mode) => {
+        currentMode = mode;
+        applyTheme();
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === mode)));
+        try { localStorage.setItem('silknet-ds-theme', mode); } catch {}
+      };
+
+      buttons.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.theme)));
+      // Re-apply on OS theme change (only matters when in system mode).
+      mql.addEventListener('change', () => { if (currentMode === 'system') applyTheme(); });
+
+      const saved = (() => { try { return localStorage.getItem('silknet-ds-theme'); } catch { return null; } })();
+      setMode(saved || 'system');
+    })();
+
+    // Generic helper: wire a size segmented picker + disabled checkbox to a
+    // grid of elements. Removes any old size class before applying the new one.
+    function wireSizePlayground({ grid, btnSelector, sizeSelector, disabledSelector, sizes }) {
+      const root = document.querySelector(grid);
+      if (!root) return;
+      const btns = Array.from(root.querySelectorAll(btnSelector));
+      const sizeBtns = Array.from(document.querySelectorAll(sizeSelector));
+      const disabledChk = document.querySelector(disabledSelector);
+      let current = 'md';
+      const apply = () => {
+        btns.forEach((b) => {
+          sizes.forEach((s) => b.classList.remove('btn--' + s));
+          b.classList.add('btn--' + current);
+          if (disabledChk && disabledChk.checked) b.setAttribute('disabled', '');
+          else b.removeAttribute('disabled');
+        });
+      };
+      sizeBtns.forEach((s) => s.addEventListener('click', () => {
+        current = s.dataset[Object.keys(s.dataset)[0]]; // pick first data-* key
+        sizeBtns.forEach((x) => x.classList.toggle('seg__btn--active', x === s));
+        apply();
+      }));
+      if (disabledChk) disabledChk.addEventListener('change', apply);
+      apply();
+    }
+
+    // Button playground
+    wireSizePlayground({
+      grid: '[data-component-grid]',
+      btnSelector: '[data-btn]',
+      sizeSelector: '[data-size]',
+      disabledSelector: '[data-disabled-toggle]',
+      sizes: ['xs', 'sm', 'md', 'lg'],
+    });
+
+    // Icon Button playground
+    wireSizePlayground({
+      grid: '[data-icon-grid]',
+      btnSelector: '[data-icon-btn]',
+      sizeSelector: '[data-icon-size]',
+      disabledSelector: '[data-icon-disabled-toggle]',
+      sizes: ['xs', 'sm', 'md', 'lg'],
+    });
+
+    // Input playground — error / disabled toggles. Error toggles both the
+    // wrapper class (for border/bg) and the helper class (for color/icon).
+    (function () {
+      const errChk = document.querySelector('[data-input-error]');
+      const disChk = document.querySelector('[data-input-disabled]');
+      const wraps = Array.from(document.querySelectorAll('[data-input-wrap]'));
+      const fields = Array.from(document.querySelectorAll('[data-input]'));
+      const helpers = Array.from(document.querySelectorAll('[data-input-helper]'));
+      if (!errChk) return;
+      const apply = () => {
+        wraps.forEach((w) => w.classList.toggle('input--error', errChk.checked));
+        helpers.forEach((h) => {
+          h.classList.toggle('helper--error', errChk.checked);
+          h.classList.toggle('helper--default', !errChk.checked);
+        });
+        fields.forEach((f) => { if (disChk.checked) f.setAttribute('disabled', ''); else f.removeAttribute('disabled'); });
+      };
+      errChk.addEventListener('change', apply);
+      disChk.addEventListener('change', apply);
+    })();
+
+    // Text Area playground — same pattern
+    (function () {
+      const errChk = document.querySelector('[data-textarea-error]');
+      const disChk = document.querySelector('[data-textarea-disabled]');
+      const wraps = Array.from(document.querySelectorAll('[data-textarea-wrap]'));
+      const fields = Array.from(document.querySelectorAll('[data-textarea]'));
+      const helpers = Array.from(document.querySelectorAll('[data-textarea-helper]'));
+      if (!errChk) return;
+      const apply = () => {
+        wraps.forEach((w) => w.classList.toggle('textarea--error', errChk.checked));
+        helpers.forEach((h) => {
+          h.classList.toggle('helper--error', errChk.checked);
+          h.classList.toggle('helper--default', !errChk.checked);
+        });
+        fields.forEach((f) => { if (disChk.checked) f.setAttribute('disabled', ''); else f.removeAttribute('disabled'); });
+      };
+      errChk.addEventListener('change', apply);
+      disChk.addEventListener('change', apply);
+    })();
+  </script>
+</body>
+</html>

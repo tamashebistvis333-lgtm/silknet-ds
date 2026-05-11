@@ -1,0 +1,63 @@
+{
+  "name": "@silknet-ds/react",
+  "version": "0.1.0",
+  "description": "Silknet design system React components — Button, IconButton, Input, TextArea, HelperText.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Sandro Tarkhnishvili <s.tarkhana@gmail.com>",
+  "keywords": [
+    "react",
+    "design-system",
+    "components",
+    "ui",
+    "silknet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandrotarkhnishvili/silknet-ds.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/sandrotarkhnishvili/silknet-ds/tree/main/packages/react#readme",
+  "bugs": "https://github.com/sandrotarkhnishvili/silknet-ds/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/index.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "@silknet-ds/tokens": "*",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@silknet-ds/tokens": "*",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  }
+}
