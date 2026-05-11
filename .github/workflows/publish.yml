@@ -1,0 +1,42 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write  # for npm provenance attestation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+
+      # Sources/SilknetDS/* is committed (Swift Package); web packages need a build first.
+      - name: Build web packages
+        run: npm run build:packages
+
+      # Publish in dependency order. tokens has no internal deps; react peer-
+      # depends on tokens but peer deps don't need the dep to publish first —
+      # we still order this way for cleanliness in the npm UI.
+      - name: Publish @silknet-ds/tokens
+        run: npm publish -w @silknet-ds/tokens --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @silknet-ds/react
+        run: npm publish -w @silknet-ds/react --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

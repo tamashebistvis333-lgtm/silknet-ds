@@ -2,7 +2,9 @@
 
 Silknet's design system. Tokens flow from Figma into platform code (iOS, Android, Web) through a single source of truth, plus a React component library.
 
-**Live playground:** runs locally with `npm run dev` — see all components, all variants, dark/light theme switch.
+**Live playground:** [tamashebistvis333-lgtm.github.io/silknet-ds](https://tamashebistvis333-lgtm.github.io/silknet-ds/) — all components, all variants, dark/light theme switch.
+
+**npm:** [`@silknet-ds/react`](https://www.npmjs.com/package/@silknet-ds/react) · [`@silknet-ds/tokens`](https://www.npmjs.com/package/@silknet-ds/tokens)
 
 ## Packages
 
