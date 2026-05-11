@@ -13,6 +13,7 @@ Silknet's design system. Tokens flow from Figma into platform code (iOS, Android
 | [`@silknet-ds/tokens`](./packages/tokens) | Web | Generated CSS tokens (light + dark) | `npm i @silknet-ds/tokens` |
 | [`@silknet-ds/react`](./packages/react) | Web | React components: Button, IconButton, Input, TextArea, HelperText | `npm i @silknet-ds/react` |
 | `SilknetDS` ([Package.swift](./Package.swift)) | iOS | Swift Package Manager — colors, dimensions, fonts | Xcode → Add Package: `https://github.com/tamashebistvis333-lgtm/silknet-ds.git` |
+| `silknet-ds` ([android/](./android)) | Android | Compose tokens + theme + XML resources via JitPack | `implementation 'com.github.tamashebistvis333-lgtm:silknet-ds:vX.Y.Z'` |
 
 ## Quick use (in your app)
 
@@ -68,6 +69,59 @@ Theme switching is automatic — semantic colors (`.silknet.textDefault`, `.silk
 
 UIKit consumers: same colors are available — just wrap with `UIColor(Color.silknet.x)` or expose a `SilknetUIColors` enum on demand.
 
+## Quick use (in your Android app)
+
+The Android library is published via [JitPack](https://jitpack.io). In your project's `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+In your app module `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.tamashebistvis333-lgtm:silknet-ds:0.2.0")
+}
+```
+
+Compose usage:
+
+```kotlin
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import ge.silknet.ds.Silknet
+import ge.silknet.ds.SilknetTheme
+
+@Composable
+fun Demo() {
+    SilknetTheme {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(Silknet.dimens.digitsSpacing4),
+            modifier = Modifier
+                .background(Silknet.colors.backgroundLayer)
+                .padding(Silknet.dimens.digitsSpacing4),
+        ) {
+            Text(
+                "Hello",
+                style = Silknet.typography.headingHeading1,
+                color = Silknet.colors.textDefault,
+            )
+        }
+    }
+}
+```
+
+XML / View System: tokens are also available as resources — `@color/text_default`, `@dimen/digits_spacing_4`, etc. Light/dark switches automatically via `values/` + `values-night/` resource qualifiers (no theme code required).
+
 ## Develop locally
 
 ```bash
@@ -104,6 +158,7 @@ Then import as shown above. Browse the live playground for all variants.
 | `npm run watch` | Auto-sync on Figma export changes |
 | `npm run build:packages` | Build tokens + react packages (web) |
 | `npm run build:swift` | Regenerate `Sources/SilknetDS/*.swift` from tokens (iOS) |
+| `npm run build:android` | Regenerate `android/library/src/main/{kotlin,res}/` from tokens |
 | `npm run dev` | Start the Ladle component playground |
 | `npm run showcase` / `build` / `import` / `clean` | Individual pipeline steps |
 
@@ -116,6 +171,8 @@ silknet-ds/
 ├── showcase/index.html        Designer-facing visual catalog
 ├── Sources/SilknetDS/         Swift Package source (auto-generated, COMMITTED)
 ├── Package.swift              Swift Package Manager manifest (iOS target)
+├── android/                   Android Gradle library + JitPack distribution
+├── jitpack.yml                JitPack build config (Android library)
 ├── packages/
 │   ├── tokens/                @silknet-ds/tokens (web)
 │   └── react/                 @silknet-ds/react (web)

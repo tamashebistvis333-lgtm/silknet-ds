@@ -1,0 +1,20 @@
+# JitPack build config — silknet-ds is a multi-platform repo (web/iOS/Android),
+# so JitPack needs to know to build the Android Gradle module specifically.
+#
+# When a tag is pushed (or a request comes in for a version), JitPack:
+#   1. checks out the tag
+#   2. provisions JDK 17 (required by AGP 8.x)
+#   3. runs the install command below — builds the AAR + sources jar
+#      and installs to its Maven repo
+#
+# Consumer reference:
+#   implementation 'com.github.tamashebistvis333-lgtm:silknet-ds:vX.Y.Z'
+
+jdk:
+  - openjdk17
+
+before_install:
+  - cd android && chmod +x gradlew
+
+install:
+  - cd android && ./gradlew :library:publishToMavenLocal -PVERSION_NAME=$VERSION

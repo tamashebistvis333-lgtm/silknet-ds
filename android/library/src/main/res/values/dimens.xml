@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Do not edit directly, this file was auto-generated.
+-->
+<resources>
+  <dimen name="digits_0">0dp</dimen>
+  <dimen name="digits_4">4dp</dimen>
+  <dimen name="digits_8">8dp</dimen>
+  <dimen name="digits_12">12dp</dimen>
+  <dimen name="digits_14">14dp</dimen>
+  <dimen name="digits_16">16dp</dimen>
+  <dimen name="digits_20">20dp</dimen>
+  <dimen name="digits_24">24dp</dimen>
+  <dimen name="digits_28">28dp</dimen>
+  <dimen name="digits_32">32dp</dimen>
+  <dimen name="digits_36">36dp</dimen>
+  <dimen name="digits_40">40dp</dimen>
+  <dimen name="digits_44">44dp</dimen>
+  <dimen name="digits_48">48dp</dimen>
+  <dimen name="digits_52">52dp</dimen>
+  <dimen name="digits_56">56dp</dimen>
+  <dimen name="digits_radius_0">0dp</dimen>
+  <dimen name="digits_radius_xxs">4dp</dimen>
+  <dimen name="digits_radius_xs">8dp</dimen>
+  <dimen name="digits_radius_s">12dp</dimen>
+  <dimen name="digits_radius_m">16dp</dimen>
+  <dimen name="digits_radius_l">24dp</dimen>
+  <dimen name="digits_radius_xl">32dp</dimen>
+  <dimen name="digits_radius_xxl">48dp</dimen>
+  <dimen name="digits_spacing_0">0dp</dimen>
+  <dimen name="digits_spacing_1">4dp</dimen>
+  <dimen name="digits_spacing_2">8dp</dimen>
+  <dimen name="digits_spacing_3">12dp</dimen>
+  <dimen name="digits_spacing_4">16dp</dimen>
+  <dimen name="digits_spacing_5">20dp</dimen>
+  <dimen name="digits_spacing_6">24dp</dimen>
+  <dimen name="digits_spacing_7">28dp</dimen>
+  <dimen name="digits_spacing_8">32dp</dimen>
+  <dimen name="digits_spacing_9">36dp</dimen>
+  <dimen name="digits_spacing_10">40dp</dimen>
+  <dimen name="digits_spacing_11">44dp</dimen>
+  <dimen name="digits_spacing_12">48dp</dimen>
+  <dimen name="digits_spacing_13">52dp</dimen>
+  <dimen name="digits_spacing_14">56dp</dimen>
+  <dimen name="digits_spacing_3_1">14dp</dimen>
+  <dimen name="font_size_heading_heading_1">32sp</dimen>
+  <dimen name="font_size_heading_heading_2">28sp</dimen>
+  <dimen name="font_size_heading_heading_3">20sp</dimen>
+  <dimen name="font_size_heading_heading_4">16sp</dimen>
+  <dimen name="font_size_heading_display_display">20sp</dimen>
+  <dimen name="font_size_subtitle_subtitle_1">16sp</dimen>
+  <dimen name="font_size_subtitle_subtitle_2">14sp</dimen>
+  <dimen name="font_size_subtitle_subtitle_3">12sp</dimen>
+  <dimen name="font_size_body_body_accent">16sp</dimen>
+  <dimen name="font_size_body_body_default">14sp</dimen>
+  <dimen name="font_size_body_body_additional">12sp</dimen>
+  <dimen name="font_size_button_button_default">14sp</dimen>
+  <dimen name="font_size_button_button_additional">12sp</dimen>
+  <dimen name="font_size_other_caption">11sp</dimen>
+  <dimen name="font_size_other_overline">11sp</dimen>
+  <dimen name="font_height_heading_heading_1">48sp</dimen>
+  <dimen name="font_height_heading_heading_2">40sp</dimen>
+  <dimen name="font_height_heading_heading_3">28sp</dimen>
+  <dimen name="font_height_heading_heading_4">24sp</dimen>
+  <dimen name="font_height_heading_display_display">28sp</dimen>
+  <dimen name="font_height_subtitle_subtitle_1">24sp</dimen>
+  <dimen name="font_height_subtitle_subtitle_2">20sp</dimen>
+  <dimen name="font_height_subtitle_subtitle_3">16sp</dimen>
+  <dimen name="font_height_body_body_accent">24sp</dimen>
+  <dimen name="font_height_body_body_default">20sp</dimen>
+  <dimen name="font_height_body_body_additional">16sp</dimen>
+  <dimen name="font_height_button_button_default">20sp</dimen>
+  <dimen name="font_height_button_button_additional">16sp</dimen>
+  <dimen name="font_height_other_caption">16sp</dimen>
+  <dimen name="font_height_other_overline">12sp</dimen>
+</resources>

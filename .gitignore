@@ -21,3 +21,11 @@ npm-debug.log*
 # Swift Package Manager — Xcode-generated metadata, regenerated on open
 .swiftpm/
 .build/
+
+# Android Gradle build artifacts (sources + wrapper ARE committed; build/ isn't)
+android/.gradle/
+android/build/
+android/library/build/
+android/local.properties
+android/captures/
+*.iml

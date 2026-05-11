@@ -37,6 +37,16 @@ jobs:
             exit 1
           fi
 
+      - name: Generate Android library sources
+        run: npm run build:android
+
+      - name: Verify committed Android sources match generated output
+        run: |
+          if ! git diff --exit-code android/library/src/main/kotlin/ android/library/src/main/res/; then
+            echo "::error::Android sources are out of date. Run \`npm run build:android\` and commit the result."
+            exit 1
+          fi
+
       - name: Type-check React package
         run: npm run typecheck
 

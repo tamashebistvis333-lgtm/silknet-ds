@@ -109,6 +109,48 @@ struct DemoView: View {
     </div>
 
     <div style={card}>
+      <p style={sectionTitle}>Android (Compose / View System)</p>
+      <p style={{ fontSize: 13, margin: '0 0 8px' }}>
+        Add JitPack to <code>settings.gradle.kts</code>:
+      </p>
+      <pre style={codeBlock}>
+        <code>{`dependencyResolutionManagement {
+  repositories {
+    google()
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+  }
+}`}</code>
+      </pre>
+      <p style={{ fontSize: 13, margin: '8px 0' }}>
+        Add to your app module:
+      </p>
+      <pre style={codeBlock}>
+        <code>{`implementation("com.github.tamashebistvis333-lgtm:silknet-ds:0.2.0")`}</code>
+      </pre>
+      <pre style={codeBlock}>
+        <code>{`import ge.silknet.ds.Silknet
+import ge.silknet.ds.SilknetTheme
+
+@Composable
+fun Demo() {
+    SilknetTheme {
+        Text(
+            "Hello",
+            style = Silknet.typography.headingHeading1,
+            color = Silknet.colors.textDefault,
+        )
+    }
+}`}</code>
+      </pre>
+      <p style={{ fontSize: 13, opacity: 0.7, margin: '12px 0 0' }}>
+        XML resources also available: <code>@color/text_default</code>,{' '}
+        <code>@dimen/digits_spacing_4</code>. Auto-switches via{' '}
+        <code>values/</code> + <code>values-night/</code>.
+      </p>
+    </div>
+
+    <div style={card}>
       <p style={sectionTitle}>Links</p>
       <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14 }}>
         <li>
