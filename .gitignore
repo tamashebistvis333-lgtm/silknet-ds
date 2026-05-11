@@ -17,3 +17,7 @@ npm-debug.log*
 .vscode/
 .idea/
 *.swp
+
+# Swift Package Manager — Xcode-generated metadata, regenerated on open
+.swiftpm/
+.build/

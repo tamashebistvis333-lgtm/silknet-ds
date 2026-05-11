@@ -21,9 +21,10 @@
     "build": "node build.js",
     "clean": "rm -rf build",
     "showcase": "node scripts/generate-showcase.js",
-    "sync": "npm run import && npm run clean && npm run build && npm run showcase",
+    "sync": "npm run import && npm run clean && npm run build && npm run build:swift && npm run showcase",
     "watch": "node scripts/watch-figma.js",
     "build:packages": "npm run build && npm run build -w @silknet-ds/tokens && npm run build -w @silknet-ds/react",
+    "build:swift": "node scripts/build-swift-package.js",
     "build:playground": "npm run build:packages && npm run build -w @silknet-ds/playground",
     "dev": "npm run dev -w @silknet-ds/playground",
     "typecheck": "npm run typecheck -w @silknet-ds/react"

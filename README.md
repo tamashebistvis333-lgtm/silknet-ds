@@ -6,10 +6,11 @@ Silknet's design system. Tokens flow from Figma into platform code (iOS, Android
 
 ## Packages
 
-| Package | What | Install |
-|---|---|---|
-| [`@silknet-ds/tokens`](./packages/tokens) | Generated CSS tokens (light + dark) | `npm i @silknet-ds/tokens` |
-| [`@silknet-ds/react`](./packages/react) | React components: Button, IconButton, Input, TextArea, HelperText | `npm i @silknet-ds/react` |
+| Package | Platform | What | Install |
+|---|---|---|---|
+| [`@silknet-ds/tokens`](./packages/tokens) | Web | Generated CSS tokens (light + dark) | `npm i @silknet-ds/tokens` |
+| [`@silknet-ds/react`](./packages/react) | Web | React components: Button, IconButton, Input, TextArea, HelperText | `npm i @silknet-ds/react` |
+| `SilknetDS` ([Package.swift](./Package.swift)) | iOS | Swift Package Manager — colors, dimensions, fonts | Xcode → Add Package: `https://github.com/tamashebistvis333-lgtm/silknet-ds.git` |
 
 ## Quick use (in your app)
 
@@ -35,6 +36,35 @@ export function Demo() {
 ```
 
 Dark theme: set `<html data-theme="dark">`. Tokens auto-switch.
+
+## Quick use (in your iOS app)
+
+In Xcode: **File → Add Package Dependencies…** → paste `https://github.com/tamashebistvis333-lgtm/silknet-ds.git` → choose version (e.g. `0.1.0`) → add the `SilknetDS` library to your app target.
+
+```swift
+import SwiftUI
+import SilknetDS
+
+struct ContentView: View {
+    var body: some View {
+        VStack(spacing: .silknet.digitsSpacing4) {
+            Text("Hello")
+                .font(.silknet.headingHeading1)
+                .foregroundColor(.silknet.textDefault)
+
+            RoundedRectangle(cornerRadius: .silknet.digitsRadiusS)
+                .fill(Color.silknet.backgroundPrimaryAccent)
+                .frame(height: 44)
+        }
+        .padding(.silknet.digitsSpacing4)
+        .background(Color.silknet.backgroundLayer)
+    }
+}
+```
+
+Theme switching is automatic — semantic colors (`.silknet.textDefault`, `.silknet.backgroundLayer`, etc.) follow the user's system appearance via `UIColor(dynamicProvider:)`. No manual code required.
+
+UIKit consumers: same colors are available — just wrap with `UIColor(Color.silknet.x)` or expose a `SilknetUIColors` enum on demand.
 
 ## Develop locally
 
@@ -68,9 +98,10 @@ Then import as shown above. Browse the live playground for all variants.
 
 | Command | What |
 |---|---|
-| `npm run sync` | Full token pipeline: import → build → showcase |
+| `npm run sync` | Full token pipeline: import → build (web + iOS) → showcase |
 | `npm run watch` | Auto-sync on Figma export changes |
-| `npm run build:packages` | Build tokens + react packages |
+| `npm run build:packages` | Build tokens + react packages (web) |
+| `npm run build:swift` | Regenerate `Sources/SilknetDS/*.swift` from tokens (iOS) |
 | `npm run dev` | Start the Ladle component playground |
 | `npm run showcase` / `build` / `import` / `clean` | Individual pipeline steps |
 
@@ -79,14 +110,16 @@ Then import as shown above. Browse the live playground for all variants.
 ```
 silknet-ds/
 ├── tokens/                    Normalized DTCG tokens (auto-generated)
-├── build/                     Multi-platform outputs (iOS Swift, Android Kotlin/XML, CSS)
+├── build/                     Multi-platform outputs (CSS for web, Compose Kotlin, Android XML)
 ├── showcase/index.html        Designer-facing visual catalog
+├── Sources/SilknetDS/         Swift Package source (auto-generated, COMMITTED)
+├── Package.swift              Swift Package Manager manifest (iOS target)
 ├── packages/
-│   ├── tokens/                @silknet-ds/tokens
-│   └── react/                 @silknet-ds/react
+│   ├── tokens/                @silknet-ds/tokens (web)
+│   └── react/                 @silknet-ds/react (web)
 ├── apps/
 │   └── playground/            Ladle component playground
-├── scripts/                   Token pipeline (import-figma, generate-showcase, watch-figma)
+├── scripts/                   Token pipeline + Swift package generator
 ├── build.js                   Style Dictionary multi-platform build
 ├── CLAUDE.md                  AI playbook for component updates
 └── .claude/commands/          Custom Claude Code slash commands

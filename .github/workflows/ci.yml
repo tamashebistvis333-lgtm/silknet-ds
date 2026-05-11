@@ -27,6 +27,16 @@ jobs:
       - name: Build packages (Style Dictionary + tokens + react)
         run: npm run build:packages
 
+      - name: Generate Swift package sources
+        run: npm run build:swift
+
+      - name: Verify committed Swift sources match generated output
+        run: |
+          if ! git diff --exit-code Sources/SilknetDS/; then
+            echo "::error::Swift sources are out of date. Run \`npm run build:swift\` and commit the result."
+            exit 1
+          fi
+
       - name: Type-check React package
         run: npm run typecheck
 

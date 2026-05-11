@@ -81,12 +81,16 @@ silknet-ds/
 
 | Command | What it does |
 |---|---|
-| `npm run sync` | Full pipeline: import → clean → build → regenerate showcase |
+| `npm run sync` | Full pipeline: import → clean → build → build:swift → regenerate showcase |
 | `npm run watch` | Folder watcher; auto-runs sync when Figma export files change |
 | `npm run showcase` | Regenerate just the showcase HTML (after editing component code) |
-| `npm run build` | Regenerate just the platform code (Swift/Kotlin/XML/CSS) |
+| `npm run build` | Regenerate just the multi-platform raw code (Swift/Kotlin/XML/CSS) |
+| `npm run build:swift` | Regenerate the SPM Swift sources under `Sources/SilknetDS/` |
+| `npm run build:packages` | Build the npm packages (tokens + react) |
 | `npm run import` | Just normalize the Figma exports into `tokens/` |
 | `npm run clean` | Delete `build/` |
+
+**Important:** `Sources/SilknetDS/*.swift` files are COMMITTED to git (unlike `build/**`) because Swift Package Manager pulls source directly from the repo. CI fails if they're out of sync with the latest tokens. Always run `npm run build:swift` (or `npm run sync`) after editing tokens; the watcher does this automatically.
 
 ## Figma MCP usage tips
 
