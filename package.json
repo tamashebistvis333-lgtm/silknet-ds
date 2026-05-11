@@ -8,10 +8,10 @@
   "author": "Sandro Tarkhnishvili <s.tarkhana@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sandrotarkhnishvili/silknet-ds.git"
+    "url": "git+https://github.com/tamashebistvis333-lgtm/silknet-ds.git"
   },
-  "homepage": "https://github.com/sandrotarkhnishvili/silknet-ds#readme",
-  "bugs": "https://github.com/sandrotarkhnishvili/silknet-ds/issues",
+  "homepage": "https://github.com/tamashebistvis333-lgtm/silknet-ds#readme",
+  "bugs": "https://github.com/tamashebistvis333-lgtm/silknet-ds/issues",
   "workspaces": [
     "packages/*",
     "apps/*"

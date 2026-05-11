@@ -13,11 +13,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sandrotarkhnishvili/silknet-ds.git",
+    "url": "git+https://github.com/tamashebistvis333-lgtm/silknet-ds.git",
     "directory": "packages/tokens"
   },
-  "homepage": "https://github.com/sandrotarkhnishvili/silknet-ds/tree/main/packages/tokens#readme",
-  "bugs": "https://github.com/sandrotarkhnishvili/silknet-ds/issues",
+  "homepage": "https://github.com/tamashebistvis333-lgtm/silknet-ds/tree/main/packages/tokens#readme",
+  "bugs": "https://github.com/tamashebistvis333-lgtm/silknet-ds/issues",
   "publishConfig": {
     "access": "public"
   },

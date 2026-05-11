@@ -76,7 +76,7 @@ import { Button, IconButton, Input, TextArea, HelperText, PlusIcon, UserIcon } f
 Run the playground locally:
 
 ```bash
-git clone https://github.com/<your-username>/silknet-ds.git
+git clone https://github.com/tamashebistvis333-lgtm/silknet-ds.git
 cd silknet-ds
 npm install
 npm run dev
