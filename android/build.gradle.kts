@@ -7,5 +7,6 @@ plugins {
     id("com.android.library") version "8.5.2" apply false
     id("org.jetbrains.kotlin.android") version "2.0.20" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.20" apply false
-    id("maven-publish") apply false
+    // `maven-publish` is a core Gradle plugin — applied directly in :library
+    // without a top-level declaration (would error with "no-op" message).
 }
