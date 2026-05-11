@@ -126,7 +126,7 @@ struct DemoView: View {
         Add to your app module:
       </p>
       <pre style={codeBlock}>
-        <code>{`implementation("com.github.tamashebistvis333-lgtm:silknet-ds:0.2.0")`}</code>
+        <code>{`implementation("com.github.tamashebistvis333-lgtm:silknet-ds:v0.2.2")`}</code>
       </pre>
       <pre style={codeBlock}>
         <code>{`import ge.silknet.ds.Silknet

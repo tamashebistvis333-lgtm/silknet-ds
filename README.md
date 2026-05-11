@@ -13,7 +13,7 @@ Silknet's design system. Tokens flow from Figma into platform code (iOS, Android
 | [`@silknet-ds/tokens`](./packages/tokens) | Web | Generated CSS tokens (light + dark) | `npm i @silknet-ds/tokens` |
 | [`@silknet-ds/react`](./packages/react) | Web | React components: Button, IconButton, Input, TextArea, HelperText | `npm i @silknet-ds/react` |
 | `SilknetDS` ([Package.swift](./Package.swift)) | iOS | Swift Package Manager — colors, dimensions, fonts | Xcode → Add Package: `https://github.com/tamashebistvis333-lgtm/silknet-ds.git` |
-| `silknet-ds` ([android/](./android)) | Android | Compose tokens + theme + XML resources via JitPack | `implementation 'com.github.tamashebistvis333-lgtm:silknet-ds:vX.Y.Z'` |
+| `silknet-ds` ([android/](./android)) | Android | Compose tokens + theme + XML resources via JitPack | `implementation 'com.github.tamashebistvis333-lgtm:silknet-ds:v0.2.2'` |
 
 ## Quick use (in your app)
 
@@ -87,7 +87,7 @@ In your app module `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.tamashebistvis333-lgtm:silknet-ds:0.2.0")
+    implementation("com.github.tamashebistvis333-lgtm:silknet-ds:v0.2.2")
 }
 ```
 
