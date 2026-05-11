@@ -21,10 +21,10 @@ jobs:
 
       - run: npm ci
 
-      - name: Build token pipeline
-        run: npm run sync
-
-      - name: Build packages
+      # Note: we deliberately skip `npm run import` here — that step reads
+      # from the designer's local ~/Desktop/Tokens/. CI uses the already-
+      # normalized tokens committed under tokens/.
+      - name: Build packages (Style Dictionary + tokens + react)
         run: npm run build:packages
 
       - name: Type-check React package
