@@ -69,22 +69,17 @@
 }
 
 /* Hover/active overlay matches Figma (Background/layer-hover at 8%, layer-
-   pressed at 16%). For filled variants we stack a translucent black
-   linear-gradient over the variant color so the source token stays the
-   driver. Ghost/secondary instead reveal a subtle background; link uses
-   color-mix to darken its text color (no background to overlay). */
+   pressed at 16%). The same alpha-black overlay applies to EVERY variant
+   including secondary (white-bg) and ghost (transparent) — verified against
+   Figma. Link is the only exception (no background to overlay; uses
+   color-mix on text below). */
 
-.silk-button:hover:not(:disabled):not(.silk-button--link):not(.silk-button--ghost):not(.silk-button--secondary) {
+.silk-button:hover:not(:disabled):not(.silk-button--link) {
   background-image: linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08));
 }
-.silk-button:active:not(:disabled):not(.silk-button--link):not(.silk-button--ghost):not(.silk-button--secondary) {
+.silk-button:active:not(:disabled):not(.silk-button--link) {
   background-image: linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.16));
 }
-
-.silk-button--ghost:hover:not(:disabled)     { background: var(--background-layer-hover); }
-.silk-button--ghost:active:not(:disabled)    { background: var(--background-layer-pressed); }
-.silk-button--secondary:hover:not(:disabled) { background: var(--background-surface-hover); }
-.silk-button--secondary:active:not(:disabled){ background: var(--background-surface-pressed); }
 
 .silk-button--link:hover:not(:disabled) {
   color: color-mix(in srgb, var(--background-primary-accent) 92%, black);
@@ -97,16 +92,35 @@
   text-underline-offset: 2px;
 }
 
-/* Disabled — uniform across variants except link (no background swap).
-   Text color is `--text-contrast` (white) per Figma spec — produces a
-   deliberate ghost-out effect on the light disabled background. Do NOT
-   "improve" this to a darker color; the muted look is intentional. */
+/* Disabled — Figma uses three distinct treatments depending on variant.
+   Verified against nodes 27:373 (primary), 27:624 (secondary), 27:895
+   (ghost), 2030:1890 (link). Do NOT collapse these into one rule — the
+   "intentional ghost-out" look varies meaningfully per variant.
+
+   Filled variants (default rule below): grey fill + WHITE text — the white
+   text on light-grey produces the muted/illegible look intentionally.
+   Secondary: transparent fill, grey BORDER, grey text (text disappears
+   into the border).
+   Ghost: just text-disabled — no fill, no border.
+   Link: just text-disabled — no underline. */
 .silk-button:disabled {
   background: var(--background-disabled) !important;
   background-image: none !important;
   color: var(--text-contrast) !important;
   border-color: transparent !important;
   cursor: not-allowed;
+}
+.silk-button--secondary:disabled {
+  background: transparent !important;
+  background-image: none !important;
+  color: var(--text-disabled) !important;
+  border-color: var(--background-disabled) !important;
+}
+.silk-button--ghost:disabled {
+  background: transparent !important;
+  background-image: none !important;
+  color: var(--text-disabled) !important;
+  border-color: transparent !important;
 }
 .silk-button--link:disabled {
   background: transparent !important;

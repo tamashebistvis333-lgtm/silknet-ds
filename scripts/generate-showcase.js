@@ -684,21 +684,16 @@ const html = `<!doctype html>
     .btn--info         { background: var(--background-info-accent);     color: var(--text-contrast); }
     .btn--silkfest     { background: var(--background-silkfest-accent); color: var(--text-contrast); }
 
-    /* Real interaction states — Figma applies an alpha-black overlay over
-       the base color for hover (8%) and pressed (16%). Replicated via
-       stacked background-images so the variant's color stays the source. */
-    .btn:hover:not(:disabled):not(.btn--link):not(.btn--ghost):not(.btn--secondary) {
+    /* Real interaction states — Figma applies the alpha-black overlay
+       (Background/layer-hover = 8%, layer-pressed = 16%) across EVERY
+       variant including secondary (white) and ghost (transparent).
+       Verified via Figma MCP. Link is the only exception (no bg). */
+    .btn:hover:not(:disabled):not(.btn--link) {
       background-image: linear-gradient(rgba(0,0,0,.08), rgba(0,0,0,.08));
     }
-    .btn:active:not(:disabled):not(.btn--link):not(.btn--ghost):not(.btn--secondary) {
+    .btn:active:not(:disabled):not(.btn--link) {
       background-image: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.16));
     }
-    /* Ghost & secondary reveal a subtle bg on hover/active rather than
-       darkening (overlay barely shows on transparent/white). */
-    .btn--ghost:hover:not(:disabled)     { background: var(--background-layer-hover); }
-    .btn--ghost:active:not(:disabled)    { background: var(--background-layer-pressed); }
-    .btn--secondary:hover:not(:disabled) { background: var(--background-surface-hover); }
-    .btn--secondary:active:not(:disabled){ background: var(--background-surface-pressed); }
     /* Link interactions: Figma layers Background/primary-accent with the
        universal Background/layer-hover (rgba(0,0,0,.08)) and Background/
        layer-pressed (rgba(0,0,0,.16)) overlays — same alpha-black overlay
@@ -715,15 +710,29 @@ const html = `<!doctype html>
       text-decoration: underline; text-underline-offset: 2px;
     }
 
-    /* Disabled — uniform across variants. Text is var(--text-contrast)
-       (white) per Figma spec; the muted/ghosted look on the light disabled
-       background is intentional. Do not change it to a darker color. */
+    /* Disabled — three distinct treatments per Figma. Verified against
+       nodes 27:373 (primary), 27:624 (secondary), 27:895 (ghost),
+       2030:1890 (link). Do NOT collapse into one rule. */
     .btn:disabled {
+      /* Filled variants: grey fill + WHITE text — the white-on-light-grey
+         look is the intentional muted/ghosted state. */
       background: var(--background-disabled) !important;
       background-image: none !important;
       color: var(--text-contrast) !important;
       border-color: transparent !important;
       cursor: not-allowed;
+    }
+    .btn--secondary:disabled {
+      background: transparent !important;
+      background-image: none !important;
+      color: var(--text-disabled) !important;
+      border-color: var(--background-disabled) !important;
+    }
+    .btn--ghost:disabled {
+      background: transparent !important;
+      background-image: none !important;
+      color: var(--text-disabled) !important;
+      border-color: transparent !important;
     }
     .btn--link:disabled {
       background: transparent !important;
