@@ -715,11 +715,13 @@ const html = `<!doctype html>
       text-decoration: underline; text-underline-offset: 2px;
     }
 
-    /* Disabled — uniform across variants */
+    /* Disabled — uniform across variants. Text is var(--text-contrast)
+       (white) per Figma spec; the muted/ghosted look on the light disabled
+       background is intentional. Do not change it to a darker color. */
     .btn:disabled {
       background: var(--background-disabled) !important;
       background-image: none !important;
-      color: var(--text-additional) !important;
+      color: var(--text-contrast) !important;
       border-color: transparent !important;
       cursor: not-allowed;
     }
