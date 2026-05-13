@@ -30,21 +30,39 @@ const sectionTitle = {
   margin: '0 0 8px',
 } as const;
 
+// Reuses the warning semantic tokens so the callout follows light/dark theme.
+const warningCallout = {
+  background: 'var(--background-warning)',
+  border: '1px solid var(--border-warning)',
+  borderRadius: 8,
+  padding: '12px 16px',
+  margin: '20px 0',
+  color: 'var(--text-default)',
+} as const;
+
 export const Readme = () => (
   <div style={{ maxWidth: 760, lineHeight: 1.6 }}>
-    <h1 style={{ marginTop: 0 }}>Silknet DS — Component Playground</h1>
+    <h1 style={{ marginTop: 0 }}>Silknet Design System — Component Playground</h1>
     <p>
-      Live React components consuming the Silknet design tokens. Use the sidebar
-      to browse Button, Icon Button, Input, Text Area, and Helper Text. Each
-      component has a <strong>Variants</strong> page (full reference + a "Use
-      it" snippet at the bottom) and a <strong>Playground</strong> with live
-      controls.
+      ეს ფაილი წარმოადგენს მცდელობას, რომ შეიქმნას reusable და სრულად ავტომატიზირებული
+      დიზაინ სისტემა, რომელიც მართვადი იქნება დიზაინერების მიერ და დეველოპერებს
+      მისცემს საშუალებას თავიდან აირიდონ ის "მოსაწყენი" პროცესი, რასაც კომპონენტების
+      მარქაფი და 1-1-ში დიზაინის დამთხვევას გულისხმობს.
     </p>
+
     <p>
-      Toggle theme via the icon in the top toolbar (Light ↔ Dark). The toggle
-      sets <code>[data-theme="dark"]</code> on the document root, which is how
-      the generated tokens CSS switches palettes.
+      ფაილში წარმოდგენილია WEB, iOS და Android პლატფორმებისთვის დიზაინ ტოკენები
+      და კომპონენტები. Light/Dark თემა გამართულია და მუშაობს.
     </p>
+
+    <p>
+      ტოკენებისა და კომპონენტების დასათვალიერებლად, გამოიყენე მარჯვნივ არსებული ნავიგაცია.
+    </p>
+
+    <div style={warningCallout}>
+      <strong>გაფრთხილება.</strong>{' '}
+      iOS და Android სისტემებისთვის, ჯერ-ჯერობით ხელმისაწვდომია მხოლოდ ტოკენები.
+    </div>
 
     <div style={card}>
       <p style={sectionTitle}>Web (React)</p>
