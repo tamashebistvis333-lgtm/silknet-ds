@@ -28,15 +28,28 @@ jobs:
       - name: Build web packages
         run: npm run build:packages
 
-      # Publish in dependency order. tokens has no internal deps; react peer-
-      # depends on tokens but peer deps don't need the dep to publish first —
-      # we still order this way for cleanliness in the npm UI.
-      - name: Publish @silknet-ds/tokens
-        run: npm publish -w @silknet-ds/tokens --access public --provenance
+      # Publish each package only if its current package.json version isn't
+      # already on npm — lets us tag a release that bumps only one of the
+      # packages without the workflow failing on "cannot publish over the
+      # previously published version".
+      - name: Publish @silknet-ds/tokens (if new)
+        run: |
+          v=$(node -p "require('./packages/tokens/package.json').version")
+          if npm view "@silknet-ds/tokens@$v" version >/dev/null 2>&1; then
+            echo "@silknet-ds/tokens@$v already published — skipping."
+          else
+            npm publish -w @silknet-ds/tokens --access public --provenance
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @silknet-ds/react
-        run: npm publish -w @silknet-ds/react --access public --provenance
+      - name: Publish @silknet-ds/react (if new)
+        run: |
+          v=$(node -p "require('./packages/react/package.json').version")
+          if npm view "@silknet-ds/react@$v" version >/dev/null 2>&1; then
+            echo "@silknet-ds/react@$v already published — skipping."
+          else
+            npm publish -w @silknet-ds/react --access public --provenance
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
