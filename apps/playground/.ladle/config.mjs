@@ -16,6 +16,7 @@ export default {
   base: process.env.LADLE_BASE_URL || '/',
   storyOrder: [
     'welcome*',
+    'tokens*',
     'button*',
     'icon-button*',
     'helper-text*',

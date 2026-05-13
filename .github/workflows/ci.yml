@@ -47,6 +47,16 @@ jobs:
             exit 1
           fi
 
+      - name: Generate playground token data
+        run: npm run build:playground-data
+
+      - name: Verify committed playground data matches generated output
+        run: |
+          if ! git diff --exit-code apps/playground/src/_data/; then
+            echo "::error::Playground token data is out of date. Run \`npm run build:playground-data\` and commit the result."
+            exit 1
+          fi
+
       - name: Type-check React package
         run: npm run typecheck
 
