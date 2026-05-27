@@ -1,0 +1,84 @@
+/* Silknet Toast. Verified against Figma node 53:864.
+   - Container: 358px max-width, 16px padding, radius/s (12px).
+   - Layered Shadow/L: 0 2px 16 alpha-black-4 + 0 4px 8 alpha-black-8.
+   - State-driven: bg + border + text color all swap per (success/error/
+     warning/info). Icon inherits text color via currentColor.
+   - Optional inline action (e.g. "Undo") rendered to the right. */
+
+.silk-toast {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-3);
+  padding: var(--digits-spacing-4);
+  max-width: 358px;
+  border: 1px solid;
+  border-radius: var(--digits-radius-s);
+  box-shadow:
+    0 2px 16px 0 var(--alpha-black-4),
+    0 4px 8px 0 var(--alpha-black-8);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-toast__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+}
+.silk-toast__icon svg { width: 100%; height: 100%; display: block; }
+
+.silk-toast__message {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.silk-toast__action {
+  flex: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: var(--digits-spacing-1) var(--digits-spacing-2);
+  border-radius: var(--digits-radius-xs);
+  font-family: inherit;
+  font-size: var(--font-size-button-button-additional);
+  line-height: var(--font-height-button-button-additional);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: background-color 0.12s ease;
+}
+.silk-toast__action:hover { background: var(--background-layer-hover); }
+.silk-toast__action:active { background: var(--background-layer-pressed); }
+.silk-toast__action:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+/* Variants */
+.silk-toast--success {
+  background: var(--background-success);
+  border-color: var(--border-success);
+  color: var(--text-success);
+}
+.silk-toast--error {
+  background: var(--background-error);
+  border-color: var(--border-error);
+  color: var(--text-error);
+}
+.silk-toast--warning {
+  background: var(--background-warning);
+  border-color: var(--border-warning);
+  color: var(--text-warrning); /* Figma source spelling */
+}
+.silk-toast--info {
+  background: var(--background-info);
+  border-color: var(--border-info);
+  color: var(--text-info);
+}

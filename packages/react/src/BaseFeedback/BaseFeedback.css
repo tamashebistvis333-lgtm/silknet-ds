@@ -1,0 +1,61 @@
+/* Silknet BaseFeedback — vertical "result"/"empty-state" pattern.
+   Verified against Figma node 6890:3379.
+   - 358px wide column, centered text.
+   - Big circular badge: 88×88 tinted outer bg + 56×56 solid colored shape
+     inside (circle for success/error, triangle for warning) + white icon.
+   - Title: heading-3 (20/28 medium), --text-default.
+   - Description: body-default (14/20 regular), --text-secondary. */
+
+.silk-base-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--digits-spacing-4);
+  max-width: 358px;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+/* Outer pastel-tinted circular badge (88×88) */
+.silk-base-feedback__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--digits-spacing-4);
+  border-radius: 9999px;
+}
+
+.silk-base-feedback__badge svg {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.silk-base-feedback--success .silk-base-feedback__badge { background: var(--background-success); }
+.silk-base-feedback--error   .silk-base-feedback__badge { background: var(--background-error); }
+.silk-base-feedback--warning .silk-base-feedback__badge { background: var(--background-warning); }
+
+.silk-base-feedback__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-2);
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  word-break: break-word;
+}
+
+.silk-base-feedback__title {
+  margin: 0;
+  font-size: var(--font-size-heading-heading-3);
+  line-height: var(--font-height-heading-heading-3);
+  font-weight: 500;
+  color: var(--text-default);
+}
+
+.silk-base-feedback__description {
+  margin: 0;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+  color: var(--text-secondary);
+}

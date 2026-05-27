@@ -25,5 +25,8 @@ export default {
     'helper-text*',
     'input*',
     'text-area*',
+    'toast*',
+    'feedback*',
+    'base-feedback*',
   ],
 };

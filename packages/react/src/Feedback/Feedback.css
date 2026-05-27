@@ -1,0 +1,158 @@
+/* Silknet Feedback. Verified against Figma node 53:149.
+   - Container: 358px max-width, 16px padding, radius/s, state-tinted bg + border.
+   - Layout: leading icon (20×20) | content column (title + body + actions) | close (24×24).
+   - Title color = state color; body always --text-default.
+   - Primary action is a filled small button in the state's accent color.
+   - Secondary action is a borderless button in --text-secondary.
+   - Close (×) is icon-only, in --text-secondary, ghost-style. */
+
+.silk-feedback {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--digits-spacing-3);
+  padding: var(--digits-spacing-4);
+  max-width: 358px;
+  border: 1px solid;
+  border-radius: var(--digits-radius-s);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-feedback__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+}
+.silk-feedback__icon svg { width: 100%; height: 100%; display: block; }
+
+.silk-feedback__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-2);
+}
+
+.silk-feedback__title-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-1);
+  word-break: break-word;
+}
+
+.silk-feedback__title {
+  margin: 0;
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+}
+
+.silk-feedback__body {
+  margin: 0;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+  color: var(--text-default);
+}
+
+/* Action button group */
+.silk-feedback__actions {
+  display: flex;
+  gap: var(--digits-spacing-2);
+  align-items: flex-start;
+}
+
+.silk-feedback__action {
+  border: 0;
+  cursor: pointer;
+  padding: var(--digits-spacing-1) var(--digits-spacing-2);
+  border-radius: var(--digits-radius-xs);
+  font-family: inherit;
+  font-size: var(--font-size-button-button-additional);
+  line-height: var(--font-height-button-button-additional);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  transition: background-color 0.12s ease, filter 0.12s ease;
+}
+.silk-feedback__action:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+.silk-feedback__action--primary {
+  color: var(--text-contrast);
+}
+.silk-feedback__action--secondary {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.silk-feedback__action--secondary:hover { background: var(--background-layer-hover); }
+.silk-feedback__action--secondary:active { background: var(--background-layer-pressed); }
+
+/* Per-variant primary action background */
+.silk-feedback--success .silk-feedback__action--primary { background: var(--background-success-accent); }
+.silk-feedback--error   .silk-feedback__action--primary { background: var(--background-error-accent); }
+.silk-feedback--warning .silk-feedback__action--primary { background: var(--background-warning-accent); color: var(--text-default); /* yellow needs dark text */ }
+.silk-feedback--info    .silk-feedback__action--primary { background: var(--background-info-accent); }
+
+.silk-feedback__action--primary:hover {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08));
+}
+.silk-feedback__action--primary:active {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.16));
+}
+
+/* Close button (×) — 24×24 icon button, ghost-style */
+.silk-feedback__close {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: var(--digits-spacing-1);
+  border: 0;
+  background: transparent;
+  border-radius: var(--digits-radius-xs);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background-color 0.12s ease;
+}
+.silk-feedback__close:hover { background: var(--background-layer-hover); }
+.silk-feedback__close:active { background: var(--background-layer-pressed); }
+.silk-feedback__close:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+.silk-feedback__close svg { width: 16px; height: 16px; display: block; }
+
+/* Variants */
+.silk-feedback--success {
+  background: var(--background-success);
+  border-color: var(--border-success);
+}
+.silk-feedback--success .silk-feedback__title { color: var(--text-success); }
+.silk-feedback--success .silk-feedback__icon { color: var(--text-success); }
+
+.silk-feedback--error {
+  background: var(--background-error);
+  border-color: var(--border-error);
+}
+.silk-feedback--error .silk-feedback__title { color: var(--text-error); }
+.silk-feedback--error .silk-feedback__icon { color: var(--text-error); }
+
+.silk-feedback--warning {
+  background: var(--background-warning);
+  border-color: var(--border-warning);
+}
+.silk-feedback--warning .silk-feedback__title { color: var(--text-warrning); }
+.silk-feedback--warning .silk-feedback__icon { color: var(--text-warrning); }
+
+.silk-feedback--info {
+  background: var(--background-info);
+  border-color: var(--border-info);
+}
+.silk-feedback--info .silk-feedback__title { color: var(--text-info); }
+.silk-feedback--info .silk-feedback__icon { color: var(--text-info); }

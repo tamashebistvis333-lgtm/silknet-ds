@@ -23,6 +23,15 @@ export const CheckIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+// Outlined "check inside a circle". Used in Toast/Feedback success states
+// (matches Figma's check-circle icon: stroke ring + stroke checkmark).
+export const CheckCircleIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base(props)}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="8 12 11 15 16 9" />
+  </svg>
+);
+
 export const InfoIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg {...base(props)}>
     <circle cx="12" cy="12" r="10" />

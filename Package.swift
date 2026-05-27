@@ -14,7 +14,10 @@ import PackageDescription
 let package = Package(
     name: "SilknetDS",
     platforms: [
-        .iOS(.v15)
+        // Bumped to iOS 16 — needed for the View.underline() modifier used by
+        // SilknetButton (link variant). iOS 16 ships Sep 2022 so support is
+        // universal at this point.
+        .iOS(.v16)
     ],
     products: [
         .library(name: "SilknetDS", targets: ["SilknetDS"])
