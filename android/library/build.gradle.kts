@@ -49,6 +49,7 @@ dependencies {
     api("androidx.compose.runtime:runtime")
     api("androidx.compose.foundation:foundation")
     api("androidx.compose.material3:material3")
+    api("androidx.compose.material:material-icons-core")
 }
 
 // JitPack reads from `release` published variant via maven-publish.
