@@ -1,0 +1,78 @@
+/* Silknet Checkbox. Verified against Figma node 4065:5125.
+   - Hit target: 20×20 (button); visible box 18×18 centered.
+   - Border-radius: --digits-radius-xxs (4px).
+   - Indicator (check or horizontal dash) is white on filled primary bg.
+   - Error: surface bg + red border. Disabled: opacity 0.5 wrapper.
+   - Disabled+checked: bg --background-disabled (light grey) instead of primary. */
+
+.silk-checkbox {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  padding: 1px;
+  background: transparent;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.silk-checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.silk-checkbox__box {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--digits-radius-xxs);
+  background: var(--background-layer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.silk-checkbox:focus-visible .silk-checkbox__box {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+/* Checked / Indeterminate — primary fill, no border */
+.silk-checkbox[data-checked='true'] .silk-checkbox__box,
+.silk-checkbox[data-indeterminate='true'] .silk-checkbox__box {
+  background: var(--background-primary-accent);
+  border-color: transparent;
+}
+
+/* Error (unchecked) */
+.silk-checkbox[data-error='true'] .silk-checkbox__box {
+  background: var(--background-surface);
+  border-color: var(--background-error-accent);
+}
+
+/* Disabled + checked/indeterminate — grey fill instead of primary */
+.silk-checkbox:disabled[data-checked='true'] .silk-checkbox__box,
+.silk-checkbox:disabled[data-indeterminate='true'] .silk-checkbox__box {
+  background: var(--background-disabled);
+  border-color: transparent;
+}
+
+/* Indicators sit inside the 18×18 box with the 15% inset from Figma. */
+.silk-checkbox__check {
+  width: 12px;
+  height: 12px;
+  color: var(--text-contrast);
+  display: block;
+}
+.silk-checkbox__dash {
+  width: 10px;
+  height: 2px;
+  background: var(--text-contrast);
+  border-radius: 1px;
+}

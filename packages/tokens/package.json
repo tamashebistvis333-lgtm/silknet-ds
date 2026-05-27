@@ -1,6 +1,6 @@
 {
   "name": "@silknet-ds/tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Silknet design system tokens — generated CSS variables for light and dark themes.",
   "type": "module",
   "license": "MIT",

@@ -1,0 +1,78 @@
+/* Silknet Radio button. Verified against Figma node 4067:5347.
+   - Hit target 20×20, visible 18×18 perfect circle.
+   - Selected: SOLID filled circle in primary-accent + 8px white center
+     punch (NOT a ring + inner dot — that was a misread). Reproduced via
+     CSS: filled background + ::after white circle inset 5px (gives the
+     8×8 center from the Figma SVG's `cx=9 cy=9 r=4`).
+   - Error (unchecked): surface bg + 1px red border.
+   - Disabled (unchecked): disabled bg + 1px default border.
+   - Disabled (selected): same structure as selected but disabled grey
+     instead of primary; white center punch unchanged. */
+
+.silk-radio {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  padding: 1px;
+  background: transparent;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.silk-radio:disabled {
+  cursor: not-allowed;
+}
+
+.silk-radio__box {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--background-layer);
+  border: 1px solid var(--border-default);
+  position: relative;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.silk-radio:focus-visible .silk-radio__box {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+/* Selected — full primary fill, no border, white center punch. */
+.silk-radio[data-selected='true']:not(:disabled) .silk-radio__box {
+  background: var(--background-primary-accent);
+  border-color: transparent;
+}
+.silk-radio[data-selected='true'] .silk-radio__box::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--background-layer);
+}
+
+/* Error (unchecked) — surface bg + red border. */
+.silk-radio[data-error='true']:not([data-selected='true']) .silk-radio__box {
+  background: var(--background-surface);
+  border-color: var(--background-error-accent);
+}
+
+/* Disabled (unchecked) — grey fill + default border. */
+.silk-radio:disabled:not([data-selected='true']) .silk-radio__box {
+  background: var(--background-disabled);
+  border-color: var(--border-default);
+}
+
+/* Disabled (selected) — same as selected but disabled grey, not primary. */
+.silk-radio:disabled[data-selected='true'] .silk-radio__box {
+  background: var(--background-disabled);
+  border-color: transparent;
+}
+/* The white center punch (::after) is inherited from the [data-selected='true']
+   rule above — works for both enabled and disabled selected states. */

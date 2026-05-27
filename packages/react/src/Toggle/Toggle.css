@@ -1,0 +1,62 @@
+/* Silknet Toggle. Verified against Figma node 2052:3503.
+   - Track: 36×20, pill shape, 2px padding
+   - Handle: 16×16 white circle with soft shadow, translates 16px on toggle
+   - OFF bg: --background-toggle-default
+   - ON  bg: --background-success-accent  (Figma uses success green for ON)
+   - Error: 1px border in --background-error-accent
+   - Disabled: opacity 0.5 (matches Figma's "active=no" states)
+   - Inner shadow on the track: inset 0 0 2px var(--alpha-black-4) */
+
+.silk-toggle {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  width: 36px;
+  height: 20px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  background: var(--background-toggle-default);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  box-shadow: inset 0 0 2px 0 var(--alpha-black-4);
+  outline: none;
+  flex-shrink: 0;
+}
+
+.silk-toggle:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+.silk-toggle[aria-checked='true'] {
+  background: var(--background-success-accent);
+}
+
+.silk-toggle--error {
+  border-color: var(--background-error-accent);
+}
+
+.silk-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.silk-toggle__handle {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  /* Subtle elevation matching the Figma handle's built-in shadow halo. */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease;
+  /* Default position = OFF (left). transform pushes it right when ON. */
+  transform: translateX(0);
+}
+
+.silk-toggle[aria-checked='true'] .silk-toggle__handle {
+  /* track 36 − padding 2*2 − handle 16 = 16 px travel */
+  transform: translateX(16px);
+}
