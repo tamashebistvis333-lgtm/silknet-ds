@@ -48,6 +48,7 @@ dependencies {
     api("androidx.compose.ui:ui-tooling-preview")
     api("androidx.compose.runtime:runtime")
     api("androidx.compose.foundation:foundation")
+    api("androidx.compose.material3:material3")
 }
 
 // JitPack reads from `release` published variant via maven-publish.
