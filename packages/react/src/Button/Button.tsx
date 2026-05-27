@@ -7,11 +7,6 @@ export type ButtonVariant =
   | 'primary-soft'
   | 'secondary'
   | 'ghost'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | 'silkfest'
   | 'link';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';

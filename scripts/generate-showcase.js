@@ -283,7 +283,6 @@ function renderSpacingAndRadius() {
 
 const BUTTON_VARIANTS = [
   'primary', 'primary-soft', 'secondary', 'ghost',
-  'success', 'warning', 'error', 'info', 'silkfest',
 ];
 const BUTTON_SIZES = ['xs', 'sm', 'md', 'lg'];
 
@@ -678,11 +677,6 @@ const html = `<!doctype html>
     .btn--secondary    { background: var(--background-layer);           color: var(--text-secondary); border: 1px solid var(--border-default); }
     .btn--ghost        { background: transparent;                       color: var(--text-secondary); }
     .btn--link         { background: transparent;                       color: var(--background-primary-accent); padding: 0; gap: var(--digits-spacing-1); border-radius: var(--digits-radius-xs); /* no underline at rest — appears on hover/pressed per Figma */ }
-    .btn--success      { background: var(--background-success-accent);  color: var(--text-contrast); }
-    .btn--warning      { background: var(--background-warning-accent);  color: var(--text-contrast); }
-    .btn--error        { background: var(--background-error-accent);    color: var(--text-contrast); }
-    .btn--info         { background: var(--background-info-accent);     color: var(--text-contrast); }
-    .btn--silkfest     { background: var(--background-silkfest-accent); color: var(--text-contrast); }
 
     /* Real interaction states — Figma applies the alpha-black overlay
        (Background/layer-hover = 8%, layer-pressed = 16%) across EVERY

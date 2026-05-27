@@ -55,11 +55,6 @@
 .silk-button--primary-soft  { background: var(--background-primary-soft);     color: var(--text-primary); }
 .silk-button--secondary     { background: var(--background-layer);            color: var(--text-secondary); border: 1px solid var(--border-default); }
 .silk-button--ghost         { background: transparent;                        color: var(--text-secondary); }
-.silk-button--success       { background: var(--background-success-accent);   color: var(--text-contrast); }
-.silk-button--warning       { background: var(--background-warning-accent);   color: var(--text-contrast); }
-.silk-button--error         { background: var(--background-error-accent);     color: var(--text-contrast); }
-.silk-button--info          { background: var(--background-info-accent);      color: var(--text-contrast); }
-.silk-button--silkfest      { background: var(--background-silkfest-accent);  color: var(--text-contrast); }
 .silk-button--link {
   background: transparent;
   color: var(--background-primary-accent);

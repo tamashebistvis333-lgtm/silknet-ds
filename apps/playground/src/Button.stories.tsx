@@ -6,8 +6,7 @@ import { UseIt, SectionTitle } from './_components/UseIt';
 export default { title: 'Button' };
 
 const VARIANTS: ButtonVariant[] = [
-  'primary', 'primary-soft', 'secondary', 'ghost',
-  'success', 'warning', 'error', 'info', 'silkfest', 'link',
+  'primary', 'primary-soft', 'secondary', 'ghost', 'link',
 ];
 const SIZES: ButtonSize[] = ['xs', 'sm', 'md', 'lg'];
 
