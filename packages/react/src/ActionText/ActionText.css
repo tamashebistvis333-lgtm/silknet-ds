@@ -1,0 +1,39 @@
+/* Silknet action+text. Verified against Figma node 4067:5572.
+   - Row, 8px gap, items top-aligned.
+   - Label: Subtitle 2 (14/20 medium) text/default.
+   - Description: Body default (14/20) text/additional, 4px below label. */
+
+.silk-action-text {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--digits-spacing-2);
+  width: 100%;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-action-text__control { flex: none; display: flex; }
+
+.silk-action-text__text {
+  flex: 1 0 0;
+  min-width: 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--digits-spacing-1);
+  word-break: break-word;
+}
+.silk-action-text__text > p { margin: 0; }
+
+.silk-action-text__label {
+  color: var(--text-default);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+}
+.silk-action-text__description {
+  color: var(--text-additional);
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+}

@@ -1,0 +1,51 @@
+/* Silknet Container (section). Verified against Figma node 6379:8021.
+   - Column, 12px gap between header and content.
+   - Header: title (Heading 4, 16/24 semibold, text/default) + subtitle
+     (Body default, text/additional) 4px apart; optional action on the right,
+     12px from the heading.
+   - Content: radius/m slot (the pink fill in Figma is only a placeholder). */
+
+.silk-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-3);
+  width: 100%;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-container__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--digits-spacing-3);
+}
+
+.silk-container__heading {
+  flex: 1 0 0;
+  min-width: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-1);
+  word-break: break-word;
+}
+
+.silk-container__title {
+  margin: 0;
+  color: var(--text-default);
+  font-size: var(--font-size-heading-heading-4);
+  line-height: var(--font-height-heading-heading-4);
+  font-weight: 600;
+}
+.silk-container__subtitle {
+  margin: 0;
+  color: var(--text-additional);
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+}
+
+.silk-container__action { flex: none; display: flex; }
+
+.silk-container__content {
+  border-radius: var(--digits-radius-m);
+}

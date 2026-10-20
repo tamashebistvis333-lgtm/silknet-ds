@@ -41,6 +41,25 @@ Set `<html data-theme="dark">` to switch. Components use CSS variables that auto
 | `Input` | — | — | default, hover, focused, filled, error, active-error, disabled |
 | `TextArea` | — | — | same as Input |
 | `HelperText` | — | — | default, success, info, warning, error |
+| `Badge` | soft, filled, dot, dot-small × primary, success, error, warning, info, neutral, disabled | — | — |
+| `Avatar` | image, initials, placeholder (+ status dot) | large, medium, small, xsmall | — |
+| `Chip` | — | small, medium | default, selected |
+| `Divider` | centered, right | — | — |
+| `Tab` / `TabBar` | 2–5 segments, badge dot | — | default, selected (animated) |
+| `Tooltip` | 8 pointer positions, optional helper line | — | — |
+| `WalletButton` | apple-pay, google-pay × auto, black, white | — | default, hover, pressed, disabled |
+| `Price` | gel, points (+ old price) | — | — |
+| `BonusContainer` | — | — | — |
+| `MenuItem` / `DropdownMenu` | destructive | — | default, hover, pressed, disabled |
+| `ListItem` | inset | — | — |
+| `ActionText` | — | — | — |
+| `NavigationItem` | — | — | default, selected |
+| `NavigationHeader` | default, search | — | — |
+| `Faq` | — | — | collapsed, open (animated) |
+| `Container` | — | — | — |
+| `Package` | — | — | — |
+| `ActionSheet` | — | — | open/closed, drag-to-dismiss |
+| `FeedbackScreen` | dialog, fullscreen × success, error, warning | — | — |
 
 ### Examples
 

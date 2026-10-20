@@ -1,0 +1,94 @@
+/* Silknet WalletButton (Figma "Button-wallet", node 7016:3648).
+   - Full-width, 52px tall, 20px side padding, radius/s (12px).
+   - Apple Pay: "Pay with" SF Pro Display Medium 20/28 + Apple-logo Pay
+     (SF Pro Text Semibold 23px), 3px gap, 12px vertical padding.
+   - Google Pay: "Pay with" Product Sans 20px + Google Pay mark, 8px gap,
+     14px vertical padding (spacing/3_1).
+   Colors are the wallet brands' mandated black / white (and Google's
+   #3c4043 grey) — intentionally not theme tokens, the brand guidelines fix
+   them. `auto` swaps to the white button under [data-theme="dark"]. */
+
+.silk-wallet {
+  --silk-wallet-bg: #000;
+  --silk-wallet-fg: #fff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  margin: 0;
+  padding: var(--digits-spacing-3) var(--digits-spacing-5);
+  border: 0;
+  border-radius: var(--digits-radius-s);
+  background: var(--silk-wallet-bg);
+  color: var(--silk-wallet-fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s ease;
+}
+.silk-wallet:hover { opacity: 0.92; }
+.silk-wallet:active { opacity: 0.84; }
+.silk-wallet:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+.silk-wallet:disabled { cursor: not-allowed; opacity: 0.4; }
+
+.silk-wallet--white,
+:root[data-theme='dark'] .silk-wallet--auto {
+  --silk-wallet-bg: #fff;
+  --silk-wallet-fg: #000;
+}
+
+/* Apple Pay */
+.silk-wallet--apple-pay { gap: 3px; }
+.silk-wallet--apple-pay .silk-wallet__label {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 0.05px;
+}
+.silk-wallet__apple-mark {
+  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 28px;
+  letter-spacing: -1.2232px;
+}
+
+/* Google Pay */
+.silk-wallet--google-pay {
+  gap: 8px;
+  padding-top: var(--digits-spacing-3-1);
+  padding-bottom: var(--digits-spacing-3-1);
+}
+.silk-wallet--google-pay .silk-wallet__label {
+  font-family: 'Product Sans', 'Google Sans', Roboto, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: normal;
+  letter-spacing: 0.5px;
+}
+.silk-wallet--white.silk-wallet--google-pay,
+:root[data-theme='dark'] .silk-wallet--auto.silk-wallet--google-pay {
+  --silk-wallet-fg: #3c4043;
+}
+
+.silk-wallet__gpay {
+  display: inline-grid;
+  place-items: start;
+  flex: none;
+}
+.silk-wallet__gpay > img {
+  grid-area: 1 / 1;
+}
+.silk-wallet__pay { margin: 1.27px 0 0 26.48px; }
+.silk-wallet__g,
+.silk-wallet__pay--white { display: block; }
+.silk-wallet__pay--grey { display: none; }
+.silk-wallet--white .silk-wallet__pay--white,
+:root[data-theme='dark'] .silk-wallet--auto .silk-wallet__pay--white { display: none; }
+.silk-wallet--white .silk-wallet__pay--grey,
+:root[data-theme='dark'] .silk-wallet--auto .silk-wallet__pay--grey { display: block; }

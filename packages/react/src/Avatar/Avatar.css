@@ -1,0 +1,96 @@
+/* Silknet Avatar. Verified against Figma node 66:1553.
+   - Sizes: large 48, medium 32, small 24, xsmall 16. Full circle, 1px
+     border/subtle ring.
+   - image: object-fit cover photo.
+   - initials: background/warning fill, text/warrning letters
+     (Subtitle 1 / 2 / 3, Other/Caption for xsmall).
+   - placeholder: background/toggle-default fill + text/secondary profile glyph.
+   - status: success-accent dot ringed in background/layer.
+     large/medium = 12px, 2px ring, flush bottom-right.
+     small/xsmall = 8px, 1px ring, offset -2px. */
+
+.silk-avatar {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  vertical-align: middle;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-avatar__circle {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+}
+
+.silk-avatar--large  { width: 48px; height: 48px; }
+.silk-avatar--medium { width: 32px; height: 32px; }
+.silk-avatar--small  { width: 24px; height: 24px; }
+.silk-avatar--xsmall { width: 16px; height: 16px; }
+
+.silk-avatar__img {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  object-fit: cover;
+  display: block;
+}
+
+.silk-avatar--initials .silk-avatar__circle { background: var(--background-warning); }
+.silk-avatar__initials {
+  color: var(--text-warrning); /* Figma source spelling */
+  font-weight: 500;
+  white-space: nowrap;
+}
+.silk-avatar--large .silk-avatar__initials {
+  font-size: var(--font-size-subtitle-subtitle-1);
+  line-height: var(--font-height-subtitle-subtitle-1);
+}
+.silk-avatar--medium .silk-avatar__initials {
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+}
+.silk-avatar--small .silk-avatar__initials {
+  font-size: var(--font-size-subtitle-subtitle-3);
+  line-height: var(--font-height-subtitle-subtitle-3);
+}
+.silk-avatar--xsmall .silk-avatar__initials {
+  font-size: var(--font-size-other-caption);
+  line-height: var(--font-height-other-caption);
+  font-weight: 400;
+  letter-spacing: 0.25px;
+}
+
+.silk-avatar--placeholder .silk-avatar__circle {
+  background: var(--background-toggle-default);
+  color: var(--text-secondary);
+}
+.silk-avatar__icon { display: block; flex: none; }
+
+.silk-avatar__status {
+  box-sizing: border-box;
+  position: absolute;
+  border-radius: 99px;
+  background: var(--background-success-accent);
+  border: 2px solid var(--background-layer);
+  width: 12px;
+  height: 12px;
+  right: 0;
+  bottom: 0;
+}
+.silk-avatar--small .silk-avatar__status,
+.silk-avatar--xsmall .silk-avatar__status {
+  width: 8px;
+  height: 8px;
+  border-width: 1px;
+  right: -2px;
+  bottom: -2px;
+}

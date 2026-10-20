@@ -1,0 +1,118 @@
+/* Silknet Tab. Verified against Figma node 5679:14710 ("Tabs").
+   - 8px/12px padding, 8px gap, radius/s (12px).
+   - selected: background/layer + "Soft" shadow, Subtitle 2 in text/primary.
+   - default: transparent, Body default in text/secondary.
+   - badge: 8px error-accent dot. */
+
+.silk-tab {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--digits-spacing-2);
+  margin: 0;
+  padding: var(--digits-spacing-2) var(--digits-spacing-3);
+  border: 0;
+  border-radius: var(--digits-radius-s);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+.silk-tab:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+.silk-tab:disabled { cursor: not-allowed; color: var(--text-disabled); }
+
+.silk-tab--selected {
+  background: var(--background-layer);
+  color: var(--text-primary);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+  box-shadow:
+    0 2px 16px 0 var(--grey-4),
+    0 4px 8px 0 var(--alpha-black-4);
+}
+
+.silk-tab__badge {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--background-error-accent);
+}
+
+/* Silknet TabBar. Verified against Figma node 5681:4769.
+   surface track, 4px padding, radius/m (16px); tabs share width equally.
+
+   Motion (not in Figma — iOS UISegmentedControl feel):
+   - The selected pill is one shared indicator behind the tabs, positioned
+     from --silk-tabbar-index / --silk-tabbar-count (set by TabBar), and
+     slides with Apple's ease-out curve (0.32, 0.72, 0, 1) over 400ms.
+   - Label color/weight cross-fade on the same curve.
+   - Pressing the selected tab shrinks the pill slightly, like iOS.
+   - prefers-reduced-motion: instant. */
+
+.silk-tabbar {
+  --silk-tabbar-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --silk-tabbar-duration: 400ms;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--digits-spacing-1);
+  border-radius: var(--digits-radius-m);
+  background: var(--background-surface);
+  overflow: hidden;
+}
+
+.silk-tabbar__indicator {
+  position: absolute;
+  z-index: 0;
+  top: var(--digits-spacing-1);
+  bottom: var(--digits-spacing-1);
+  left: var(--digits-spacing-1);
+  width: calc((100% - 2 * var(--digits-spacing-1)) / var(--silk-tabbar-count, 1));
+  border-radius: var(--digits-radius-s);
+  background: var(--background-layer);
+  box-shadow:
+    0 2px 16px 0 var(--grey-4),
+    0 4px 8px 0 var(--alpha-black-4);
+  transform: translateX(calc(var(--silk-tabbar-index, 0) * 100%));
+  transition: transform var(--silk-tabbar-duration) var(--silk-tabbar-ease);
+  will-change: transform;
+  pointer-events: none;
+}
+.silk-tabbar:has(.silk-tab--selected:active) .silk-tabbar__indicator {
+  transform: translateX(calc(var(--silk-tabbar-index, 0) * 100%)) scale(0.95);
+}
+
+.silk-tabbar > .silk-tab {
+  position: relative;
+  z-index: 1;
+  flex: 1 0 0;
+  min-width: 1px;
+  transition:
+    color var(--silk-tabbar-duration) var(--silk-tabbar-ease),
+    font-weight var(--silk-tabbar-duration) var(--silk-tabbar-ease);
+}
+/* The indicator draws the selected pill inside a TabBar. */
+.silk-tabbar > .silk-tab--selected {
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silk-tabbar__indicator,
+  .silk-tabbar > .silk-tab { transition: none; }
+}

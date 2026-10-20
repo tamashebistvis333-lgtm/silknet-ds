@@ -1,0 +1,46 @@
+/* Silknet Navigation item. Verified against Figma node 2052:3507.
+   - 78px wide, 4px/12px padding, 4px gap, column.
+   - Caption (11/16, +0.25) label.
+   - default: icon + label text/additional; selected: text/primary. */
+
+.silk-nav-item {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--digits-spacing-1);
+  width: 78px;
+  margin: 0;
+  padding: var(--digits-spacing-1) var(--digits-spacing-3);
+  border: 0;
+  background: transparent;
+  color: var(--text-additional);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.silk-nav-item:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+  border-radius: var(--digits-radius-xs);
+}
+.silk-nav-item--selected { color: var(--text-primary); }
+
+.silk-nav-item__icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+}
+.silk-nav-item__icon > svg { display: block; width: 100%; height: 100%; }
+
+.silk-nav-item__label {
+  width: 100%;
+  font-size: var(--font-size-other-caption);
+  line-height: var(--font-height-other-caption);
+  font-weight: 400;
+  letter-spacing: 0.25px;
+  text-align: center;
+  word-break: break-word;
+}

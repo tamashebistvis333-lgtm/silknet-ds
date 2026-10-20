@@ -1,0 +1,30 @@
+/* Silknet Divider. Verified against Figma node 7186:7366.
+   1px border/default line.
+   - centered: 8px row, line vertically centered, 16px side insets.
+   - right: 1px row, 64px left inset (spacing/15), 16px right inset. */
+
+.silk-divider {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  flex: none;
+}
+.silk-divider::before {
+  content: '';
+  position: absolute;
+  height: 1px;
+  background: var(--border-default);
+  right: var(--digits-spacing-4);
+}
+
+.silk-divider--centered { height: 8px; }
+.silk-divider--centered::before {
+  left: var(--digits-spacing-4);
+  top: calc(50% - 0.5px);
+}
+
+.silk-divider--right { height: 1px; }
+.silk-divider--right::before {
+  left: 64px; /* Digits/spacing/15 — not yet in the token export */
+  top: 0;
+}

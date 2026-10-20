@@ -1,0 +1,52 @@
+/* Silknet Chip. Verified against Figma node 66:3712 ("Chips").
+   - small:  4px/8px padding, radius/xs (8px), Body additional (12/16), 12px icon.
+   - medium: 8px/12px padding, radius/s (12px), Body default (14/20), 16px icon.
+   - default: surface bg, border/default, text/secondary.
+   - selected: primary bg, border/primary-focus, text/primary + close icon. */
+
+.silk-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--digits-spacing-2);
+  margin: 0;
+  border: 1px solid var(--border-default);
+  background: var(--background-surface);
+  color: var(--text-secondary);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.silk-chip:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+.silk-chip:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.silk-chip--small {
+  padding: var(--digits-spacing-1) var(--digits-spacing-2);
+  border-radius: var(--digits-radius-xs);
+  font-size: var(--font-size-body-body-additional);
+  line-height: var(--font-height-body-body-additional);
+}
+.silk-chip--small.silk-chip--selected { gap: var(--digits-spacing-1); }
+
+.silk-chip--medium {
+  padding: var(--digits-spacing-2) var(--digits-spacing-3);
+  border-radius: var(--digits-radius-s);
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+}
+
+.silk-chip--selected {
+  background: var(--background-primary);
+  border-color: var(--border-primary-focus);
+  color: var(--text-primary);
+}
+
+.silk-chip__icon { flex: none; display: inline-flex; }
+.silk-chip__icon > svg { display: block; }
+.silk-chip--small .silk-chip__icon { width: 12px; height: 12px; }
+.silk-chip--medium .silk-chip__icon { width: 16px; height: 16px; }
