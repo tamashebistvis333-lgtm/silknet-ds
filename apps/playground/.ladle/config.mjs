@@ -34,5 +34,13 @@ export default {
     'divider*',
     'tab-bar*',
     'tooltip*',
+    'wallet-button*',
+    'price*',
+    'bonus-container*',
+    'menu-item*',
+    'dropdown-menu*',
+    'list-item*',
+    'action-text*',
+    'navigation-item*',
   ],
 };

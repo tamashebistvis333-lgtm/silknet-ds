@@ -1,0 +1,55 @@
+/* Silknet list-item. Verified against Figma node 7001:1391.
+   - 64px min height, 12px vertical padding, 16px gap, radius/m (16px).
+   - inset: 16px horizontal padding (otherwise 0).
+   - Text: Body additional helper lines (12/16, text/additional, ellipsized)
+     around Body default main text (14/20, text/default), 4px gap.
+   - Leading slot: 24px icons render in text/secondary. */
+
+.silk-list-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-4);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--digits-spacing-3) var(--digits-spacing-0);
+  border-radius: var(--digits-radius-m);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+.silk-list-item--inset { padding-left: var(--digits-spacing-4); padding-right: var(--digits-spacing-4); }
+
+.silk-list-item__slot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: var(--digits-spacing-2);
+}
+.silk-list-item__leading { color: var(--text-secondary); }
+.silk-list-item__leading > svg { display: block; width: 24px; height: 24px; }
+
+.silk-list-item__text {
+  flex: 1 0 0;
+  min-width: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-1);
+  font-weight: 400;
+  word-break: break-word;
+}
+.silk-list-item__text > p { margin: 0; width: 100%; }
+
+.silk-list-item__helper {
+  color: var(--text-additional);
+  font-size: var(--font-size-body-body-additional);
+  line-height: var(--font-height-body-body-additional);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.silk-list-item__body {
+  color: var(--text-default);
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+}

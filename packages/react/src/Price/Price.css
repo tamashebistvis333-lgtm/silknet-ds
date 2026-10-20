@@ -1,0 +1,66 @@
+/* Silknet Price. Verified against Figma node 8296:3944.
+   - Row, 4px gap, items centered.
+   - Primary value: Heading 3 (20/28 medium) text/default.
+   - Secondary value: Subtitle 2 (14/20 medium) text/secondary.
+   - Old price: Subtitle 2, text/additional, line-through.
+   - Silk Points: number + 16px box holding the 12.8px coin, 2px gap.
+     Secondary points get 4px left / 1px top padding; primary points get 4px
+     right padding. */
+
+.silk-price {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--digits-spacing-1);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.silk-price__main,
+.silk-price__points--primary {
+  color: var(--text-default);
+  font-size: var(--font-size-heading-heading-3);
+  line-height: var(--font-height-heading-heading-3);
+}
+
+.silk-price__secondary,
+.silk-price__points--secondary {
+  color: var(--text-secondary);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+}
+
+.silk-price__old {
+  color: var(--text-additional);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  text-decoration: line-through;
+  text-decoration-skip-ink: none;
+}
+
+.silk-price__points {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.silk-price__points--primary { padding-right: var(--digits-spacing-1); }
+.silk-price__points--secondary { padding-left: var(--digits-spacing-1); padding-top: 1px; }
+
+.silk-price__coin {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.silk-price__coin > img { display: block; }
+
+.silk-price__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

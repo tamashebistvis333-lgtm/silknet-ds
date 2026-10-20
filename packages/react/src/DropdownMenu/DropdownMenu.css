@@ -1,0 +1,24 @@
+/* Silknet Dropdown-menu. Verified against Figma node 6977:1506.
+   - background/layer, radius/m (16px), 4px vertical padding, 216px wide.
+   - Shadow: 0 2 8 alpha-black-4, 0 4 4 alpha-black-8.
+   - Content clips to radius/m so item hover fills stay inside. */
+
+.silk-dropdown {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 216px;
+  padding: var(--digits-spacing-1) 0;
+  border-radius: var(--digits-radius-m);
+  background: var(--background-layer);
+  filter:
+    drop-shadow(0 2px 8px var(--alpha-black-4))
+    drop-shadow(0 4px 4px var(--alpha-black-8));
+}
+
+.silk-dropdown__content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--digits-radius-m);
+}

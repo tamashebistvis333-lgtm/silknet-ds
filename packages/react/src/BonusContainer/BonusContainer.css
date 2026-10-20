@@ -1,0 +1,47 @@
+/* Silknet Bonus-container. Verified against Figma node 8297:4380.
+   - Column, 4px gap, min-width 72px.
+   - Head: 16px icon + Other/Caption (11/16, +0.25) in text/additional, 4px gap.
+   - Amount: Subtitle 2 in text/default, optional caption after it (4px gap). */
+
+.silk-bonus {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--digits-spacing-1);
+  min-width: 72px;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-bonus__head,
+.silk-bonus__amount {
+  display: flex;
+  gap: var(--digits-spacing-1);
+  white-space: nowrap;
+}
+.silk-bonus__head { align-items: flex-start; }
+.silk-bonus__amount { align-items: center; }
+
+.silk-bonus__icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  color: var(--text-additional);
+}
+.silk-bonus__icon > svg { display: block; width: 100%; height: 100%; }
+
+.silk-bonus__caption {
+  color: var(--text-additional);
+  font-size: var(--font-size-other-caption);
+  line-height: var(--font-height-other-caption);
+  font-weight: 400;
+  letter-spacing: 0.25px;
+}
+
+.silk-bonus__value {
+  color: var(--text-default);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+}
