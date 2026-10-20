@@ -28,5 +28,11 @@ export default {
     'toast*',
     'feedback*',
     'base-feedback*',
+    'badge*',
+    'avatar*',
+    'chip*',
+    'divider*',
+    'tab-bar*',
+    'tooltip*',
   ],
 };

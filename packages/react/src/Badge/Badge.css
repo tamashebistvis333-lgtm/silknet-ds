@@ -1,0 +1,70 @@
+/* Silknet Badge. Verified against Figma node 66:1419.
+   - Labelled (soft/filled): 20px tall, 4px padding + gap, radius/xxs (4px),
+     Other/Overline text (11/12, semibold, uppercase, +0.25 tracking), 12px icon.
+   - soft: tinted bg + 1px tinted border + colored text.
+   - filled: accent bg + contrast text.
+   - dot: 12px circle (filled accent), dot-small: 8px.
+   Note: `--background-gray-accent` (Neutral) is newer than the last token
+   export; falls back to its current primitive (grey-800) until re-synced. */
+
+.silk-badge {
+  --silk-badge-gray-accent: var(--background-gray-accent, var(--grey-800));
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-badge--soft,
+.silk-badge--filled {
+  height: 20px;
+  gap: var(--digits-spacing-1);
+  padding: var(--digits-spacing-1);
+  border-radius: var(--digits-radius-xxs);
+}
+.silk-badge--soft { border: 1px solid; }
+
+.silk-badge__icon {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+}
+.silk-badge__icon > svg { width: 100%; height: 100%; display: block; }
+
+.silk-badge__label {
+  font-size: var(--font-size-other-overline);
+  line-height: var(--font-height-other-overline);
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.silk-badge--dot,
+.silk-badge--dot-small { border-radius: 99px; }
+.silk-badge--dot { width: 12px; height: 12px; }
+.silk-badge--dot-small { width: 8px; height: 8px; }
+
+/* Soft */
+.silk-badge--soft.silk-badge--primary  { background: var(--background-primary); border-color: var(--border-primary); color: var(--text-primary); }
+.silk-badge--soft.silk-badge--success  { background: var(--background-success); border-color: var(--border-success); color: var(--text-success); }
+.silk-badge--soft.silk-badge--error    { background: var(--background-error);   border-color: var(--border-error);   color: var(--text-error); }
+.silk-badge--soft.silk-badge--warning  { background: var(--background-warning); border-color: var(--border-warning); color: var(--text-warrning); /* Figma source spelling */ }
+.silk-badge--soft.silk-badge--info     { background: var(--background-info);    border-color: var(--border-info);    color: var(--text-info); }
+.silk-badge--soft.silk-badge--neutral  { background: var(--background-surface); border-color: var(--border-default); color: var(--text-default); }
+.silk-badge--soft.silk-badge--disabled { background: var(--background-surface); border-color: var(--background-disabled); color: var(--text-disabled); }
+
+/* Filled + dots share the accent fill */
+.silk-badge--filled { color: var(--text-contrast); }
+.silk-badge--filled.silk-badge--disabled { color: var(--background-layer); }
+
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--primary  { background: var(--background-primary-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--success  { background: var(--background-success-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--error    { background: var(--background-error-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--warning  { background: var(--background-warning-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--info     { background: var(--background-info-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--neutral  { background: var(--silk-badge-gray-accent); }
+:is(.silk-badge--filled, .silk-badge--dot, .silk-badge--dot-small).silk-badge--disabled { background: var(--background-disabled); }

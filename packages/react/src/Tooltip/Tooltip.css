@@ -1,0 +1,63 @@
+/* Silknet Tooltip. Verified against Figma node 5681:5165.
+   - Body: gray-accent fill, 12px padding, 4px gap, radius/s (12px), max 288px.
+   - Text: Subtitle 2 in text/contrast; helper: Body additional in text/disabled.
+   - Pointer: 12px-deep rounded triangle, same fill, on any edge.
+   - Shadow: drop-shadow (0 2 8 alpha-black-4, 0 4 4 alpha-black-8) so the
+     pointer is shadowed too.
+   `--background-gray-accent` is newer than the last token export; falls back
+   to grey-800 until re-synced. */
+
+.silk-tooltip {
+  --silk-tooltip-bg: var(--background-gray-accent, var(--grey-800));
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 288px;
+  color: var(--silk-tooltip-bg);
+  filter:
+    drop-shadow(0 2px 8px var(--alpha-black-4))
+    drop-shadow(0 4px 4px var(--alpha-black-8));
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-tooltip__body {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-1);
+  padding: var(--digits-spacing-3);
+  border-radius: var(--digits-radius-s);
+  background: var(--silk-tooltip-bg);
+  word-break: break-word;
+}
+
+.silk-tooltip__text {
+  margin: 0;
+  color: var(--text-contrast);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+}
+.silk-tooltip__helper {
+  margin: 0;
+  color: var(--text-disabled);
+  font-size: var(--font-size-body-body-additional);
+  line-height: var(--font-height-body-body-additional);
+  font-weight: 400;
+}
+
+.silk-tooltip__pointer { flex: none; display: block; }
+
+/* Pointer on top: pointer first, then body */
+.silk-tooltip--top,
+.silk-tooltip--top-start,
+.silk-tooltip--top-end { flex-direction: column-reverse; }
+
+.silk-tooltip--top-start,
+.silk-tooltip--bottom-start { align-items: flex-start; }
+.silk-tooltip--top-end,
+.silk-tooltip--bottom-end { align-items: flex-end; }
+
+.silk-tooltip--left,
+.silk-tooltip--right { flex-direction: row; }
+.silk-tooltip--left { flex-direction: row-reverse; }

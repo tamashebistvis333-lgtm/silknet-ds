@@ -31,4 +31,25 @@ export type { FeedbackProps, FeedbackVariant, FeedbackAction } from './Feedback/
 export { BaseFeedback } from './BaseFeedback/BaseFeedback';
 export type { BaseFeedbackProps, BaseFeedbackState } from './BaseFeedback/BaseFeedback';
 
+export { Badge } from './Badge/Badge';
+export type { BadgeProps, BadgeCategory, BadgeVariant } from './Badge/Badge';
+
+export { Avatar } from './Avatar/Avatar';
+export type { AvatarProps, AvatarSize } from './Avatar/Avatar';
+
+export { Chip } from './Chip/Chip';
+export type { ChipProps, ChipSize } from './Chip/Chip';
+
+export { Divider } from './Divider/Divider';
+export type { DividerProps, DividerAlignment } from './Divider/Divider';
+
+export { Tab } from './Tabs/Tabs';
+export type { TabProps } from './Tabs/Tabs';
+
+export { TabBar } from './Tabs/TabBar';
+export type { TabBarProps, TabBarItem } from './Tabs/TabBar';
+
+export { Tooltip } from './Tooltip/Tooltip';
+export type { TooltipProps, TooltipPointer } from './Tooltip/Tooltip';
+
 export * from './icons';
