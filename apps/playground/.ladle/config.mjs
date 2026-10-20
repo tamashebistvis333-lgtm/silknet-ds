@@ -42,5 +42,11 @@ export default {
     'list-item*',
     'action-text*',
     'navigation-item*',
+    'navigation-header*',
+    'faq*',
+    'container*',
+    'package*',
+    'action-sheet*',
+    'feedback-screen*',
   ],
 };

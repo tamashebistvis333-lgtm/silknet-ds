@@ -1,0 +1,87 @@
+/* Silknet FAQ. Verified against Figma node 6391:8656.
+   - surface bg, 16px padding, radius/m (16px), 16px gap between question
+     and answer.
+   - Question: Subtitle 2 text/default; 20px chevron in text/additional
+     (up = open, rotated down = closed).
+   - Answer: Body default (14/20) text/secondary.
+   Motion (not in Figma — iOS feel, same curve as TabBar): the answer row
+   animates 0fr → 1fr while fading in; chevron rotates. */
+
+.silk-faq {
+  --silk-faq-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --silk-faq-duration: 400ms;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--digits-spacing-4);
+  border-radius: var(--digits-radius-m);
+  background: var(--background-surface);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-faq__header {
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.silk-faq__header:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 4px;
+  border-radius: var(--digits-radius-xs);
+}
+
+.silk-faq__question {
+  flex: 1 0 0;
+  min-width: 1px;
+  color: var(--text-default);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.silk-faq__chevron {
+  flex: none;
+  color: var(--text-additional);
+  transform: rotate(180deg);
+  transition: transform var(--silk-faq-duration) var(--silk-faq-ease);
+}
+.silk-faq--open .silk-faq__chevron { transform: rotate(0deg); }
+
+.silk-faq__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--silk-faq-duration) var(--silk-faq-ease),
+    opacity var(--silk-faq-duration) var(--silk-faq-ease);
+}
+.silk-faq--open .silk-faq__panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.silk-faq__panel-inner { overflow: hidden; min-height: 0; }
+
+.silk-faq__answer {
+  margin: 0;
+  padding-top: var(--digits-spacing-4);
+  color: var(--text-secondary);
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+  word-break: break-word;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silk-faq__chevron,
+  .silk-faq__panel { transition: none; }
+}

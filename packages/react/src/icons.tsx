@@ -104,12 +104,18 @@ export const AwardIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// "close" — Chips remove icon. Figma ships 12px (stroke 1) and 16px (stroke 1.3).
-export const CloseIcon = ({ size = 16, ...props }: SVGProps<SVGSVGElement> & { size?: 12 | 16 }) =>
+// "close". Figma ships 12px (stroke 1, Chips), 16px (stroke 1.3, Chips) and
+// 20px (stroke 1.5, ActionSheet / FeedbackScreen close button).
+export const CloseIcon = ({ size = 16, ...props }: SVGProps<SVGSVGElement> & { size?: 12 | 16 | 20 }) =>
   size === 12 ? (
     <svg {...figma(12, props)}>
       <path d="M2.81802 9.5L9.18198 3.13604" />
       <path d="M2.81802 3.00001L9.18198 9.36397" />
+    </svg>
+  ) : size === 20 ? (
+    <svg {...figma(20, { strokeWidth: 1.5, ...props })}>
+      <path d="M4.6967 15.8333L15.3033 5.22674" />
+      <path d="M4.69671 5.00001L15.3033 15.6066" />
     </svg>
   ) : (
     <svg {...figma(16, { strokeWidth: 1.3, ...props })}>
@@ -185,5 +191,40 @@ export const HomeIcon = ({ filled = false, ...props }: SVGProps<SVGSVGElement> &
       fill={filled ? 'currentColor' : 'none'}
     />
     <path d="M12 17.99V14.99" style={filled ? { stroke: 'var(--text-contrast)' } : undefined} />
+  </svg>
+);
+
+export const ArrowLeftIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...figma(16, { strokeWidth: 1.3, ...props })}>
+    <path d="M6.38 3.95333L2.33333 8L6.38 12.0467" />
+    <path d="M13.6667 8H2.44667" />
+  </svg>
+);
+
+export const MessagesIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...figma(16, { strokeWidth: 1.3, ...props })}>
+    <path
+      d="M11.9867 7.19334V9.86001C11.9867 10.0333 11.98 10.2 11.96 10.36C11.8067 12.16 10.7467 13.0533 8.79334 13.0533H8.52667C8.36001 13.0533 8.2 13.1333 8.1 13.2667L7.30001 14.3333C6.94668 14.8067 6.37333 14.8067 6.02 14.3333L5.21999 13.2667C5.13332 13.1533 4.94 13.0533 4.79334 13.0533H4.52667C2.40001 13.0533 1.33333 12.5267 1.33333 9.86001V7.19334C1.33333 5.24001 2.23334 4.18001 4.02667 4.02667C4.18667 4.00667 4.35334 4 4.52667 4H8.79334C10.92 4 11.9867 5.06667 11.9867 7.19334Z"
+      strokeWidth={1.5}
+    />
+    <path d="M14.6533 4.52667V7.19334C14.6533 9.15334 13.7533 10.2067 11.96 10.36C11.98 10.2 11.9867 10.0333 11.9867 9.86001V7.19334C11.9867 5.06667 10.92 4 8.79334 4H4.52667C4.35334 4 4.18667 4.00667 4.02667 4.02667C4.18001 2.23334 5.24001 1.33333 7.19334 1.33333H11.46C13.5867 1.33333 14.6533 2.40001 14.6533 4.52667Z" />
+    <path d="M8.997 8.83333H9.003" />
+    <path d="M6.66367 8.83333H6.66967" />
+    <path d="M4.33033 8.83333H4.33633" />
+  </svg>
+);
+
+// 20px icons (stroke 1.5) — navigation-header search, FAQ chevron.
+export const SearchIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...figma(20, { strokeWidth: 1.5, ...props })}>
+    <path d="M17.5 17.5L13.8833 13.8833" />
+    <path d="M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" />
+  </svg>
+);
+
+// "arrow-up" — FAQ open state; rotate 180° for closed.
+export const ChevronUpIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...figma(20, { strokeWidth: 1.5, ...props })}>
+    <path d="M16.6 12.5417L11.1667 7.10833C10.525 6.46667 9.475 6.46667 8.83333 7.10833L3.4 12.5417" />
   </svg>
 );

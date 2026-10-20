@@ -76,4 +76,22 @@ export type { ActionTextProps } from './ActionText/ActionText';
 export { NavigationItem } from './NavigationItem/NavigationItem';
 export type { NavigationItemProps } from './NavigationItem/NavigationItem';
 
+export { NavigationHeader } from './NavigationHeader/NavigationHeader';
+export type { NavigationHeaderProps } from './NavigationHeader/NavigationHeader';
+
+export { Faq } from './Faq/Faq';
+export type { FaqProps } from './Faq/Faq';
+
+export { Container } from './Container/Container';
+export type { ContainerProps } from './Container/Container';
+
+export { Package } from './Package/Package';
+export type { PackageProps } from './Package/Package';
+
+export { ActionSheet } from './ActionSheet/ActionSheet';
+export type { ActionSheetProps } from './ActionSheet/ActionSheet';
+
+export { FeedbackScreen } from './FeedbackScreen/FeedbackScreen';
+export type { FeedbackScreenProps, FeedbackScreenVariant } from './FeedbackScreen/FeedbackScreen';
+
 export * from './icons';

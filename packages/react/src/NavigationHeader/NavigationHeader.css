@@ -1,0 +1,72 @@
+/* Silknet navigation-header. Verified against Figma node 4229:2985.
+   - 16px padding, 12px gap, items centered (64px tall).
+   - Default: 72px left + right slots so the title stays centered; title is
+     Subtitle 2 (14/20 medium) text/default, single line, ellipsized.
+   - search: back button + surface search field (8px padding, 12px gap,
+     radius/s, 20px search icon, Body default placeholder in text/additional).
+   - Icon buttons reuse IconButton ghost/sm (32px, 16px icon). */
+
+.silk-nav-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--digits-spacing-4);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-nav-header__side {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-2);
+  width: 72px;
+}
+.silk-nav-header__side--end { justify-content: flex-end; }
+.silk-nav-header--search .silk-nav-header__side { width: auto; }
+
+.silk-nav-header__title {
+  flex: 1 0 0;
+  min-width: 1px;
+  margin: 0;
+  color: var(--text-default);
+  font-size: var(--font-size-subtitle-subtitle-2);
+  line-height: var(--font-height-subtitle-subtitle-2);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.silk-nav-header__search {
+  box-sizing: border-box;
+  flex: 1 0 0;
+  min-width: 1px;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-3);
+  margin: 0;
+  padding: var(--digits-spacing-2);
+  border: 0;
+  border-radius: var(--digits-radius-s);
+  background: var(--background-surface);
+  color: var(--text-additional);
+  font-family: inherit;
+  font-size: var(--font-size-body-body-default);
+  line-height: var(--font-height-body-body-default);
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.silk-nav-header__search:hover { background: var(--background-surface-hover); }
+.silk-nav-header__search:active { background: var(--background-surface-pressed); }
+.silk-nav-header__search:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+.silk-nav-header__search > svg { flex: none; color: var(--text-secondary); }
+.silk-nav-header__search > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

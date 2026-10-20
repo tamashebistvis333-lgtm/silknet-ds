@@ -1,0 +1,86 @@
+/* Silknet Feedback-screen. Verified against Figma node 6890:4182.
+   Both variants: BaseFeedback (success/error/warning) + up to two full-width
+   lg Buttons, 12px apart.
+   - dialog: ActionSheet without a title (close only); content 16px below
+     the header, 16px between feedback and buttons; secondary = ghost.
+   - fullscreen: background/layer page; close (24px, 20px icon) 16px from
+     the top-right below the status bar; feedback vertically centered;
+     buttons pinned 32px from the bottom; secondary = primary-soft.
+   Motion (not in Figma): fullscreen fades + rises 24px on the iOS curve. */
+
+.silk-feedback-screen__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--digits-spacing-3);
+  width: 100%;
+}
+.silk-feedback-screen__buttons > .silk-button { width: 100%; }
+
+/* Dialog */
+.silk-feedback-screen--dialog .silk-sheet__content {
+  gap: var(--digits-spacing-4);
+  padding-top: var(--digits-spacing-4);
+  align-items: center;
+}
+
+/* Fullscreen */
+.silk-feedback-screen--fullscreen {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding:
+    max(61px, calc(var(--digits-spacing-4) + env(safe-area-inset-top, 0px))) var(--digits-spacing-4)
+    calc(32px + env(safe-area-inset-bottom, 0px));
+  background: var(--background-layer);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 400ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  outline: none;
+}
+.silk-feedback-screen--fullscreen.silk-feedback-screen--visible {
+  opacity: 1;
+  transform: none;
+}
+.silk-feedback-screen--fullscreen > .silk-base-feedback {
+  flex: 1 0 auto;
+  justify-content: center;
+  width: 100%;
+  max-width: 358px;
+}
+.silk-feedback-screen--fullscreen > .silk-feedback-screen__buttons { max-width: 358px; }
+
+.silk-feedback-screen__close {
+  position: absolute;
+  top: max(61px, calc(var(--digits-spacing-4) + env(safe-area-inset-top, 0px)));
+  right: var(--digits-spacing-4);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--digits-radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.silk-feedback-screen__close:hover { background: var(--background-layer-hover); }
+.silk-feedback-screen__close:focus-visible {
+  outline: 2px solid var(--background-primary-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silk-feedback-screen--fullscreen { transition: none; }
+}

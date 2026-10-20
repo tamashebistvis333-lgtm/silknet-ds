@@ -1,0 +1,102 @@
+/* Silknet Package. Verified against Figma node 8255:11202.
+   - surface bg, 16px padding, 16px gap, radius/m (16px), clipped.
+   - Decorative blurred gradient (Figma export) bleeding off the top-right:
+     Figma box 178×180.5 at right −43 / top −14, art overflows it by ~33%.
+   - Header (20px): Overline title (11/12 semibold uppercase, text/additional,
+     ellipsized) + badges (8px gap). Points chip: background/warning, 4px
+     padding, radius/xxs, Overline text/secondary + 12px coin box.
+   - Bonuses row: BonusContainers, 16px gap.
+   - Footer: price (flex 1) + meta on the right. */
+
+.silk-package {
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--digits-spacing-4);
+  width: 100%;
+  padding: var(--digits-spacing-4);
+  border-radius: var(--digits-radius-m);
+  background: var(--background-surface);
+  font-family: 'Noto Sans Georgian', system-ui, sans-serif;
+}
+
+.silk-package__bg {
+  position: absolute;
+  z-index: -1;
+  top: -73.2px;
+  right: -102.2px;
+  pointer-events: none;
+}
+.silk-package__bg > img { display: block; }
+
+.silk-package__header {
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-4);
+  height: 20px;
+}
+
+.silk-package__title {
+  flex: 1 0 0;
+  min-width: 1px;
+  margin: 0;
+  color: var(--text-additional);
+  font-size: var(--font-size-other-overline);
+  line-height: var(--font-height-other-overline);
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.silk-package__badges {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--digits-spacing-2);
+}
+
+.silk-package__points {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--digits-spacing-1);
+  border-radius: var(--digits-radius-xxs);
+  background: var(--background-warning);
+  color: var(--text-secondary);
+  font-size: var(--font-size-other-overline);
+  line-height: var(--font-height-other-overline);
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.silk-package__coin {
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.silk-package__coin > img { display: block; flex: none; }
+
+.silk-package__bonuses {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--digits-spacing-4);
+}
+
+.silk-package__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--digits-spacing-2);
+}
+.silk-package__price { flex: 1 0 0; min-width: 1px; display: flex; }
+.silk-package__meta { flex: none; display: flex; }
