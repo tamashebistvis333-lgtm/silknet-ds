@@ -168,7 +168,7 @@ before that) and pass the session ID on every file tool call.
 | Asset | Rejected when |
 |---|---|
 | Component | no entry; `status ≠ "approved"`; `approval.quote` empty; key differs from a fresh scoped search; library `updatedAt` newer than `libraryUpdatedAt` (until re-inspected) |
-| Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set |
+| Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set; the entry has a non-empty `variantCombinations` and the full variant name is not in it |
 | Property | key not in the entry's `properties` (exact key, rule 8); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
 | Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
 | Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
@@ -246,7 +246,8 @@ For each approved screen, in plan order:
      `#id`), after checking each value is in that set's `variantOptions` **and** that the
      full target combination exists as a variant name in `set.children` (not every axis
      combination exists — e.g. Button has 68 of 80); a missing combination is a `FAIL`
-     for that element, never a nearest-match substitute;
+     for that element, never a nearest-match substitute; when the registry entry has a
+     non-empty `variantCombinations`, the resolved variant name must also be in that list;
    - loads every font used by an instance before inserting, moving, cloning, or changing
      it, and again after variant changes (rule 9);
    - binds structural frame fills/strokes/padding/gaps/radii to approved semantic
