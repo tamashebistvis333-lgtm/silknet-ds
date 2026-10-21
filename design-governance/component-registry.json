@@ -1,7 +1,7 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r2",
+  "revision": "r3",
   "updatedAt": "2026-10-21",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
@@ -291,30 +291,39 @@
         "SHAPE_FILL",
         "EFFECT_COLOR"
       ],
+      "approvedUsage": [
+        {
+          "nodeType": "FRAME",
+          "property": "fills",
+          "evidence": "frames 4:16 and 5:56 (fills bound)"
+        }
+      ],
       "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
       "collectionModes": [
         "Light",
         "Dark"
       ],
-      "status": "proposed",
+      "status": "approved",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
           "imported by key (remote: true)",
           "bound to frame fill (4:16, 5:56)",
-          "Tokens collection modes Light/Dark; explicit Dark set on 5:56"
+          "Tokens collection modes Light/Dark; explicit Dark set on 5:56",
+          "read-only re-verification 2026-10-21 (scoped search + bindings read back in target zzGuTpXzrcglX1zlOd4IuR): key unchanged; collection Tokens (40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8); approved usage confirmed on the listed nodes"
         ],
-        "UNVERIFIED": []
+        "UNVERIFIED": [
+          "SHAPE_FILL and EFFECT_COLOR usage (declared scopes, not tested, not approved)",
+          "explicit mode selection (Dark rendered on 5:56 during the test; modes are not part of this approval)"
+        ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Design System Owner",
+        "quote": "I approve the following design assets for their verified usage: `var.background-surface` — frame background fills.",
+        "at": "2026-10-21",
+        "scope": "fills of FRAME nodes only. Not approved: SHAPE_FILL and EFFECT_COLOR uses (declared scopes, untested), any explicit mode selection."
       },
-      "unverified": [
-        "approval"
-      ]
+      "unverified": []
     },
     {
       "id": "var.text-default",
@@ -327,28 +336,37 @@
         "TEXT_FILL",
         "STROKE"
       ],
+      "approvedUsage": [
+        {
+          "nodeType": "TEXT",
+          "property": "fills",
+          "evidence": "text node 5:55 (fill bound)"
+        }
+      ],
       "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
       "collectionModes": [],
-      "status": "proposed",
+      "status": "approved",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
           "imported by key (remote: true)",
-          "bound to text fill (5:55)"
+          "bound to text fill (5:55)",
+          "read-only re-verification 2026-10-21 (scoped search + bindings read back in target zzGuTpXzrcglX1zlOd4IuR): key unchanged; collection Tokens (40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8); approved usage confirmed on the listed nodes"
         ],
         "UNVERIFIED": [
-          "rendering under Dark mode (not exercised on a text node)"
+          "rendering under Dark mode (not exercised on a text node)",
+          "SHAPE_FILL and stroke usage (declared scopes, not tested, not approved; search reports scope 'STROKE', the Plugin API reports 'STROKE_COLOR')",
+          "explicit mode selection (not part of this approval)"
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Design System Owner",
+        "quote": "I approve the following design assets for their verified usage: `var.text-default` — text fills.",
+        "at": "2026-10-21",
+        "scope": "fills of TEXT nodes only. Not approved: SHAPE_FILL and stroke uses (declared scopes, untested), any explicit mode selection."
       },
       "unverified": [
-        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)",
-        "approval"
+        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)"
       ]
     },
     {
@@ -363,27 +381,93 @@
         "FONT_SIZE",
         "LINE_HEIGHT"
       ],
+      "approvedUsage": [
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "VERTICAL",
+          "property": "itemSpacing",
+          "evidence": "frames 4:16 and 5:56 (VERTICAL Auto Layout, resolves to 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "VERTICAL",
+          "property": "paddingTop",
+          "evidence": "frames 4:16 and 5:56 (VERTICAL Auto Layout, resolves to 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "VERTICAL",
+          "property": "paddingRight",
+          "evidence": "frames 4:16 and 5:56 (VERTICAL Auto Layout, resolves to 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "VERTICAL",
+          "property": "paddingBottom",
+          "evidence": "frames 4:16 and 5:56 (VERTICAL Auto Layout, resolves to 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "VERTICAL",
+          "property": "paddingLeft",
+          "evidence": "frames 4:16 and 5:56 (VERTICAL Auto Layout, resolves to 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "HORIZONTAL",
+          "property": "itemSpacing",
+          "evidence": "frame 14:18 (HORIZONTAL Auto Layout, resolves to 16; measured gap and padding 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "HORIZONTAL",
+          "property": "paddingTop",
+          "evidence": "frame 14:18 (HORIZONTAL Auto Layout, resolves to 16; measured gap and padding 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "HORIZONTAL",
+          "property": "paddingRight",
+          "evidence": "frame 14:18 (HORIZONTAL Auto Layout, resolves to 16; measured gap and padding 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "HORIZONTAL",
+          "property": "paddingBottom",
+          "evidence": "frame 14:18 (HORIZONTAL Auto Layout, resolves to 16; measured gap and padding 16)"
+        },
+        {
+          "nodeType": "FRAME",
+          "layoutMode": "HORIZONTAL",
+          "property": "paddingLeft",
+          "evidence": "frame 14:18 (HORIZONTAL Auto Layout, resolves to 16; measured gap and padding 16)"
+        }
+      ],
       "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
       "collectionModes": [],
-      "status": "proposed",
+      "status": "approved",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
           "imported by key (remote: true)",
           "bound to itemSpacing (resolves to 16)",
-          "bound to all four paddings"
+          "bound to all four paddings",
+          "read-only re-verification 2026-10-21 (scoped search + bindings read back in target zzGuTpXzrcglX1zlOd4IuR): key unchanged; collection Tokens (40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8); approved usage confirmed on the listed nodes",
+          "horizontal spacing test 2026-10-21 (target zzGuTpXzrcglX1zlOd4IuR, frame 14:18 in section 4:15, independent read-only audit): HORIZONTAL Auto Layout; itemSpacing and all four paddings bound to 80b18cd7807110216874d70e30b8c9bd28971fcd, resolved 16; measured gap 16 between two linked Badge instances (14:19, 14:26) and padding 16 on all sides"
         ],
-        "UNVERIFIED": []
+        "UNVERIFIED": [
+          "WIDTH_HEIGHT, FONT_SIZE and LINE_HEIGHT usage (declared scopes, not tested, not approved)",
+          "explicit mode selection (not part of this approval)"
+        ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Design System Owner",
+        "quote": "I approve the following design assets for their verified usage: `var.spacing-4` — Auto Layout gaps and padding. | Extension: If both bindings pass, update approvedUsage to allow gap and padding on both vertical and horizontal Auto Layout frames. Keep all other approval scopes unchanged. Do not approve mode selection or other untested uses.",
+        "at": "2026-10-21",
+        "scope": "itemSpacing and paddingTop/Right/Bottom/Left on VERTICAL and HORIZONTAL Auto Layout frames (both tested). Not approved: WIDTH_HEIGHT / FONT_SIZE / LINE_HEIGHT uses, any explicit mode selection."
       },
       "unverified": [
-        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)",
-        "approval"
+        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)"
       ]
     }
   ],
@@ -396,25 +480,33 @@
       "fonts": [
         "Noto Sans Georgian Medium"
       ],
-      "status": "proposed",
+      "approvedUsage": [
+        {
+          "nodeType": "TEXT",
+          "property": "textStyleId",
+          "evidence": "text node 5:55 (style applied, Noto Sans Georgian Medium 14)"
+        }
+      ],
+      "status": "approved",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
           "imported by key (remote: true)",
           "applied to text node 5:55",
-          "font Noto Sans Georgian Medium available and loaded"
+          "font Noto Sans Georgian Medium available and loaded",
+          "read-only re-verification 2026-10-21 (scoped search + style read back on 5:55 in target zzGuTpXzrcglX1zlOd4IuR): key unchanged; remote: true; font Noto Sans Georgian Medium, size 14"
         ],
-        "UNVERIFIED": []
+        "UNVERIFIED": [
+          "the style is internally bound to Typography collection variables (Font/size/Subtitle/Subtitle 2, Font/weight/medium, Font/Family/family, Font/Height/Subtitle/Subtitle 2; modes Mobile, Web) — Typography mode selection not tested, not approved"
+        ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Design System Owner",
+        "quote": "I approve the following design assets for their verified usage: `style.subtitle-2` — text styling.",
+        "at": "2026-10-21",
+        "scope": "textStyleId on TEXT nodes. Not approved: Typography collection mode selection (Mobile/Web)."
       },
-      "unverified": [
-        "approval"
-      ]
+      "unverified": []
     }
   ],
   "exceptions": []
