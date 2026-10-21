@@ -19,6 +19,8 @@ Supporting files (read when the step says so):
 
 | File | Used in |
 |---|---|
+| `design-governance/component-registry.json` (repo root) | Step 3 — the project registry |
+| `design-governance/README.md` (repo root) | Process for adding / changing registry entries |
 | `templates/component-registry.template.json` | Step 3 — registry shape when none exists |
 | `templates/screen-map.template.md` | Step 4 — plan the designer approves |
 | `templates/handoff-report.template.md` | Step 8 — final report |
@@ -152,11 +154,34 @@ before that) and pass the session ID on every file tool call.
 
 ## Step 3 — Approved-component registry
 
-1. Ask for the registry location (default proposal:
-   `design-governance/component-registry.json`). If a registry exists there, load it.
+1. **Load** `design-governance/component-registry.json` (the project registry; another
+   path only if the designer names one). Parse it; if it is missing or invalid JSON, stop
+   and report. Check `source.fileKey === "ymEnGYUGvRRVKhHiUSGMVF"` and that
+   `source.libraryKey` equals the key `get_libraries` returns this run — a mismatch
+   blocks the run. Process for changing the registry: `design-governance/README.md`.
 2. **If none exists:** show `templates/component-registry.template.json`. Ask whether to
    create the file at the approved path. Create it only with an explicit yes; otherwise
    keep the proposed registry in the conversation/handoff only.
+
+**Enforcement — reject (blocker in Gate B, `FAIL` in the audit):**
+
+| Asset | Rejected when |
+|---|---|
+| Component | no entry; `status ≠ "approved"`; `approval.quote` empty; key differs from a fresh scoped search; library `updatedAt` newer than `libraryUpdatedAt` (until re-inspected) |
+| Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set |
+| Property | key not in the entry's `properties` (exact key, rule 8); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
+| Variable | key not in `variables` with `status: "approved"` + approval quote; scope does not fit the property being bound |
+| Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType` |
+
+`proposed`, `deprecated`, and `blocked` entries are never placed; a `deprecated` entry's
+`replacedBy` must itself be approved.
+
+**Non-blocking unknowns (reported as `UNVERIFIED`, never a reason to reject):**
+`requiredBindings` keys (internal to the component), `sourceNodeId` /
+`identityLink: "unverified"` (unless the designer requires node-level proof for that
+flow), fonts of variants not yet exercised (they are loaded and checked at placement,
+rule 9), `collectionModes` not read directly. An unknown optional field on one entry
+never blocks other approved entries or other verified functionality.
 3. **Discovery (read-only, source):** for each component the flow needs,
    `search_design_system` (scoped). From each hit record `assetType`,
    `componentSetKey`/`componentKey`, `updatedAt`, `filePath`. Inspect the source node
@@ -218,7 +243,10 @@ For each approved screen, in plan order:
      `importComponentByKeyAsync`), creates instances, and applies only approved
      properties via `setProperties` using the **exact** keys from the owning component
      set's `componentPropertyDefinitions` (rule 8; TEXT/BOOLEAN/INSTANCE_SWAP keys carry
-     `#id`), after checking each value is in that set's `variantOptions`;
+     `#id`), after checking each value is in that set's `variantOptions` **and** that the
+     full target combination exists as a variant name in `set.children` (not every axis
+     combination exists — e.g. Button has 68 of 80); a missing combination is a `FAIL`
+     for that element, never a nearest-match substitute;
    - loads every font used by an instance before inserting, moving, cloning, or changing
      it, and again after variant changes (rule 9);
    - binds structural frame fills/strokes/padding/gaps/radii to approved semantic
