@@ -1,7 +1,7 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r5",
+  "revision": "r6",
   "updatedAt": "2026-10-21",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
@@ -494,6 +494,26 @@
       ],
       "instanceSwapAllowed": {},
       "nestedContent": "Default nested icon 'add' (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013): linked, found in Silknet New DS scoped search; not registered.",
+      "nestedDependencies": {
+        "Property=primary, Size=Medium, State=Default": [
+          {
+            "sourceId": "6890:8197",
+            "name": "add",
+            "key": "1bcf4fe3589314d4e056b75e23fbb3b74cf9e013",
+            "variant": "add",
+            "provenance": "Silknet New DS (scoped search_design_system, 2026-10-21)"
+          }
+        ],
+        "Property=secondary, Size=Large, State=Default": [
+          {
+            "sourceId": "6890:8406",
+            "name": "add",
+            "key": "1bcf4fe3589314d4e056b75e23fbb3b74cf9e013",
+            "variant": "add",
+            "provenance": "Silknet New DS (scoped search_design_system, 2026-10-21)"
+          }
+        ]
+      },
       "requiredBindings": [],
       "usageRestrictions": "Approved variants: exactly Property=primary, Size=Medium, State=Default and Property=secondary, Size=Large, State=Default. Instance#7060:67 must stay at its default: the `add` icon (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013), so use it only for an add action until swaps are approved. No accessible label is exposed. No detaching or editing internal layers.",
       "verification": {
@@ -505,7 +525,8 @@
           "linked instance 24:190 (Property=primary, Size=Medium, State=Default); nested add icon linked",
           "Stage 2: variant switch to Property=secondary, Size=Large, State=Default on 32:101; Instance#7060:67 unchanged (default); nested add icon linked; no overrides (independent audit)",
           "used as nested content of navigation-header: 3 linked instances per Property=Default header, same imported set",
-          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1",
+          "r6 nestedDependencies evidence 2026-10-21: nested add icon (1bcf4fe3…) read back with sourceId 6890:8197 in 24:190 (primary/Medium) and 6890:8406 in 32:101 (secondary/Large) in target zzGuTpXzrcglX1zlOd4IuR; nested overrides empty"
         ],
         "UNVERIFIED": [
           "instance swap Instance#7060:67 (not approved)",
@@ -596,6 +617,54 @@
       ],
       "instanceSwapAllowed": {},
       "nestedContent": "Property=Default only, as fixed built-in content with no overrides: left icon-button (212d9896…, Property=ghost, Size=Small, State=Default; visibility via left-slot#4229:7) with arrow-left (f560a5040ba481a779f0c63b25f22fc342e5714a, Silknet New DS confirmed); right icon-button (same variant; visibility via right-slot#4229:8) with star (d5a44ddec3ceaff52031f8503165b26588343db3, Filled=No, Silknet New DS confirmed); a hidden icon-button (additional-slot#4229:9 = false) holding Icon 8c6c04694a868828a99a5fb79626aebf873f4fb7 (library origin UNVERIFIED, must stay hidden). The nested icon-button variant ghost/Small/Default is approved only inside this header, not for standalone use (ds.icon-button approves only primary/Medium and secondary/Large). Search (4be3d648…) belongs to Property=search and is not approved.",
+      "nestedDependencies": {
+        "Property=Default": [
+          {
+            "sourceId": "4166:2586",
+            "name": "icon-button",
+            "key": "212d9896ed342331bb799829ce14e8a6623769aa",
+            "variant": "Property=ghost, Size=Small, State=Default",
+            "visibility": "left-slot#4229:7"
+          },
+          {
+            "sourceId": "4166:2586;2073:2043",
+            "name": "arrow-left",
+            "key": "f560a5040ba481a779f0c63b25f22fc342e5714a",
+            "variant": "arrow-left",
+            "provenance": "Silknet New DS (scoped search_design_system, 2026-10-21)"
+          },
+          {
+            "sourceId": "4166:2597",
+            "name": "icon-button",
+            "key": "212d9896ed342331bb799829ce14e8a6623769aa",
+            "variant": "Property=ghost, Size=Small, State=Default",
+            "visibility": "additional-slot#4229:9",
+            "mustRemainHidden": true
+          },
+          {
+            "sourceId": "4166:2597;2073:2043",
+            "name": "Icon",
+            "key": "8c6c04694a868828a99a5fb79626aebf873f4fb7",
+            "variant": "Icon=More_Horizontal",
+            "mustRemainHidden": true,
+            "provenance": "UNVERIFIED (not found in Silknet New DS scoped search)"
+          },
+          {
+            "sourceId": "4166:2600",
+            "name": "icon-button",
+            "key": "212d9896ed342331bb799829ce14e8a6623769aa",
+            "variant": "Property=ghost, Size=Small, State=Default",
+            "visibility": "right-slot#4229:8"
+          },
+          {
+            "sourceId": "4166:2600;2073:2043",
+            "name": "star",
+            "key": "d5a44ddec3ceaff52031f8503165b26588343db3",
+            "variant": "Filled=No",
+            "provenance": "Silknet New DS (scoped search_design_system, 2026-10-21)"
+          }
+        ]
+      },
       "requiredBindings": [],
       "usageRestrictions": "Approved variant: Property=Default only. Approved overrides: header text#4229:6 (any text; only one short Georgian string was tested, long-text wrapping or truncation is UNVERIFIED), title#4229:5, left-slot#4229:7, right-slot#4229:8 (true/false). additional-slot#4229:9 must stay false (enabling it reveals the nested Icon 8c6c04694a868828a99a5fb79626aebf873f4fb7, whose library origin is UNVERIFIED). additional instance#4229:10 must stay at its default (icon-button Property=ghost, Size=Small, State=Default). Property=search is not approved. No overrides inside nested instances, no detaching, no editing internal layers.",
       "verification": {
@@ -610,7 +679,8 @@
           "Stage 2: title#4229:5, left-slot#4229:7, right-slot#4229:8 = false on 32:134; Title, left icon-button and right icon-button read back hidden",
           "Stage 2: variant switch to Property=search on 32:152; font Noto Sans Georgian Regular available and loaded; nested Search (4be3d648…) and ds.button (7c3e71bf…, ghost/small/default) linked, no overrides",
           "Stage 2: additional instance#4229:10 unchanged (default) on all three headers; no instance overrides (independent audit)",
-          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1",
+          "r6 nestedDependencies evidence 2026-10-21: identical sourceIds, keys and variant names read back (hidden instances included) from linked Property=Default instances 24:620, 32:116 and 32:134 in target zzGuTpXzrcglX1zlOd4IuR; nested overrides empty"
         ],
         "UNVERIFIED": [
           "additional-slot#4229:9 = true (not tested, not approved)",
