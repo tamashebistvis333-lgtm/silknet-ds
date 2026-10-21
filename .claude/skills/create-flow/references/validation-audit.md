@@ -18,6 +18,12 @@ Replace the constants with literal values from this run:
 
 The script returns facts. **You** decide PASS / FAIL / UNVERIFIED per check (SKILL.md Step 7).
 
+`ROOT_ID` may be a SECTION: layout-only properties (`layoutPositioning`, `layoutMode`) are
+read through capability guards, because SECTION nodes do not expose them. The script turns
+off `figma.skipInvisibleInstanceChildren` (a plugin-runtime read setting, not a document
+change) so hidden nested instances are included in the provenance audit; it restores the
+previous value before returning.
+
 ```js
 const TARGET_KEY = "<target file key>";
 const ROOT_ID = "<screen / wrapper / section id>";
@@ -31,8 +37,11 @@ const root = await figma.getNodeByIdAsync(ROOT_ID);
 if (!root) throw new Error(`Root ${ROOT_ID} not found`);
 let page = root; while (page && page.type !== "PAGE") page = page.parent;
 if (page && page !== figma.currentPage) await figma.setCurrentPageAsync(page);
+const prevSkipInvisible = figma.skipInvisibleInstanceChildren;
+figma.skipInvisibleInstanceChildren = false; // include hidden nested instances (read setting only)
 
 const box = n => { const b = n.absoluteBoundingBox; return b ? { x: b.x, y: b.y, w: b.width, h: b.height } : null; };
+const layoutPos = n => ("layoutPositioning" in n ? n.layoutPositioning : null); // SECTION has no layoutPositioning
 const inside = (c, p) => c && p && c.x >= p.x - 0.5 && c.y >= p.y - 0.5 && c.x + c.w <= p.x + p.w + 0.5 && c.y + c.h <= p.y + p.h + 0.5;
 const overlaps = (a, b) => !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y);
 const vcache = {};
@@ -43,7 +52,21 @@ async function vinfo(alias) {
 }
 const paintsOf = (n, p) => (Array.isArray(n[p]) ? n[p] : []);
 
-const instances = [], frames = [], texts = [], literalPaints = [], containment = [], overlapPairs = [];
+const instances = [], frames = [], texts = [], literalPaints = [], containment = [], overlapPairs = [], nestedInstances = [];
+// Every instance nested inside a top-level instance, hidden ones included. Linked provenance
+// (remote + key) is reported separately from registry status (registryId from APPROVED).
+async function auditNested(top) {
+  for (const n of top.findAllWithCriteria({ types: ["INSTANCE"] })) {
+    const main = await n.getMainComponentAsync();
+    const set = main && main.parent && main.parent.type === "COMPONENT_SET" ? main.parent : null;
+    const key = set ? set.key : main ? main.key : null;
+    const path = []; let hiddenByAncestor = false;
+    for (let p = n.parent; p && p.id !== top.id; p = p.parent) { path.unshift(p.name); if (p.visible === false) hiddenByAncestor = true; }
+    nestedInstances.push({ id: n.id, top: top.id, path: path.join(" / "), name: n.name, visible: n.visible, hiddenByAncestor,
+      main: main && main.name, remote: main && main.remote, assetType: set ? "COMPONENT_SET" : "COMPONENT", key, setName: set && set.name,
+      registryId: key && APPROVED[key] ? APPROVED[key].id : null, overriddenFields: (n.overrides || []).flatMap(o => o.overriddenFields) });
+  }
+}
 async function visit(node) {
   const parent = node.parent;
   if (node !== root && parent && parent.type !== "PAGE") {
@@ -67,8 +90,9 @@ async function visit(node) {
       for (const s of t.getStyledTextSegments(["fontName"])) fonts.add(`${s.fontName.family} ${s.fontName.style}`);
     instances.push({ id: node.id, name: node.name, parent: parent && parent.id, main: main && main.name, remote: main && main.remote,
       key, registryId: entry ? entry.id : null, properties: props, variantViolations, propertyViolations,
-      fonts: [...fonts], layoutPositioning: node.layoutPositioning });
-    return; // library internals are not audited
+      fonts: [...fonts], layoutPositioning: layoutPos(node) });
+    await auditNested(node); // nested provenance only; other library internals are not audited
+    return;
   }
   if (node.type === "FRAME" || node.type === "GROUP" || node.type === "SECTION") {
     const bound = {};
@@ -84,7 +108,7 @@ async function visit(node) {
       modes[c ? c.name : cid] = c ? (c.modes.find(m => m.modeId === mid) || {}).name || mid : mid;
     }
     frames.push({ id: node.id, name: node.name, type: node.type, parent: parent && parent.id,
-      layoutMode: "layoutMode" in node ? node.layoutMode : null, layoutPositioning: node.layoutPositioning,
+      layoutMode: "layoutMode" in node ? node.layoutMode : null, layoutPositioning: layoutPos(node),
       detached: "detachedInfo" in node ? node.detachedInfo != null : false, bound, fillBindings, modes,
       reactions: (node.reactions || []).map(r => ({ trigger: r.trigger && r.trigger.type, actions: (r.actions || []).map(a => ({ type: a.type, navigation: a.navigation, destinationId: a.destinationId })) })),
       box: box(node) });
@@ -130,6 +154,7 @@ if (PREVIOUS) for (const group of ["instances", "frames", "texts"])
     else if (JSON.stringify(now) !== JSON.stringify(prev)) preservationDiffs.push({ id, group, before: prev, after: now });
   }
 
+figma.skipInvisibleInstanceChildren = prevSkipInvisible;
 return {
   fileKey: figma.fileKey, page: figma.currentPage.name, root: { id: root.id, name: root.name, box: box(root) },
   counts: { instances: instances.length, frames: frames.length, texts: texts.length },
@@ -143,6 +168,10 @@ return {
   textsWithoutStyle: texts.filter(t => !t.style || t.styleMixed).map(t => t.id),
   textsWithLiteralFill: texts.filter(t => t.fills.includes("LITERAL")).map(t => t.id),
   fontsInUse: [...new Set([...instances.flatMap(i => i.fonts), ...texts.flatMap(t => t.fonts)])],
+  nestedInstances,
+  nestedUnlinked: nestedInstances.filter(n => n.remote !== true || !n.key).map(n => n.id),
+  nestedHidden: nestedInstances.filter(n => n.visible === false || n.hiddenByAncestor).map(n => n.id),
+  nestedNotInRegistry: nestedInstances.filter(n => !n.registryId).map(n => ({ id: n.id, name: n.name, key: n.key })),
   preservationDiffs, snapshot,
 };
 ```
@@ -152,6 +181,8 @@ return {
 | Check | FAIL when | UNVERIFIED when |
 |---|---|---|
 | V2 provenance | any `unapprovedInstances` or `detachedFrames` | `key` null (main component unresolved) |
+| V2 nested provenance | any `nestedUnlinked`, or a nested key that differs from the source structure | a nested component's library origin is not confirmed by a scoped `search_design_system` (`remote: true` proves a library link, not which library) |
+| V2 nested registry status | — (reported separately; never merged with provenance) | any `nestedNotInRegistry` that a flow relies on and the designer has not approved as nested content |
 | V3 variants / properties | any `variantViolations` or `propertyViolations` | registry entry lacks `variants` / `properties` for something in use |
 | V4 Auto Layout | structural frame in `nonAutoLayoutFrames` or control in `absoluteChildren` without an approved exception | — |
 | V5 bindings | `literalPaints` / `unapprovedBindings` on generated frames without an approved exception | variable could not be resolved (`null`) |
@@ -163,6 +194,8 @@ return {
 | V14 independent audit | — | this audit was not run, or its output was not used for the report |
 
 Transparent frames have no fills, which is fine. Literal paints on an *instance* are not
-reported because instances are not descended into; instance overrides are covered by V3.
+reported because instance internals are not walked for paints or containment; instance
+overrides are covered by V3. Nested instances (including hidden ones, listed in
+`nestedHidden`) are walked only for provenance.
 A section or free frame (`layoutMode: NONE`) is the only place where sibling overlap can
 happen by accident; Auto Layout parents position children themselves.
