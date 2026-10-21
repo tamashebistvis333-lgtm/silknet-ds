@@ -170,8 +170,8 @@ before that) and pass the session ID on every file tool call.
 | Component | no entry; `status ≠ "approved"`; `approval.quote` empty; key differs from a fresh scoped search; library `updatedAt` newer than `libraryUpdatedAt` (until re-inspected) |
 | Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set |
 | Property | key not in the entry's `properties` (exact key, rule 8); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
-| Variable | key not in `variables` with `status: "approved"` + approval quote; scope does not fit the property being bound |
-| Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType` |
+| Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
+| Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
 
 `proposed`, `deprecated`, and `blocked` entries are never placed; a `deprecated` entry's
 `replacedBy` must itself be approved.
