@@ -17,6 +17,20 @@ Replace the constants with literal values from this run:
 - `APPROVED_VARIABLE_KEYS`, `APPROVED_STYLE_KEYS` — keys allowed for bindings and styles.
 - `PREVIOUS` — optional: the `snapshot` returned by the previous audit, for V13
   (preservation) after a fix or modification.
+- `AUDIT_MODE` — `"compliance"` (default), `"negative-regression"` or `"full"`:
+  - `compliance`: normal approved-screen audit. Fixture sections in `EXCLUDED_ROOTS` are
+    skipped (listed in `skippedFixtures`); a `ROOT_ID` inside a fixture is refused.
+  - `negative-regression`: explicit audit of a fixture section; `ROOT_ID` must be (inside) a
+    fixture root. Every finding is counted — fixtures are expected to produce violations.
+  - `full`: explicit audit of anything, e.g. the whole Playground page as `ROOT_ID`.
+    Fixture findings are kept apart in `fixtureFindings` and never counted in the summary.
+- `EXCLUDED_ROOTS` — node IDs of intentionally non-compliant fixture sections (below).
+
+Known fixture sections (target `zzGuTpXzrcglX1zlOd4IuR`, page `🧪 Capability test`):
+
+| Node | Purpose |
+|---|---|
+| `43:206` | `NEGATIVE FIXTURES — INTENTIONALLY NON-COMPLIANT — r6 enforcement` (N1–N5). Keep unchanged; audit only with `negative-regression` or `full`. |
 
 The script returns facts. **You** decide PASS / FAIL / UNVERIFIED per check (SKILL.md Step 7).
 
@@ -41,6 +55,11 @@ How instances are scoped:
 - **Slot content** (direct child of a `SLOT` node that is not a listed dependency): checked
   against its **own** registry entry like a top-level instance, plus the slot's
   `limitViolations`. Instances inside slot content must carry no overrides.
+- **Slots and placeholders**: every effectively visible `SLOT` inside a top-level instance
+  must have no `limitViolations` — an empty visible slot below its minimum is reported in
+  `slotViolations`. Slots hidden by a property or an ancestor are listed in `hiddenSlots`
+  and ignored. Any effectively visible fill bound to a `Pink/*` variable (the library's
+  slot placeholder colour) is reported in `placeholderVisible`.
 
 ```js
 const TARGET_KEY = "<target file key>";
@@ -49,12 +68,19 @@ const APPROVED = { /* "<key>": { id: "<registry id>", variants: { "size": ["medi
 const APPROVED_VARIABLE_KEYS = [ /* "<variable key>" */ ];
 const APPROVED_STYLE_KEYS = [ /* "<style key>" */ ];
 const PREVIOUS = null; // or the previous audit's `snapshot`
+const AUDIT_MODE = "compliance"; // "compliance" | "negative-regression" | "full"
+const EXCLUDED_ROOTS = ["43:206"]; // intentionally non-compliant fixture sections
 
 if (figma.fileKey !== TARGET_KEY) throw new Error(`Wrong file: ${figma.fileKey}`);
 const root = await figma.getNodeByIdAsync(ROOT_ID);
 if (!root) throw new Error(`Root ${ROOT_ID} not found`);
 let page = root; while (page && page.type !== "PAGE") page = page.parent;
 if (page && page !== figma.currentPage) await figma.setCurrentPageAsync(page);
+const fixtureOf = n => { for (let p = n; p; p = p.parent) if (EXCLUDED_ROOTS.includes(p.id)) return p.id; return null; };
+const rootFixture = fixtureOf(root);
+if (AUDIT_MODE === "compliance" && rootFixture) throw new Error(`${ROOT_ID} is inside fixture ${rootFixture}; use AUDIT_MODE "negative-regression"`);
+if (AUDIT_MODE === "negative-regression" && !rootFixture) throw new Error(`negative-regression must target a fixture root (${EXCLUDED_ROOTS.join(", ")})`);
+const counted = x => AUDIT_MODE === "negative-regression" || !x.fixture; // fixture findings never count as compliance results
 const prevSkipInvisible = figma.skipInvisibleInstanceChildren;
 figma.skipInvisibleInstanceChildren = false; // include hidden nested instances (read setting only)
 
@@ -92,8 +118,32 @@ function scopeCheck(entry, main, set, props) {
 }
 
 const instances = [], frames = [], texts = [], literalPaints = [], containment = [], overlapPairs = [], nestedInstances = [], missingDependencies = [];
+const slotViolations = [], hiddenSlots = [], placeholderVisible = [], skippedFixtures = [];
+// Visible from `n` up to (not including) `stop`; null `stop` walks to the page.
+const visibleUpTo = (n, stop) => { for (let p = n; p && p !== stop && p.type !== "PAGE"; p = p.parent) if (p.visible === false) return false; return true; };
+async function pinkFills(n) {
+  const out = [];
+  for (const p of paintsOf(n, "fills")) if (p.visible !== false && p.opacity !== 0 && p.boundVariables && p.boundVariables.color) {
+    const v = await vinfo(p.boundVariables.color);
+    if (v && /^Pink\//.test(v.name)) out.push(v.name);
+  }
+  return out;
+}
+// Visible SLOT limits and visible Pink/* placeholders inside one top-level instance.
+async function auditSlots(top, fixture) {
+  const topVisible = visibleUpTo(top, null);
+  for (const n of [top, ...top.findAll(() => true)]) {
+    const visible = topVisible && visibleUpTo(n, top);
+    if (n.type === "SLOT") {
+      const rec = { id: n.id, top: top.id, name: n.name, children: n.children.length, limitViolations: [...(n.limitViolations || [])], fixture };
+      if (!visible) hiddenSlots.push(rec);
+      else if (rec.limitViolations.length) slotViolations.push({ ...rec, problem: rec.children === 0 ? "empty-visible-slot" : "slot-limit" });
+    }
+    if (visible) for (const v of await pinkFills(n)) placeholderVisible.push({ id: n.id, top: top.id, name: n.name, variable: v, fixture });
+  }
+}
 // Nested instances of one top-level instance, hidden ones included.
-async function auditNested(top, topEntry, topVariant) {
+async function auditNested(top, topEntry, topVariant, fixture) {
   const deps = topEntry && topEntry.nestedDependencies ? topEntry.nestedDependencies[topVariant] || null : null;
   const seen = new Set(), prefix = `I${top.id};`, topOverrides = top.overrides || [];
   for (const n of top.findAllWithCriteria({ types: ["INSTANCE"] })) {
@@ -136,15 +186,19 @@ async function auditNested(top, topEntry, topVariant) {
     nestedInstances.push({ id: n.id, top: top.id, sourceId, path: path.join(" / "), name: n.name, visible: n.visible, hiddenByAncestor,
       main: main && main.name, remote: main && main.remote, assetType: set ? "COMPONENT_SET" : "COMPONENT", key, setName: set && set.name,
       scope, registryId: key && APPROVED[key] ? APPROVED[key].id : null, overriddenFields,
-      overrideEvidence: { fromTop, fromSelf }, problems });
+      overrideEvidence: { fromTop, fromSelf }, problems, fixture });
   }
-  if (deps) for (const d of deps) if (!seen.has(d.sourceId)) missingDependencies.push({ top: top.id, sourceId: d.sourceId, key: d.key });
+  if (deps) for (const d of deps) if (!seen.has(d.sourceId)) missingDependencies.push({ top: top.id, sourceId: d.sourceId, key: d.key, fixture });
 }
-async function visit(node) {
+async function visit(node, fixture) {
+  if (node !== root && EXCLUDED_ROOTS.includes(node.id)) {
+    if (AUDIT_MODE === "compliance") { skippedFixtures.push(node.id); return; } // fixtures never enter compliance results
+    fixture = node.id;
+  }
   const parent = node.parent;
   if (node !== root && parent && parent.type !== "PAGE") {
     const ok = inside(box(node), box(parent));
-    if (!ok) containment.push({ id: node.id, name: node.name, parent: parent.id, box: box(node), parentBox: box(parent) });
+    if (!ok) containment.push({ id: node.id, name: node.name, parent: parent.id, box: box(node), parentBox: box(parent), fixture });
   }
   if (node.type === "INSTANCE") {
     const { main, set, key } = await resolve(node);
@@ -155,8 +209,9 @@ async function visit(node) {
     for (const t of node.findAllWithCriteria({ types: ["TEXT"] }))
       for (const s of t.getStyledTextSegments(["fontName"])) fonts.add(`${s.fontName.family} ${s.fontName.style}`);
     instances.push({ id: node.id, name: node.name, parent: parent && parent.id, main: main && main.name, remote: main && main.remote,
-      key, registryId: entry ? entry.id : null, properties: props, ...r, fonts: [...fonts], layoutPositioning: layoutPos(node) });
-    await auditNested(node, entry, main && main.name); // nested scope; other library internals are not audited
+      key, registryId: entry ? entry.id : null, properties: props, ...r, fonts: [...fonts], layoutPositioning: layoutPos(node), fixture });
+    await auditNested(node, entry, main && main.name, fixture); // nested scope; other library internals are not audited
+    await auditSlots(node, fixture); // visible SLOT limits and Pink/* placeholders
     return;
   }
   if (node.type === "FRAME" || node.type === "GROUP" || node.type === "SECTION") {
@@ -176,12 +231,12 @@ async function visit(node) {
       layoutMode: "layoutMode" in node ? node.layoutMode : null, layoutPositioning: layoutPos(node),
       detached: "detachedInfo" in node ? node.detachedInfo != null : false, bound, fillBindings, modes,
       reactions: (node.reactions || []).map(r => ({ trigger: r.trigger && r.trigger.type, actions: (r.actions || []).map(a => ({ type: a.type, navigation: a.navigation, destinationId: a.destinationId })) })),
-      box: box(node) });
+      box: box(node), fixture });
     // Sibling overlap among frames/instances in non-Auto-Layout containers (sections, free frames)
     if ("children" in node && (node.type === "SECTION" || node.layoutMode === "NONE")) {
       const kids = node.children.filter(c => c.type === "FRAME" || c.type === "INSTANCE" || c.type === "SECTION");
       for (let i = 0; i < kids.length; i++) for (let j = i + 1; j < kids.length; j++)
-        if (overlaps(box(kids[i]), box(kids[j]))) overlapPairs.push([kids[i].id, kids[j].id]);
+        if (overlaps(box(kids[i]), box(kids[j]))) overlapPairs.push({ pair: [kids[i].id, kids[j].id], fixture });
     }
   }
   if (node.type === "TEXT") {
@@ -190,20 +245,19 @@ async function visit(node) {
     const fills = [];
     for (const p of paintsOf(node, "fills")) fills.push(p.type !== "SOLID" ? p.type : p.boundVariables && p.boundVariables.color ? await vinfo(p.boundVariables.color) : "LITERAL");
     const fonts = [...new Set(node.getStyledTextSegments(["fontName"]).map(s => `${s.fontName.family} ${s.fontName.style}`))];
-    texts.push({ id: node.id, name: node.name, parent: parent && parent.id, style, styleMixed: typeof node.textStyleId !== "string", fills, fonts });
+    texts.push({ id: node.id, name: node.name, parent: parent && parent.id, style, styleMixed: typeof node.textStyleId !== "string", fills, fonts, fixture });
   }
   for (const prop of ["fills", "strokes"])
     for (const p of paintsOf(node, prop))
-      if (p.type === "SOLID" && !(p.boundVariables && p.boundVariables.color)) literalPaints.push({ id: node.id, name: node.name, prop });
-  if ("children" in node) for (const c of node.children) await visit(c);
+      if (p.type === "SOLID" && !(p.boundVariables && p.boundVariables.color)) literalPaints.push({ id: node.id, name: node.name, prop, fixture });
+  if (visibleUpTo(node, null)) for (const v of await pinkFills(node)) placeholderVisible.push({ id: node.id, top: null, name: node.name, variable: v, fixture });
+  if ("children" in node) for (const c of node.children) await visit(c, fixture);
 }
-await visit(root);
+await visit(root, rootFixture);
 
-const unapprovedInstances = instances.filter(i => !i.registryId || i.remote !== true);
 const unapprovedBindings = [];
 for (const f of frames) for (const [prop, list] of Object.entries(f.bound))
-  for (const v of list) if (!v || !APPROVED_VARIABLE_KEYS.includes(v.key)) unapprovedBindings.push({ id: f.id, prop, variable: v });
-const unapprovedStyles = texts.filter(t => t.style && !APPROVED_STYLE_KEYS.includes(t.style.key));
+  for (const v of list) if (!v || !APPROVED_VARIABLE_KEYS.includes(v.key)) unapprovedBindings.push({ id: f.id, prop, variable: v, fixture: f.fixture });
 
 // Snapshot for V13 (preservation) — compare with PREVIOUS after a fix/modification
 const snapshot = {
@@ -220,26 +274,39 @@ if (PREVIOUS) for (const group of ["instances", "frames", "texts"])
   }
 
 figma.skipInvisibleInstanceChildren = prevSkipInvisible;
+// Compliance summaries use counted() records only; in "full" mode fixture findings are reported apart.
+const summarize = keep => {
+  const I = instances.filter(keep), F = frames.filter(keep), T = texts.filter(keep), N = nestedInstances.filter(keep);
+  return {
+    unapprovedInstances: I.filter(i => !i.registryId || i.remote !== true),
+    variantViolations: I.filter(i => i.variantViolations.length), propertyViolations: I.filter(i => i.propertyViolations.length),
+    detachedFrames: F.filter(f => f.detached).map(f => f.id),
+    nonAutoLayoutFrames: F.filter(f => f.type === "FRAME" && (!f.layoutMode || f.layoutMode === "NONE")).map(f => f.id),
+    absoluteChildren: [...I, ...F].filter(n => n.layoutPositioning === "ABSOLUTE").map(n => n.id),
+    containmentViolations: containment.filter(keep), overlapPairs: overlapPairs.filter(keep).map(o => o.pair),
+    literalPaints: literalPaints.filter(keep), unapprovedBindings: unapprovedBindings.filter(keep),
+    unapprovedStyles: T.filter(t => t.style && !APPROVED_STYLE_KEYS.includes(t.style.key)),
+    textsWithoutStyle: T.filter(t => !t.style || t.styleMixed).map(t => t.id),
+    textsWithLiteralFill: T.filter(t => t.fills.includes("LITERAL")).map(t => t.id),
+    nestedViolations: N.filter(n => n.problems.length).map(n => ({ id: n.id, top: n.top, sourceId: n.sourceId, scope: n.scope, problems: n.problems })),
+    missingDependencies: missingDependencies.filter(keep),
+    hiddenDependencyVisible: N.filter(n => n.problems.includes("hidden-dependency-visible")).map(n => n.id),
+    nestedUnlinked: N.filter(n => n.remote !== true || !n.key).map(n => n.id),
+    slotViolations: slotViolations.filter(keep), placeholderVisible: placeholderVisible.filter(keep),
+  };
+};
 return {
   fileKey: figma.fileKey, page: figma.currentPage.name, root: { id: root.id, name: root.name, box: box(root) },
+  mode: AUDIT_MODE, excludedRoots: EXCLUDED_ROOTS, skippedFixtures,
   counts: { instances: instances.length, frames: frames.length, texts: texts.length, nested: nestedInstances.length },
   instances, frames, texts,
-  unapprovedInstances, variantViolations: instances.filter(i => i.variantViolations.length), propertyViolations: instances.filter(i => i.propertyViolations.length),
-  detachedFrames: frames.filter(f => f.detached).map(f => f.id),
-  nonAutoLayoutFrames: frames.filter(f => f.type === "FRAME" && (!f.layoutMode || f.layoutMode === "NONE")).map(f => f.id),
-  absoluteChildren: [...instances, ...frames].filter(n => n.layoutPositioning === "ABSOLUTE").map(n => n.id),
-  containmentViolations: containment, overlapPairs,
-  literalPaints, unapprovedBindings, unapprovedStyles,
-  textsWithoutStyle: texts.filter(t => !t.style || t.styleMixed).map(t => t.id),
-  textsWithLiteralFill: texts.filter(t => t.fills.includes("LITERAL")).map(t => t.id),
+  ...summarize(counted),
   fontsInUse: [...new Set([...instances.flatMap(i => i.fonts), ...texts.flatMap(t => t.fonts)])],
   nestedInstances,
-  nestedViolations: nestedInstances.filter(n => n.problems.length).map(n => ({ id: n.id, top: n.top, sourceId: n.sourceId, scope: n.scope, problems: n.problems })),
-  missingDependencies,
-  hiddenDependencyVisible: nestedInstances.filter(n => n.problems.includes("hidden-dependency-visible")).map(n => n.id),
-  nestedUnlinked: nestedInstances.filter(n => n.remote !== true || !n.key).map(n => n.id),
   nestedHidden: nestedInstances.filter(n => n.visible === false || n.hiddenByAncestor).map(n => n.id),
-  nestedNotInRegistry: nestedInstances.filter(n => !n.registryId && !n.scope.startsWith("nested-dependency-of")).map(n => ({ id: n.id, name: n.name, key: n.key })),
+  nestedNotInRegistry: nestedInstances.filter(n => counted(n) && !n.registryId && !n.scope.startsWith("nested-dependency-of")).map(n => ({ id: n.id, name: n.name, key: n.key })),
+  hiddenSlots,
+  fixtureFindings: AUDIT_MODE === "full" ? summarize(x => !!x.fixture) : null,
   preservationDiffs, snapshot,
 };
 ```
@@ -254,6 +321,9 @@ return {
 | V3 variants / properties | any `variantViolations` or `propertyViolations` (only properties whose value differs from the component default; unchanged ones are in `propertiesAtDefault` and are not violations) | registry entry lacks `variants` / `properties` for something in use |
 | V3 nested scope | any `nestedViolations` (changed nested component or variant, nested override, unexpected nested instance, unapproved slot content, slot limit) or `missingDependencies` | the top-level entry has no `nestedDependencies` for that variant and the nested content matters to the flow |
 | V3 hidden dependencies | any `hiddenDependencyVisible` | — |
+| V3 slots | any `slotViolations` (a visible slot outside its limits — an empty visible slot below its minimum is `empty-visible-slot`); slots in `hiddenSlots` are ignored | — |
+| V5 placeholders | any `placeholderVisible` (a visible fill bound to a `Pink/*` placeholder variable) | — |
+| Fixtures | in `compliance` mode, `ROOT_ID` inside an `EXCLUDED_ROOTS` section (the script refuses it) | `skippedFixtures` is not empty while the flow under audit was expected inside that root — report it |
 | V4 Auto Layout | structural frame in `nonAutoLayoutFrames` or control in `absoluteChildren` without an approved exception | — |
 | V5 bindings | `literalPaints` / `unapprovedBindings` on generated frames without an approved exception | variable could not be resolved (`null`) |
 | V6 text | generated text without a style, with an unapproved style, or with a literal fill (component-owned text is excluded) | style cannot be matched to the registry |
@@ -266,6 +336,10 @@ return {
 `overrideEvidence` shows where each nested override was reported: `fromTop` (the top-level
 instance's `overrides`) and `fromSelf` (the nested instance's own `overrides`). Report both;
 do not assume a nested edit appears in either until a capability test has shown it.
+
+In `negative-regression` mode every finding is expected: report, per fixture, whether the
+intended violation was detected, never PASS/FAIL for compliance. In `full` mode the top-level
+summary excludes fixtures and `fixtureFindings` lists their findings separately.
 
 Transparent frames have no fills, which is fine. Literal paints on an *instance* are not
 reported because instance internals are not walked for paints or containment; instance
