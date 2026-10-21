@@ -1,7 +1,7 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r3",
+  "revision": "r4",
   "updatedAt": "2026-10-21",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
@@ -276,6 +276,283 @@
         "identityLink (66:1419 is a structural match only; the designer confirmed the intended component, not the node mapping)",
         "modes (not part of the approval scope)",
         "requiredBindings"
+      ]
+    },
+    {
+      "id": "ds.divider",
+      "role": "Horizontal divider / separator",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "997e14e3f231a73aabe5b7eeecfaee911f4764a0",
+      "componentKey": "",
+      "sourceNodeId": "7186:7366",
+      "identityLink": "unverified",
+      "identityEvidence": "Structural match only: the imported set 'Divider' (remote: true) has exactly 2 variants whose names are identical to the 2 children of source node 7186:7366 (get_metadata 2026-10-21). Read-only tools cannot prove the key-to-node link.",
+      "libraryUpdatedAt": "2026-06-19T12:51:30Z",
+      "inspectedAt": "2026-10-21T12:04:41Z",
+      "variantCount": 2,
+      "variantOptions": {
+        "Alignment": [
+          "Centered",
+          "Right aligned"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [],
+      "fonts": [],
+      "limitations": [
+        "No non-variant properties (no TEXT, BOOLEAN or INSTANCE_SWAP).",
+        "No TEXT nodes: font check not applicable.",
+        "Alignment=Right aligned is 216×0 in the source."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "",
+      "requiredBindings": [],
+      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, axis Alignment, 2/2 source variant names, variantCount 2",
+          "linked instance 24:42 (Alignment=Centered), independent audit: linked, not detached, inside Test A",
+          "Stage 2: variant switch Centered → Right aligned on 32:95; read-back main 'Alignment=Right aligned'; still linked to 997e14e3…; no overrides (independent audit)"
+        ],
+        "UNVERIFIED": [
+          "requiredBindings (not read)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "sourceNodeId (structural match)",
+        "variants (not approved)",
+        "approval"
+      ]
+    },
+    {
+      "id": "ds.toggle",
+      "role": "Switch / toggle",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "1b57d0d6637c3725791c74bea0e871af1a62aa90",
+      "componentKey": "",
+      "sourceNodeId": "2052:3503",
+      "identityLink": "unverified",
+      "identityEvidence": "Structural match only: the imported set 'Toggle' (remote: true) has exactly 5 variants whose names are identical to the 5 children of source node 2052:3503 (get_metadata 2026-10-21).",
+      "libraryUpdatedAt": "2026-05-25T12:57:17Z",
+      "inspectedAt": "2026-10-21T12:04:41Z",
+      "variantCount": 5,
+      "variantOptions": {
+        "active": [
+          "yes",
+          "no"
+        ],
+        "selected": [
+          "false",
+          "true"
+        ],
+        "error": [
+          "false",
+          "true"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [],
+      "fonts": [],
+      "limitations": [
+        "Only 5 of 8 axis combinations exist: active=yes/selected=false/error=false, active=yes/selected=true/error=false, active=yes/selected=false/error=true, active=no/selected=false/error=false, active=no/selected=true/error=false. Every requested combination must match an existing variant name.",
+        "No non-variant properties; no label.",
+        "No TEXT nodes: font check not applicable."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "",
+      "requiredBindings": [],
+      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, axes active/selected/error, 5/5 source variant names, variantCount 5",
+          "linked instance 24:59 (active=yes, selected=false, error=false), independent audit: linked, not detached",
+          "Stage 2: variant switch selected false → true on 32:98; read-back main 'active=yes, selected=true, error=false'; still linked; no overrides (independent audit)"
+        ],
+        "UNVERIFIED": [
+          "requiredBindings (not read)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "sourceNodeId (structural match)",
+        "variants (not approved)",
+        "approval"
+      ]
+    },
+    {
+      "id": "ds.icon-button",
+      "role": "Icon-only action button",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "212d9896ed342331bb799829ce14e8a6623769aa",
+      "componentKey": "",
+      "sourceNodeId": "53:366",
+      "identityLink": "unverified",
+      "identityEvidence": "Structural match only: the imported set 'icon-button' (remote: true) has exactly 64 variants whose names are identical to the 64 children of source node 53:366 (get_metadata 2026-10-21).",
+      "libraryUpdatedAt": "2026-09-30T10:53:19Z",
+      "inspectedAt": "2026-10-21T12:04:41Z",
+      "variantCount": 64,
+      "variantOptions": {
+        "Property": [
+          "primary",
+          "secondary",
+          "ghost",
+          "primary-soft"
+        ],
+        "Size": [
+          "xSmall",
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "State": [
+          "Default",
+          "Hover",
+          "Pressed",
+          "Disabled"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [],
+      "fonts": [],
+      "limitations": [
+        "The icon is set only via INSTANCE_SWAP Instance#7060:67 (about 170 preferred values). Swaps were not exercised and are not approved. Default icon: add (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013).",
+        "No TEXT property (no accessible label exposed).",
+        "No TEXT nodes: font check not applicable."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "Default nested icon 'add' (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013): linked, found in Silknet New DS scoped search; not registered.",
+      "requiredBindings": [],
+      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, axes Property/Size/State, 64/64 source variant names, variantCount 64",
+          "property key read from the imported set: Instance#7060:67 (INSTANCE_SWAP)",
+          "linked instance 24:190 (Property=primary, Size=Medium, State=Default); nested add icon linked",
+          "Stage 2: variant switch to Property=secondary, Size=Large, State=Default on 32:101; Instance#7060:67 unchanged (default); nested add icon linked; no overrides (independent audit)",
+          "used as nested content of navigation-header: 3 linked instances per Property=Default header, same imported set"
+        ],
+        "UNVERIFIED": [
+          "instance swap Instance#7060:67",
+          "requiredBindings (not read)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "sourceNodeId (structural match)",
+        "variants (not approved)",
+        "properties (not approved)",
+        "approval"
+      ]
+    },
+    {
+      "id": "ds.navigation-header",
+      "role": "Top app bar / screen header",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "0758be8c107cf606e12937d8b393e3200ece14d5",
+      "componentKey": "",
+      "sourceNodeId": "4229:2985",
+      "identityLink": "unverified",
+      "identityEvidence": "Structural match only: the imported set 'navigation-header' (remote: true) has exactly 2 variants whose names are identical to the 2 children of source node 4229:2985; the nested icon-button structure matches source variant 4166:2609 (3 icon-buttons, 1 hidden).",
+      "libraryUpdatedAt": "2026-09-30T10:53:19Z",
+      "inspectedAt": "2026-10-21T12:04:41Z",
+      "variantCount": 2,
+      "variantOptions": {
+        "Property": [
+          "Default",
+          "search"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [],
+      "fonts": [
+        "Noto Sans Georgian Medium",
+        "Noto Sans Georgian Regular"
+      ],
+      "limitations": [
+        "In Property=search, title#4229:5, right-slot#4229:8 and additional-slot#4229:9 have no target layers.",
+        "additional-slot#4229:9 = true reveals a nested Icon (8c6c04694a868828a99a5fb79626aebf873f4fb7) whose library origin is UNVERIFIED (not found in Silknet New DS scoped search). Not tested (designer decision D1 = b).",
+        "additional instance#4229:10 (INSTANCE_SWAP) controls the right icon-button's component. Not exercised, not approved.",
+        "Property=search nests the Search component (4be3d6484256e76512e7e029fa14c2f7eea1ae5f), which is not registered and not approved."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "Property=Default: 3 × icon-button (212d9896…, Property=ghost, Size=Small, State=Default; one hidden via additional-slot#4229:9) with icons arrow-left (f560a5040ba481a779f0c63b25f22fc342e5714a, Silknet New DS confirmed), star (d5a44ddec3ceaff52031f8503165b26588343db3, Silknet New DS confirmed), Icon (8c6c04694a868828a99a5fb79626aebf873f4fb7, library origin UNVERIFIED). Property=search: icon-button with arrow-left, Search (4be3d648…, Silknet New DS, not registered) containing search icon (bf9b7307d2a9b9701a9b76d7a0bfb035986a19b2) and ds.button property=ghost, size=small, State=default (approved r3). No nested icon or Search is approved by this entry.",
+      "requiredBindings": [],
+      "usageRestrictions": "Status proposed: not placeable in flows. Depends on ds.icon-button (proposed). No variants or properties are approved.",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, axis Property, 2/2 source variant names, variantCount 2",
+          "property keys read from the imported set: title#4229:5 (BOOLEAN), header text#4229:6 (TEXT), left-slot#4229:7 (BOOLEAN), right-slot#4229:8 (BOOLEAN), additional-slot#4229:9 (BOOLEAN), additional instance#4229:10 (INSTANCE_SWAP)",
+          "font Noto Sans Georgian Medium available and loaded",
+          "linked instance 24:620 (Property=Default); nested provenance: 3/3 icon-buttons (2 visible, 1 hidden) linked to 212d9896…, same imported set",
+          "Stage 2: header text#4229:6 = 'ჩემი სერვისები' on 32:116; property and Title layer characters read back",
+          "Stage 2: title#4229:5, left-slot#4229:7, right-slot#4229:8 = false on 32:134; Title, left icon-button and right icon-button read back hidden",
+          "Stage 2: variant switch to Property=search on 32:152; font Noto Sans Georgian Regular available and loaded; nested Search (4be3d648…) and ds.button (7c3e71bf…, ghost/small/default) linked, no overrides",
+          "Stage 2: additional instance#4229:10 unchanged (default) on all three headers; no instance overrides (independent audit)"
+        ],
+        "UNVERIFIED": [
+          "additional-slot#4229:9 = true (not tested, D1 = b)",
+          "instance swap additional instance#4229:10",
+          "nested Icon 8c6c0469… library origin",
+          "visual: nested ds.button inside Search reports visible: true but did not appear in the Stage 2 screenshot (possibly clipped by the Search frame)",
+          "requiredBindings (not read)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "sourceNodeId (structural match)",
+        "variants (not approved)",
+        "properties (not approved)",
+        "nested Icon library origin",
+        "approval"
       ]
     }
   ],
