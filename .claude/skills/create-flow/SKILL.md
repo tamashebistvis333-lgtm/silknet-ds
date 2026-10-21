@@ -40,6 +40,10 @@ Supporting files (read when the step says so):
    Allowed on the source (read-only): `get_libraries`, `search_design_system`,
    `get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`,
    `get_code_connect_map`.
+   This overrides any helper skill that suggests otherwise — e.g. `figma-generate-design`
+   step 2a-i proposes running `use_figma` on the library file to resolve keys; **do not**.
+   Resolve keys with scoped `search_design_system`, and read property definitions from
+   instances imported into the **target** (Step 5).
 2. **Separate target only.** Write only to a target file whose key ≠ the source key, after
    the designer explicitly approves that exact file (Gate A). Every write script asserts
    `figma.fileKey === TARGET_KEY` and the approved page before mutating, and throws otherwise.
@@ -54,6 +58,12 @@ Supporting files (read when the step says so):
    recolor with literals. A placeholder is allowed only if the designer explicitly
    approves it for that slot; it must be visibly labeled
    `PLACEHOLDER — not a DS component` and reported as a gap, never as compliant.
+   **Missing component properties are limitations, not obstacles to work around.** If a
+   component exposes no property for something the flow needs (e.g. Badge has no TEXT
+   property, so its label cannot be overridden), record it as a limitation
+   (`UNVERIFIED` / gap) and report it. Never detach the instance, edit its internal
+   layers, or swap in another component to achieve it unless the designer explicitly
+   approves that exact workaround for that exact node.
 6. **No code or repo side effects.** This skill does not write application code,
    components, showcase, tokens, or native packages, and does not run
    `npm run sync|build|showcase|watch|build:*`. The only repository file it may create or
@@ -62,9 +72,43 @@ Supporting files (read when the step says so):
    `android/`, `scripts/`, or unrelated files. No commit, push, or publish.
 7. **Honest status.** Use `PASS` only with performed checks and inspected evidence;
    `FAIL` for evidence of a violation; `UNVERIFIED` for anything missing, stale,
-   inaccessible, or not run. Overall = FAIL if any FAIL; else UNVERIFIED if any
-   UNVERIFIED; else PASS. Designer approval is recorded separately and never upgrades
-   missing evidence to PASS.
+   inaccessible, or not run. Keep the three separate: never merge them into one verdict
+   per area, never relabel UNVERIFIED as PASS because it "probably works", and never
+   report a capability as PASS unless it was exercised in this run (or a recorded run
+   whose library timestamps still match). A stored prototype link is not proof that
+   playback works; a write script's own self-report is not proof — see rule 11.
+   Overall = FAIL if any FAIL; else UNVERIFIED if any UNVERIFIED; else PASS. Designer
+   approval is recorded separately and never upgrades missing evidence to PASS.
+8. **Real Figma property names only.** `get_design_context` returns code-normalized names
+   (`label`, `left`, `showIcon`). The actual properties are keys in the owning component
+   set's `componentPropertyDefinitions`, e.g. `Label#2022:15` (TEXT),
+   `Left ⤵︎#27:0` (BOOLEAN, contains U+FE0E), `Show Icon#7056:0` (BOOLEAN). VARIANT keys
+   have no `#id` (`property`, `size`, `State`). Use the exact key strings in
+   `setProperties`, in the registry, and in reports. Never derive keys from
+   `get_design_context`; if the key has not been read from the imported set, the property
+   is `UNVERIFIED`. When comparing names, strip variation selectors (`U+FE0E/U+FE0F`)
+   only for matching — still write the exact key.
+9. **Load fonts before touching instances or text.** Before inserting (`appendChild` /
+   `insertChild`), moving, re-parenting, cloning, changing variants, or setting TEXT
+   properties of an instance, load every font its text uses
+   (`getStyledTextSegments(['fontName'])` on each TEXT node → `figma.loadFontAsync`), and
+   reload after a variant change. Silknet components use Noto Sans Georgian (observed:
+   Medium, SemiBold). Record each font's availability (`listAvailableFontsAsync`) and load
+   result; an unloaded/unavailable font is `FAIL`, not a reason to substitute a font.
+10. **Stay inside the container.** Every generated frame must lie fully within its parent
+    container's bounds (section, screen, or Auto Layout parent) with no unintended
+    overlap or overflow. Size sections/screens to their content plus margins after
+    placing children; never place children by fixed offsets without checking the
+    parent's size.
+11. **Independent read-only audit.** After generating or modifying anything (screens,
+    flows, capability tests, fixes), run a separate read-only `use_figma` audit on the
+    target (`references/validation-audit.md`) and report from **its** output, not from
+    the write script's return value.
+12. **Preserve what is linked.** Generation and fixes must keep real library instance
+    links (`remote: true`, expected set key), selected variants, semantic variable
+    bindings, applied text/effect styles, explicit variable modes, and prototype
+    reactions. Any operation that would break one of these is a `FAIL` and must not be
+    used as a fix. Layout fixes change only position/size of frames and containers.
 
 Prerequisite skills (Figma plugin rules): load `figma:figma-design-to-code` before any
 `get_design_context` call; load `figma:figma-use` **and** `figma:figma-generate-design`
@@ -99,6 +143,12 @@ before that) and pass the session ID on every file tool call.
   prefix for this task. Do not touch other pages or frames.
 - Record: source key, target key + URL, page, naming prefix, approval quote + timestamp.
 - Until Gate A passes, only read-only discovery is allowed.
+- Edit access cannot be verified read-only. The first approved write (Step 5) is the
+  probe. If it fails with `Can't call "<api>" in read-only mode` while
+  `figma.editorType === "figma"`, the connected account cannot edit that file (verified
+  2026-10-21: same session/tools wrote normally to an editable file). Stop, report it as
+  a permission blocker, and ask the designer to grant edit access or approve another
+  target — never fall back to the source or to a different file on your own.
 
 ## Step 3 — Approved-component registry
 
@@ -114,6 +164,12 @@ before that) and pass the session ID on every file tool call.
    (bindings, properties) and `get_screenshot`. Variables and styles likewise
    (`key`, collection, scopes). Prefer the semantic **Tokens** collection; do not bind
    **Primitives** unless an approved exception says so.
+   Treat `get_design_context` property names as hints only (rule 8). Record exact
+   property keys and variant options **only** after reading
+   `componentPropertyDefinitions` from the set imported into the target (Step 5 stage 1);
+   until then the registry's `properties` stay empty and listed under `unverified`.
+   Record the full variant option lists from the imported set, not just the variants you
+   happened to inspect in the source.
 4. Write discovered candidates as `"status": "proposed"` with evidence. Fields you could
    not observe stay empty and are listed under `unverified`. Known limitation: no
    read-only tool returns both an import key and the source node ID for the same asset —
@@ -142,8 +198,13 @@ binding, text-style application, required fonts, required modes, and (if prototy
 in scope) reactions. If no such evidence exists from this run (or a recorded earlier run
 whose library timestamps still match), follow `references/capability-test.md` — **only
 after the designer explicitly approves the test operations and their location**.
-Any FAIL → stop and report the blocker. Any UNVERIFIED that a screen depends on → do not
-generate that screen.
+The test runs in two stages with a hard gate between them:
+**Stage 1** imports each component, proves provenance, and places linked instances;
+**Stage 2** (variants, text, tokens, styles, modes, prototype) runs only if every Stage 1
+check is PASS and the designer approves it. Any FAIL → stop and report the blocker. Any
+UNVERIFIED that a screen depends on → do not generate that screen. If a failed script
+leaves nodes behind (e.g. an instance created before a later step threw), find them with
+a read-only audit, report their IDs, and clean up only with approval and only those IDs.
 
 ## Step 6 — Generate one screen at a time
 
@@ -155,16 +216,22 @@ For each approved screen, in plan order:
      (`figma.createAutoLayout`), positioned clear of existing content;
    - imports each component by its **registry key** (`importComponentSetByKeyAsync` /
      `importComponentByKeyAsync`), creates instances, and applies only approved
-     properties via `setProperties` (property keys read from the owning component set's
-     `componentPropertyDefinitions`; TEXT/BOOLEAN/INSTANCE_SWAP keys carry `#id`);
+     properties via `setProperties` using the **exact** keys from the owning component
+     set's `componentPropertyDefinitions` (rule 8; TEXT/BOOLEAN/INSTANCE_SWAP keys carry
+     `#id`), after checking each value is in that set's `variantOptions`;
+   - loads every font used by an instance before inserting, moving, cloning, or changing
+     it, and again after variant changes (rule 9);
    - binds structural frame fills/strokes/padding/gaps/radii to approved semantic
      variables (`importVariableByKeyAsync` + `setBoundVariable` /
      `setBoundVariableForPaint`); applies approved text/effect styles by key;
    - sets the approved variable mode on the screen frame if a mode is in scope;
+   - places every frame fully inside its parent and sizes containers to content plus
+     margins (rule 10);
    - never detaches, never edits main components, never edits nested layers outside
      approved overrides, never uses literal colors/sizes where a token exists;
    - returns every created/mutated node ID and a component-usage list.
-2. Run Step 7 validation on that screen. Repair FAILs within scope and re-validate.
+2. Run Step 7 validation on that screen — a **separate read-only audit** (rule 11).
+   Repair FAILs within scope without breaking anything rule 12 protects, then re-audit.
 3. Report the screen (link `https://www.figma.com/design/<TARGET_KEY>?node-id=<id>`,
    results) and **stop for designer review** before the next screen.
 
@@ -186,6 +253,11 @@ output), result, remediation. Mandatory checks:
 | V8 | Screen/state/navigation coverage vs the approved map | map vs created frames; reactions if in scope |
 | V9 | Accessibility | contrast computed from resolved values where possible; focus / screen-reader = designer review → UNVERIFIED until reviewed |
 | V10 | No code generation, repo mutation, source write, or publish occurred | your own tool-call log this run |
+| V11 | Every generated frame is fully inside its parent container; no unintended overlap or overflow | audit: `absoluteBoundingBox` of each frame vs parent, pairwise overlap |
+| V12 | Fonts used by placed instances/text were available and loaded | write-call font report + audit `fontName` read-back |
+| V13 | Linked state preserved after every modification (links, variants, bindings, styles, modes, reactions) | audit read-back compared with the previous audit |
+| V14 | Results come from an independent read-only audit, not the write script | separate `use_figma` read call output |
+| V15 | Prototype playback (if in scope) | designer presents the prototype → UNVERIFIED until done; a stored reaction alone is PASS only for "link stored" |
 
 A screenshot never proves provenance or bindings; structure never proves visual quality.
 
@@ -193,7 +265,8 @@ A screenshot never proves provenance or bindings; structure never proves visual 
 
 Fill `templates/handoff-report.template.md` and present it: target link(s) and node IDs,
 registry path + revision, components used (usage manifest), missing components and
-gaps, per-check PASS/FAIL/UNVERIFIED with evidence, overall result, pending designer
+gaps, component limitations (properties not exposed), per-check PASS/FAIL/UNVERIFIED
+with evidence taken from the independent audit, overall result, pending designer
 decisions, exceptions with approvals, and an explicit statement that no code was
 generated and no repository file other than the approved registry was touched.
 Never call the flow complete, compliant, or implementation-ready while any mandatory
@@ -204,3 +277,25 @@ check is FAIL or UNVERIFIED. Implementation is a separate, explicitly approved t
 If a write goes to the wrong file/page or changes protected content: stop all writes,
 report exactly what changed (IDs), and reverse only when the reversal is known to be safe
 and the designer approves it. Never delete unrelated content to hide an error.
+
+## Validated findings (capability test, 2026-10-21)
+
+Recorded from an approved test in target `zzGuTpXzrcglX1zlOd4IuR` with Silknet New DS
+`button` (`7c3e71bf0a0ffba71efbf997fa41e4dd986065d0`) and `Badge`
+(`4365e8336baa34d805885823c67f57a10f7d78a0`). Re-verify before relying on them — they are
+evidence for that run, not permanent facts.
+
+| Finding | Status then | Consequence for this skill |
+|---|---|---|
+| Import by key + linked instances (`remote: true`, set key match) | PASS | Allowed path for placing components |
+| Variant change via `setProperties` with values from `variantOptions` | PASS | Rule 8, Step 6 |
+| Button text via `Label#2022:15` | PASS | Use exact keys (rule 8) |
+| Badge exposes no TEXT property | UNVERIFIED by design | Limitation; no internal-layer edits (rule 5) |
+| `get_design_context` names (`label`, `left`, `showIcon`) ≠ real keys | caused a FAIL | Rule 8 |
+| Placing instances without loading Noto Sans Georgian Medium/SemiBold | caused a FAIL | Rule 9 |
+| Semantic color (`Background/surface`, `Text/default`) + spacing (`Digits/spacing/4` on gap **and** padding) bindings | PASS | Bind containers to Tokens |
+| Text style `Subtitle/Subtitle 2` | PASS | Apply library text styles by key |
+| `Tokens` collection modes `Light` / `Dark`; explicit Dark on a frame | PASS | Mode per frame |
+| Prototype reaction stored (ON_CLICK → NAVIGATE) | PASS (stored) / UNVERIFIED (playback) | V15 |
+| Frame placed by fixed offset outside its section | caused a FAIL | Rule 10, V11 |
+| `read-only mode` error on a file the account could not edit | permission blocker | Gate A note |
