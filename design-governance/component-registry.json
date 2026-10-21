@@ -1,0 +1,384 @@
+{
+  "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
+  "registryVersion": 1,
+  "revision": "r1-draft",
+  "updatedAt": "2026-10-21",
+  "source": {
+    "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
+    "libraryName": "Silknet New DS",
+    "libraryKey": "lk-c885b42adca9f8622eec60ff19a9c65014465c3473ab5f9568201f6005eb4e60564e3810553ecff1a0220454b65fdd4aba8b5da3f45187f418832e9b927d86f6",
+    "libraryKeyObservedAt": "2026-10-21"
+  },
+  "components": [
+    {
+      "id": "ds.button",
+      "role": "Action button",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "7c3e71bf0a0ffba71efbf997fa41e4dd986065d0",
+      "componentKey": "",
+      "sourceNodeId": "",
+      "identityLink": "unverified",
+      "identityEvidence": "Set node not inspected. The imported set 'button' (remote: true) contains all 4 source variant nodes found by name: 27:379 'property=primary, size=medium, State=default', 27:373 'property=primary, size=large, State=disabled', 27:624 'property=secondary, size=medium, State=disabled', 2030:1890 'property=link, size=x-small, State=disabled'.",
+      "libraryUpdatedAt": "2026-09-30T10:53:19Z",
+      "inspectedAt": "2026-10-21T10:38:09Z",
+      "variantCount": 68,
+      "variantOptions": {
+        "property": [
+          "primary",
+          "primary-soft",
+          "secondary",
+          "ghost",
+          "link"
+        ],
+        "size": [
+          "x-small",
+          "small",
+          "medium",
+          "large"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "disabled"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [
+        {
+          "key": "Label#2022:15",
+          "type": "TEXT",
+          "allowed": "pending approval"
+        },
+        {
+          "key": "Left ⤵︎#27:0",
+          "type": "BOOLEAN",
+          "allowed": "pending approval"
+        },
+        {
+          "key": "Right ⤵︎#27:21",
+          "type": "BOOLEAN",
+          "allowed": "pending approval"
+        },
+        {
+          "key": "Left icon#2022:113",
+          "type": "INSTANCE_SWAP",
+          "allowed": "pending approval"
+        },
+        {
+          "key": "Right icon#2022:162",
+          "type": "INSTANCE_SWAP",
+          "allowed": "pending approval"
+        }
+      ],
+      "fonts": [
+        "Noto Sans Georgian Medium"
+      ],
+      "limitations": [
+        "Only 68 of 80 axis combinations exist (5 × 4 × 4). Every requested combination must match an existing variant name before use.",
+        "Icon-swap targets (Left icon / Right icon) have no registry entries yet, so swaps are blocked until icon components are registered and approved."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "",
+      "requiredBindings": [
+        {
+          "name": "Background/primary-accent",
+          "key": ""
+        },
+        {
+          "name": "Text/contrast",
+          "key": ""
+        },
+        {
+          "name": "Digits/spacing/3",
+          "key": ""
+        },
+        {
+          "name": "Digits/spacing/4",
+          "key": ""
+        },
+        {
+          "name": "Digits/radius/s",
+          "key": ""
+        },
+        {
+          "name": "Button/Button default (text style)",
+          "key": ""
+        }
+      ],
+      "usageRestrictions": "",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, variant axes, 4/4 source variant names",
+          "font Noto Sans Georgian Medium available and loaded",
+          "linked instance placed (4:17)",
+          "variant switch to property=secondary, size=medium, State=disabled",
+          "Label#2022:15 text override",
+          "renders under Dark mode (clone 5:57)",
+          "still linked after all changes (independent audit)"
+        ],
+        "UNVERIFIED": [
+          "exact source set node ID",
+          "fonts used by non-default variants",
+          "requiredBindings keys (names come from get_variable_defs on variant 27:379 only)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "sourceNodeId",
+        "variants",
+        "states",
+        "sizes",
+        "modes",
+        "requiredBindings[].key",
+        "approval"
+      ]
+    },
+    {
+      "id": "ds.badge",
+      "role": "Status / category badge",
+      "status": "proposed",
+      "assetType": "component_set",
+      "componentSetKey": "4365e8336baa34d805885823c67f57a10f7d78a0",
+      "componentKey": "",
+      "sourceNodeId": "66:1419",
+      "identityLink": "unverified",
+      "identityEvidence": "Structural match only: the imported set 'Badge' (remote: true) has exactly 28 variants whose names are identical to the 28 children of source node 66:1419. Read-only tools cannot prove the key-to-node link.",
+      "libraryUpdatedAt": "2026-06-19T12:51:19Z",
+      "inspectedAt": "2026-10-21T10:38:09Z",
+      "variantCount": 28,
+      "variantOptions": {
+        "Property": [
+          "Filled",
+          "Soft",
+          "Small"
+        ],
+        "Category": [
+          "Primary",
+          "Success",
+          "Error",
+          "Warning",
+          "Info",
+          "Disabled",
+          "Neutral"
+        ],
+        "Text": [
+          "True",
+          "False"
+        ]
+      },
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [
+        {
+          "key": "Show Icon#7056:0",
+          "type": "BOOLEAN",
+          "allowed": "pending approval"
+        },
+        {
+          "key": "Instance#7056:29",
+          "type": "INSTANCE_SWAP",
+          "allowed": "pending approval"
+        }
+      ],
+      "fonts": [
+        "Noto Sans Georgian SemiBold"
+      ],
+      "limitations": [
+        "No TEXT property: the label cannot be overridden and its text is fixed per variant. Detaching or editing internal layers is not permitted without explicit designer approval.",
+        "Only 28 of 42 axis combinations exist (3 × 7 × 2); e.g. 'Small' exists only with Text=False. Every requested combination must match an existing variant name before use.",
+        "Icon-swap target (Instance#7056:29) has no registry entries yet, so swaps are blocked until icon components are registered and approved."
+      ],
+      "instanceSwapAllowed": {},
+      "nestedContent": "",
+      "requiredBindings": [],
+      "usageRestrictions": "",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "import by key (remote: true)",
+          "provenance: key, name, variant axes, 28/28 variant names match source 66:1419",
+          "font Noto Sans Georgian SemiBold available and loaded",
+          "linked instance placed (4:21)",
+          "variant switch to Property=Filled, Category=Success, Text=True",
+          "still linked after all changes (independent audit)"
+        ],
+        "UNVERIFIED": [
+          "text override (no TEXT property — limitation)",
+          "key-to-node identity for 66:1419",
+          "fonts used by non-default variants",
+          "requiredBindings (not recorded)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "replacedBy": "",
+      "unverified": [
+        "identityLink (sourceNodeId 66:1419 is a structural match only)",
+        "variants",
+        "states",
+        "sizes",
+        "modes",
+        "requiredBindings",
+        "approval"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "id": "var.background-surface",
+      "name": "Background/surface",
+      "collection": "Tokens",
+      "key": "16bbb88a80af237a63d613dd53326de80afb511b",
+      "type": "COLOR",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "EFFECT_COLOR"
+      ],
+      "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
+      "collectionModes": [
+        "Light",
+        "Dark"
+      ],
+      "status": "proposed",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "imported by key (remote: true)",
+          "bound to frame fill (4:16, 5:56)",
+          "Tokens collection modes Light/Dark; explicit Dark set on 5:56"
+        ],
+        "UNVERIFIED": []
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "unverified": [
+        "approval"
+      ]
+    },
+    {
+      "id": "var.text-default",
+      "name": "Text/default",
+      "collection": "Tokens",
+      "key": "84a20bac91ac4a5b959c477cb45fbe036a7b0abb",
+      "type": "COLOR",
+      "scopes": [
+        "SHAPE_FILL",
+        "TEXT_FILL",
+        "STROKE"
+      ],
+      "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
+      "collectionModes": [],
+      "status": "proposed",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "imported by key (remote: true)",
+          "bound to text fill (5:55)"
+        ],
+        "UNVERIFIED": [
+          "rendering under Dark mode (not exercised on a text node)"
+        ]
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "unverified": [
+        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)",
+        "approval"
+      ]
+    },
+    {
+      "id": "var.spacing-4",
+      "name": "Digits/spacing/4",
+      "collection": "Tokens",
+      "key": "80b18cd7807110216874d70e30b8c9bd28971fcd",
+      "type": "FLOAT",
+      "scopes": [
+        "WIDTH_HEIGHT",
+        "GAP",
+        "FONT_SIZE",
+        "LINE_HEIGHT"
+      ],
+      "variableSetKey": "40a1679b1eda3def2e20f7bdc4abe3eb6a5b33a8",
+      "collectionModes": [],
+      "status": "proposed",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "imported by key (remote: true)",
+          "bound to itemSpacing (resolves to 16)",
+          "bound to all four paddings"
+        ],
+        "UNVERIFIED": []
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "unverified": [
+        "collectionModes (shares variableSetKey with var.background-surface, where Light/Dark were read; not read directly for this variable)",
+        "approval"
+      ]
+    }
+  ],
+  "styles": [
+    {
+      "id": "style.subtitle-2",
+      "name": "Subtitle/Subtitle 2",
+      "styleType": "TEXT",
+      "key": "1948b150f25b2fc29fca2f26961e6bad0ca5616d",
+      "fonts": [
+        "Noto Sans Georgian Medium"
+      ],
+      "status": "proposed",
+      "verification": {
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
+        "PASS": [
+          "imported by key (remote: true)",
+          "applied to text node 5:55",
+          "font Noto Sans Georgian Medium available and loaded"
+        ],
+        "UNVERIFIED": []
+      },
+      "approval": {
+        "by": "",
+        "quote": "",
+        "at": "",
+        "scope": ""
+      },
+      "unverified": [
+        "approval"
+      ]
+    }
+  ],
+  "exceptions": []
+}
