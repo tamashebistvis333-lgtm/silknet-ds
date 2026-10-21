@@ -169,7 +169,9 @@ before that) and pass the session ID on every file tool call.
 |---|---|
 | Component | no entry; `status ≠ "approved"`; `approval.quote` empty; key differs from a fresh scoped search; library `updatedAt` newer than `libraryUpdatedAt` (until re-inspected) |
 | Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set; the entry has a non-empty `variantCombinations` and the full variant name is not in it |
-| Property | key not in the entry's `properties` (exact key, rule 8); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
+| Property | key not in the entry's `properties` (exact key, rule 8) **and** its value differs from the component default (an unapproved property left at its default is not an override); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
+| Nested | the entry has `nestedDependencies` for the placed variant and a built-in nested instance does not match it (different component or variant, any override, an unlisted nested instance, a listed dependency missing, or a `mustRemainHidden` dependency that is visible); without `nestedDependencies`, any override on a built-in nested instance |
+| Slot content | an instance placed directly in a `SLOT` has no `approved` entry of its own, or is outside that entry's variants, `variantCombinations` or properties; the slot reports `limitViolations` |
 | Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
 | Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
 
@@ -258,6 +260,10 @@ For each approved screen, in plan order:
      margins (rule 10);
    - never detaches, never edits main components, never edits nested layers outside
      approved overrides, never uses literal colors/sizes where a token exists;
+   - never changes built-in nested instances (variant, swap, visibility or any other
+     override) and leaves unapproved properties at their defaults; fills a `SLOT` only by
+     appending instances of `approved` entries (never via `setProperties`), within that
+     entry's own approved variants and properties;
    - returns every created/mutated node ID and a component-usage list.
 2. Run Step 7 validation on that screen — a **separate read-only audit** (rule 11).
    Repair FAILs within scope without breaking anything rule 12 protects, then re-audit.
