@@ -10,7 +10,8 @@ Replace the constants with literal values from this run:
 - `TARGET_KEY` — the Gate A target key.
 - `ROOT_ID` — the screen frame, flow wrapper, or test section to audit.
 - `APPROVED` — from the registry: for every `approved` component entry,
-  `{ "<componentSetKey or componentKey>": { id: "<registry id>", variants: { "<axis>": [allowed…] }, properties: ["<exact key e.g. Label#2022:15>", …] } }`.
+  `{ "<componentSetKey or componentKey>": { id: "<registry id>", variants: { "<axis>": [allowed…] }, variantCombinations: ["<exact variant name>", …], properties: ["<exact key e.g. Label#2022:15>", …] } }`.
+  Copy `variantCombinations` only when the entry has it; it limits the allowed combinations to those exact names.
   Property keys are the exact Figma keys (rule 8), never `get_design_context` names.
 - `APPROVED_VARIABLE_KEYS`, `APPROVED_STYLE_KEYS` — keys allowed for bindings and styles.
 - `PREVIOUS` — optional: the `snapshot` returned by the previous audit, for V13
@@ -83,6 +84,8 @@ async function visit(node) {
     const variantViolations = [], propertyViolations = [];
     if (entry && entry.variants) for (const [ax, allowed] of Object.entries(entry.variants))
       if (ax in props && !allowed.includes(props[ax])) variantViolations.push(`${ax}=${props[ax]}`);
+    if (entry && entry.variantCombinations && entry.variantCombinations.length && main && !entry.variantCombinations.includes(main.name))
+      variantViolations.push(`combination ${main.name}`); // approved axis values, but not an approved combination
     if (entry && entry.properties) for (const k of Object.keys(props))
       if (k.includes("#") && !entry.properties.includes(k)) propertyViolations.push(k); // non-variant props not in the approved list
     const fonts = new Set();
@@ -192,6 +195,11 @@ return {
 | V12 fonts | a font in `fontsInUse` failed to load or is unavailable in the write-call report | the write call did not report font loading |
 | V13 preservation | any `preservationDiffs` not explained by an approved change | no `PREVIOUS` snapshot to compare against |
 | V14 independent audit | — | this audit was not run, or its output was not used for the report |
+
+Known limitation: `propertyViolations` lists every non-variant property key that is not in the
+entry's `properties`, even when its value is still the component default (e.g. `Instance#7060:67`,
+`additional-slot#4229:9`). Compare those values with the set's `componentPropertyDefinitions`
+defaults before reporting FAIL; only a changed value is a violation.
 
 Transparent frames have no fills, which is fine. Literal paints on an *instance* are not
 reported because instance internals are not walked for paints or containment; instance

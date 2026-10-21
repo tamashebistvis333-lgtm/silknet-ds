@@ -1,7 +1,7 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r4",
+  "revision": "r5",
   "updatedAt": "2026-10-21",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
@@ -281,7 +281,7 @@
     {
       "id": "ds.divider",
       "role": "Horizontal divider / separator",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "997e14e3f231a73aabe5b7eeecfaee911f4764a0",
       "componentKey": "",
@@ -297,7 +297,16 @@
           "Right aligned"
         ]
       },
-      "variants": {},
+      "variants": {
+        "Alignment": [
+          "Centered",
+          "Right aligned"
+        ]
+      },
+      "variantCombinations": [
+        "Alignment=Centered",
+        "Alignment=Right aligned"
+      ],
       "states": [],
       "sizes": [],
       "modes": [],
@@ -311,36 +320,35 @@
       "instanceSwapAllowed": {},
       "nestedContent": "",
       "requiredBindings": [],
-      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "usageRestrictions": "Approved variants: Alignment=Centered and Alignment=Right aligned only. No property overrides. No detaching or editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
         "PASS": [
           "import by key (remote: true)",
           "provenance: key, name, axis Alignment, 2/2 source variant names, variantCount 2",
           "linked instance 24:42 (Alignment=Centered), independent audit: linked, not detached, inside Test A",
-          "Stage 2: variant switch Centered → Right aligned on 32:95; read-back main 'Alignment=Right aligned'; still linked to 997e14e3…; no overrides (independent audit)"
+          "Stage 2: variant switch Centered → Right aligned on 32:95; read-back main 'Alignment=Right aligned'; still linked to 997e14e3…; no overrides (independent audit)",
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
         ],
         "UNVERIFIED": [
           "requiredBindings (not read)"
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "`ds.divider` — Approve `Alignment=Centered` and `Alignment=Right aligned`. No additional property overrides. | D1: \"For entries with this field, accept only explicitly listed exact combinations.\" | Final approval (2026-10-21): \"Approve the exact documented and tested scopes for: ds.divider, ds.toggle, ds.icon-button, ds.navigation-header. Do not broaden any variant combinations, properties, or dependency permissions beyond the reviewed r5 proposal.\"",
+        "at": "2026-10-21",
+        "scope": "variants: Alignment=Centered, Alignment=Right aligned (both of the 2 existing variants); properties: none (the component exposes none); not approved: detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
-        "sourceNodeId (structural match)",
-        "variants (not approved)",
-        "approval"
+        "sourceNodeId (structural match)"
       ]
     },
     {
       "id": "ds.toggle",
       "role": "Switch / toggle",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "1b57d0d6637c3725791c74bea0e871af1a62aa90",
       "componentKey": "",
@@ -364,7 +372,22 @@
           "true"
         ]
       },
-      "variants": {},
+      "variants": {
+        "active": [
+          "yes"
+        ],
+        "selected": [
+          "false",
+          "true"
+        ],
+        "error": [
+          "false"
+        ]
+      },
+      "variantCombinations": [
+        "active=yes, selected=false, error=false",
+        "active=yes, selected=true, error=false"
+      ],
       "states": [],
       "sizes": [],
       "modes": [],
@@ -378,36 +401,35 @@
       "instanceSwapAllowed": {},
       "nestedContent": "",
       "requiredBindings": [],
-      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "usageRestrictions": "Approved variants: active=yes, selected=false, error=false (off) and active=yes, selected=true, error=false (on) only. Not approved: active=no and error=true variants. No property overrides (none exposed). The toggle has no label of its own. No detaching or editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
         "PASS": [
           "import by key (remote: true)",
           "provenance: key, name, axes active/selected/error, 5/5 source variant names, variantCount 5",
           "linked instance 24:59 (active=yes, selected=false, error=false), independent audit: linked, not detached",
-          "Stage 2: variant switch selected false → true on 32:98; read-back main 'active=yes, selected=true, error=false'; still linked; no overrides (independent audit)"
+          "Stage 2: variant switch selected false → true on 32:98; read-back main 'active=yes, selected=true, error=false'; still linked; no overrides (independent audit)",
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
         ],
         "UNVERIFIED": [
           "requiredBindings (not read)"
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "`ds.toggle` — Approve `active=yes, selected=false, error=false`. Approve `active=yes, selected=true, error=false`. Do not approve the other variants yet. | D1: \"For entries with this field, accept only explicitly listed exact combinations.\" | Final approval (2026-10-21): \"Approve the exact documented and tested scopes for: ds.divider, ds.toggle, ds.icon-button, ds.navigation-header. Do not broaden any variant combinations, properties, or dependency permissions beyond the reviewed r5 proposal.\"",
+        "at": "2026-10-21",
+        "scope": "variants: active=yes, selected=false, error=false and active=yes, selected=true, error=false only; not approved: active=no (both), active=yes, selected=false, error=true, detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
-        "sourceNodeId (structural match)",
-        "variants (not approved)",
-        "approval"
+        "sourceNodeId (structural match)"
       ]
     },
     {
       "id": "ds.icon-button",
       "role": "Icon-only action button",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "212d9896ed342331bb799829ce14e8a6623769aa",
       "componentKey": "",
@@ -437,21 +459,43 @@
           "Disabled"
         ]
       },
-      "variants": {},
-      "states": [],
-      "sizes": [],
+      "variants": {
+        "Property": [
+          "primary",
+          "secondary"
+        ],
+        "Size": [
+          "Medium",
+          "Large"
+        ],
+        "State": [
+          "Default"
+        ]
+      },
+      "variantCombinations": [
+        "Property=primary, Size=Medium, State=Default",
+        "Property=secondary, Size=Large, State=Default"
+      ],
+      "states": [
+        "Default"
+      ],
+      "sizes": [
+        "Medium",
+        "Large"
+      ],
       "modes": [],
       "properties": [],
       "fonts": [],
       "limitations": [
         "The icon is set only via INSTANCE_SWAP Instance#7060:67 (about 170 preferred values). Swaps were not exercised and are not approved. Default icon: add (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013).",
         "No TEXT property (no accessible label exposed).",
-        "No TEXT nodes: font check not applicable."
+        "No TEXT nodes: font check not applicable.",
+        "The approved axis values alone would also allow Property=primary, Size=Large and Property=secondary, Size=Medium; only the two names in `variantCombinations` are approved."
       ],
       "instanceSwapAllowed": {},
       "nestedContent": "Default nested icon 'add' (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013): linked, found in Silknet New DS scoped search; not registered.",
       "requiredBindings": [],
-      "usageRestrictions": "Status proposed: not placeable in flows. No variants or properties are approved.",
+      "usageRestrictions": "Approved variants: exactly Property=primary, Size=Medium, State=Default and Property=secondary, Size=Large, State=Default. Instance#7060:67 must stay at its default: the `add` icon (1bcf4fe3589314d4e056b75e23fbb3b74cf9e013), so use it only for an add action until swaps are approved. No accessible label is exposed. No detaching or editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
         "PASS": [
@@ -460,31 +504,29 @@
           "property key read from the imported set: Instance#7060:67 (INSTANCE_SWAP)",
           "linked instance 24:190 (Property=primary, Size=Medium, State=Default); nested add icon linked",
           "Stage 2: variant switch to Property=secondary, Size=Large, State=Default on 32:101; Instance#7060:67 unchanged (default); nested add icon linked; no overrides (independent audit)",
-          "used as nested content of navigation-header: 3 linked instances per Property=Default header, same imported set"
+          "used as nested content of navigation-header: 3 linked instances per Property=Default header, same imported set",
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
         ],
         "UNVERIFIED": [
-          "instance swap Instance#7060:67",
+          "instance swap Instance#7060:67 (not approved)",
           "requiredBindings (not read)"
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "`ds.icon-button` — Approve `Property=primary, Size=Medium, State=Default`. Approve `Property=secondary, Size=Large, State=Default`. Do not approve `Instance#7060:67` swaps. | D1: \"For entries with this field, accept only explicitly listed exact combinations.\" | Final approval (2026-10-21): \"Approve the exact documented and tested scopes for: ds.divider, ds.toggle, ds.icon-button, ds.navigation-header. Do not broaden any variant combinations, properties, or dependency permissions beyond the reviewed r5 proposal.\"",
+        "at": "2026-10-21",
+        "scope": "variants: Property=primary, Size=Medium, State=Default and Property=secondary, Size=Large, State=Default only (exact combinations); properties: none; not approved: Instance#7060:67 swaps, all other 62 variants, detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
-        "sourceNodeId (structural match)",
-        "variants (not approved)",
-        "properties (not approved)",
-        "approval"
+        "sourceNodeId (structural match)"
       ]
     },
     {
       "id": "ds.navigation-header",
       "role": "Top app bar / screen header",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "0758be8c107cf606e12937d8b393e3200ece14d5",
       "componentKey": "",
@@ -500,11 +542,48 @@
           "search"
         ]
       },
-      "variants": {},
+      "variants": {
+        "Property": [
+          "Default"
+        ]
+      },
+      "variantCombinations": [
+        "Property=Default"
+      ],
       "states": [],
       "sizes": [],
       "modes": [],
-      "properties": [],
+      "properties": [
+        {
+          "key": "header text#4229:6",
+          "type": "TEXT",
+          "allowed": "any text"
+        },
+        {
+          "key": "title#4229:5",
+          "type": "BOOLEAN",
+          "allowed": [
+            true,
+            false
+          ]
+        },
+        {
+          "key": "left-slot#4229:7",
+          "type": "BOOLEAN",
+          "allowed": [
+            true,
+            false
+          ]
+        },
+        {
+          "key": "right-slot#4229:8",
+          "type": "BOOLEAN",
+          "allowed": [
+            true,
+            false
+          ]
+        }
+      ],
       "fonts": [
         "Noto Sans Georgian Medium",
         "Noto Sans Georgian Regular"
@@ -516,9 +595,9 @@
         "Property=search nests the Search component (4be3d6484256e76512e7e029fa14c2f7eea1ae5f), which is not registered and not approved."
       ],
       "instanceSwapAllowed": {},
-      "nestedContent": "Property=Default: 3 × icon-button (212d9896…, Property=ghost, Size=Small, State=Default; one hidden via additional-slot#4229:9) with icons arrow-left (f560a5040ba481a779f0c63b25f22fc342e5714a, Silknet New DS confirmed), star (d5a44ddec3ceaff52031f8503165b26588343db3, Silknet New DS confirmed), Icon (8c6c04694a868828a99a5fb79626aebf873f4fb7, library origin UNVERIFIED). Property=search: icon-button with arrow-left, Search (4be3d648…, Silknet New DS, not registered) containing search icon (bf9b7307d2a9b9701a9b76d7a0bfb035986a19b2) and ds.button property=ghost, size=small, State=default (approved r3). No nested icon or Search is approved by this entry.",
+      "nestedContent": "Property=Default only, as fixed built-in content with no overrides: left icon-button (212d9896…, Property=ghost, Size=Small, State=Default; visibility via left-slot#4229:7) with arrow-left (f560a5040ba481a779f0c63b25f22fc342e5714a, Silknet New DS confirmed); right icon-button (same variant; visibility via right-slot#4229:8) with star (d5a44ddec3ceaff52031f8503165b26588343db3, Filled=No, Silknet New DS confirmed); a hidden icon-button (additional-slot#4229:9 = false) holding Icon 8c6c04694a868828a99a5fb79626aebf873f4fb7 (library origin UNVERIFIED, must stay hidden). The nested icon-button variant ghost/Small/Default is approved only inside this header, not for standalone use (ds.icon-button approves only primary/Medium and secondary/Large). Search (4be3d648…) belongs to Property=search and is not approved.",
       "requiredBindings": [],
-      "usageRestrictions": "Status proposed: not placeable in flows. Depends on ds.icon-button (proposed). No variants or properties are approved.",
+      "usageRestrictions": "Approved variant: Property=Default only. Approved overrides: header text#4229:6 (any text; only one short Georgian string was tested, long-text wrapping or truncation is UNVERIFIED), title#4229:5, left-slot#4229:7, right-slot#4229:8 (true/false). additional-slot#4229:9 must stay false (enabling it reveals the nested Icon 8c6c04694a868828a99a5fb79626aebf873f4fb7, whose library origin is UNVERIFIED). additional instance#4229:10 must stay at its default (icon-button Property=ghost, Size=Small, State=Default). Property=search is not approved. No overrides inside nested instances, no detaching, no editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 24:30 (Batch 1 Stage 1); 2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 32:93 (Batch 1 Stage 2)",
         "PASS": [
@@ -530,29 +609,28 @@
           "Stage 2: header text#4229:6 = 'ჩემი სერვისები' on 32:116; property and Title layer characters read back",
           "Stage 2: title#4229:5, left-slot#4229:7, right-slot#4229:8 = false on 32:134; Title, left icon-button and right icon-button read back hidden",
           "Stage 2: variant switch to Property=search on 32:152; font Noto Sans Georgian Regular available and loaded; nested Search (4be3d648…) and ds.button (7c3e71bf…, ghost/small/default) linked, no overrides",
-          "Stage 2: additional instance#4229:10 unchanged (default) on all three headers; no instance overrides (independent audit)"
+          "Stage 2: additional instance#4229:10 unchanged (default) on all three headers; no instance overrides (independent audit)",
+          "r5 read-only re-verification 2026-10-21 (scoped search_design_system + imported set in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; every approved variant name exists exactly once; property definitions and defaults unchanged since Stage 1"
         ],
         "UNVERIFIED": [
-          "additional-slot#4229:9 = true (not tested, D1 = b)",
-          "instance swap additional instance#4229:10",
+          "additional-slot#4229:9 = true (not tested, not approved)",
+          "instance swap additional instance#4229:10 (not approved)",
           "nested Icon 8c6c0469… library origin",
-          "visual: nested ds.button inside Search reports visible: true but did not appear in the Stage 2 screenshot (possibly clipped by the Search frame)",
+          "Property=search and its nested Search (not approved); nested ds.button inside Search did not appear in the Stage 2 screenshot",
+          "header text#4229:6 with long text (wrapping / truncation not tested)",
           "requiredBindings (not read)"
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "`ds.navigation-header` — Approve `Property=Default`. Approve text override via `header text#4229:6`. Approve tested Boolean overrides for `title#4229:5`, `left-slot#4229:7` and `right-slot#4229:8`. Do not approve `additional-slot#4229:9`, `additional instance#4229:10` or `Property=search`. | D1: \"For entries with this field, accept only explicitly listed exact combinations.\" | D2: \"Approve navigation-header with Property=Default only, including its built-in, unchanged nested content: Three linked icon-button instances (ghost / Small / Default), including the hidden one. The verified arrow-left and star components. The unverified Icon (8c6c0469…) must remain hidden. Nested ghost / Small / Default icon-buttons are permitted only as unchanged internal dependencies of the approved header, not as standalone approved variants. Do not approve Property=search, additional-slot#4229:9, additional instance#4229:10, icon swaps, or nested-instance overrides.\" | Final approval (2026-10-21): \"Approve the exact documented and tested scopes for: ds.divider, ds.toggle, ds.icon-button, ds.navigation-header. Do not broaden any variant combinations, properties, or dependency permissions beyond the reviewed r5 proposal.\"",
+        "at": "2026-10-21",
+        "scope": "variants: Property=Default only; properties: header text#4229:6 (any text), title#4229:5, left-slot#4229:7, right-slot#4229:8 (true/false); not approved: additional-slot#4229:9 (must stay false), additional instance#4229:10 (must stay default), Property=search, icon swaps inside nested icon-buttons, detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
         "sourceNodeId (structural match)",
-        "variants (not approved)",
-        "properties (not approved)",
-        "nested Icon library origin",
-        "approval"
+        "nested Icon library origin"
       ]
     }
   ],
