@@ -172,6 +172,7 @@ before that) and pass the session ID on every file tool call.
 | Property | key not in the entry's `properties` (exact key, rule 8) **and** its value differs from the component default (an unapproved property left at its default is not an override); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
 | Nested | the entry has `nestedDependencies` for the placed variant and a built-in nested instance does not match it (different component or variant, any override, an unlisted nested instance, a listed dependency missing, or a `mustRemainHidden` dependency that is visible); without `nestedDependencies`, any override on a built-in nested instance |
 | Slot content | an instance placed directly in a `SLOT` has no `approved` entry of its own, or is outside that entry's variants, `variantCombinations` or properties; the slot reports `limitViolations` |
+| Empty slot / placeholder | a visible `SLOT` reports `limitViolations` (e.g. empty below its minimum); any visible fill bound to a `Pink/*` placeholder variable. A slot hidden by its host's own property (e.g. `Slot#8218:12 = false`) is not checked |
 | Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
 | Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
 
@@ -263,7 +264,9 @@ For each approved screen, in plan order:
    - never changes built-in nested instances (variant, swap, visibility or any other
      override) and leaves unapproved properties at their defaults; fills a `SLOT` only by
      appending instances of `approved` entries (never via `setProperties`), within that
-     entry's own approved variants and properties;
+     entry's own approved variants and properties; never leaves a visible slot empty or a
+     `Pink/*` placeholder visible — an unused slot is hidden with its host's own approved
+     property instead;
    - returns every created/mutated node ID and a component-usage list.
 2. Run Step 7 validation on that screen — a **separate read-only audit** (rule 11).
    Repair FAILs within scope without breaking anything rule 12 protects, then re-audit.
@@ -273,7 +276,10 @@ For each approved screen, in plan order:
 ## Step 7 — Validate each screen
 
 Run the read-only audit in `references/validation-audit.md` **on the target only**, then
-one `get_screenshot` of the screen. Record per check: method, evidence (node IDs /
+one `get_screenshot` of the screen. Use `AUDIT_MODE = "compliance"` for screens and flows:
+intentionally non-compliant fixture sections (`EXCLUDED_ROOTS`, e.g. `43:206`) never count
+toward compliance. Audit a fixture only explicitly (`negative-regression`), and the whole
+Playground only when the designer asks for it (`full`, fixtures reported apart). Record per check: method, evidence (node IDs /
 output), result, remediation. Mandatory checks:
 
 | # | Check | Evidence source |
