@@ -1,7 +1,7 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r1-draft",
+  "revision": "r2",
   "updatedAt": "2026-10-21",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
@@ -13,13 +13,13 @@
     {
       "id": "ds.button",
       "role": "Action button",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "7c3e71bf0a0ffba71efbf997fa41e4dd986065d0",
       "componentKey": "",
       "sourceNodeId": "",
       "identityLink": "unverified",
-      "identityEvidence": "Set node not inspected. The imported set 'button' (remote: true) contains all 4 source variant nodes found by name: 27:379 'property=primary, size=medium, State=default', 27:373 'property=primary, size=large, State=disabled', 27:624 'property=secondary, size=medium, State=disabled', 2030:1890 'property=link, size=x-small, State=disabled'.",
+      "identityEvidence": "Set node not inspected. The imported set 'button' (remote: true) contains all 4 source variant nodes found by name: 27:379 'property=primary, size=medium, State=default', 27:373 'property=primary, size=large, State=disabled', 27:624 'property=secondary, size=medium, State=disabled', 2030:1890 'property=link, size=x-small, State=disabled'. Designer confirmed on 2026-10-21 that this key is the intended Silknet New DS button component; the source set node ID remains unidentified (UNVERIFIED).",
       "libraryUpdatedAt": "2026-09-30T10:53:19Z",
       "inspectedAt": "2026-10-21T10:38:09Z",
       "variantCount": 68,
@@ -44,43 +44,69 @@
           "disabled"
         ]
       },
-      "variants": {},
-      "states": [],
-      "sizes": [],
+      "variants": {
+        "property": [
+          "primary",
+          "primary-soft",
+          "secondary",
+          "ghost",
+          "link"
+        ],
+        "size": [
+          "x-small",
+          "small",
+          "medium",
+          "large"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "disabled"
+        ]
+      },
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "disabled"
+      ],
+      "sizes": [
+        "x-small",
+        "small",
+        "medium",
+        "large"
+      ],
       "modes": [],
       "properties": [
         {
           "key": "Label#2022:15",
           "type": "TEXT",
-          "allowed": "pending approval"
+          "allowed": "any text"
         },
         {
           "key": "Left ⤵︎#27:0",
           "type": "BOOLEAN",
-          "allowed": "pending approval"
+          "allowed": [
+            true,
+            false
+          ]
         },
         {
           "key": "Right ⤵︎#27:21",
           "type": "BOOLEAN",
-          "allowed": "pending approval"
-        },
-        {
-          "key": "Left icon#2022:113",
-          "type": "INSTANCE_SWAP",
-          "allowed": "pending approval"
-        },
-        {
-          "key": "Right icon#2022:162",
-          "type": "INSTANCE_SWAP",
-          "allowed": "pending approval"
+          "allowed": [
+            true,
+            false
+          ]
         }
       ],
       "fonts": [
         "Noto Sans Georgian Medium"
       ],
       "limitations": [
-        "Only 68 of 80 axis combinations exist (5 × 4 × 4). Every requested combination must match an existing variant name before use.",
-        "Icon-swap targets (Left icon / Right icon) have no registry entries yet, so swaps are blocked until icon components are registered and approved."
+        "Only 68 of 80 axis combinations exist (5 × 4 × 4), e.g. property=link exists only with size=x-small. Every requested combination must match an existing variant name before use.",
+        "Icon instance swaps (Left icon#2022:113, Right icon#2022:162) are not approved — default icons only."
       ],
       "instanceSwapAllowed": {},
       "nestedContent": "",
@@ -110,7 +136,7 @@
           "key": ""
         }
       ],
-      "usageRestrictions": "",
+      "usageRestrictions": "All 68 existing variant combinations; text only via Label#2022:15; icon visibility via Left ⤵︎#27:0 / Right ⤵︎#27:21. No icon instance swaps. No detaching or editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
@@ -121,7 +147,8 @@
           "variant switch to property=secondary, size=medium, State=disabled",
           "Label#2022:15 text override",
           "renders under Dark mode (clone 5:57)",
-          "still linked after all changes (independent audit)"
+          "still linked after all changes (independent audit)",
+          "read-only re-verification 2026-10-21 (scoped search + linked instance in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; 68 variant names, 0 duplicates, 0 malformed; property keys exact (Label#2022:15, Left ⤵︎#27:0, Right ⤵︎#27:21, Left icon#2022:113, Right icon#2022:162)"
         ],
         "UNVERIFIED": [
           "exact source set node ID",
@@ -130,32 +157,28 @@
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "I confirm that `ds.button` and `ds.badge` are the intended components from Silknet New DS. ds.button: All 68 existing variant combinations. Text override via `Label#2022:15`. Left and right icon visibility properties. No icon instance swaps. No detaching or editing internal layers.",
+        "at": "2026-10-21",
+        "scope": "variants: all 68 existing combinations of property × size × State; properties: Label#2022:15 (any text), Left ⤵︎#27:0 and Right ⤵︎#27:21 (true/false); not approved: Left icon#2022:113, Right icon#2022:162 swaps, detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
         "sourceNodeId",
-        "variants",
-        "states",
-        "sizes",
-        "modes",
-        "requiredBindings[].key",
-        "approval"
+        "modes (not part of the approval scope)",
+        "requiredBindings[].key"
       ]
     },
     {
       "id": "ds.badge",
       "role": "Status / category badge",
-      "status": "proposed",
+      "status": "approved",
       "assetType": "component_set",
       "componentSetKey": "4365e8336baa34d805885823c67f57a10f7d78a0",
       "componentKey": "",
       "sourceNodeId": "66:1419",
       "identityLink": "unverified",
-      "identityEvidence": "Structural match only: the imported set 'Badge' (remote: true) has exactly 28 variants whose names are identical to the 28 children of source node 66:1419. Read-only tools cannot prove the key-to-node link.",
+      "identityEvidence": "Structural match only: the imported set 'Badge' (remote: true) has exactly 28 variants whose names are identical to the 28 children of source node 66:1419. Read-only tools cannot prove the key-to-node link. Designer confirmed on 2026-10-21 that this key is the intended Silknet New DS Badge component; the key-to-node mapping for 66:1419 remains UNVERIFIED.",
       "libraryUpdatedAt": "2026-06-19T12:51:19Z",
       "inspectedAt": "2026-10-21T10:38:09Z",
       "variantCount": 28,
@@ -179,7 +202,26 @@
           "False"
         ]
       },
-      "variants": {},
+      "variants": {
+        "Property": [
+          "Filled",
+          "Soft",
+          "Small"
+        ],
+        "Category": [
+          "Primary",
+          "Success",
+          "Error",
+          "Warning",
+          "Info",
+          "Disabled",
+          "Neutral"
+        ],
+        "Text": [
+          "True",
+          "False"
+        ]
+      },
       "states": [],
       "sizes": [],
       "modes": [],
@@ -187,26 +229,24 @@
         {
           "key": "Show Icon#7056:0",
           "type": "BOOLEAN",
-          "allowed": "pending approval"
-        },
-        {
-          "key": "Instance#7056:29",
-          "type": "INSTANCE_SWAP",
-          "allowed": "pending approval"
+          "allowed": [
+            true,
+            false
+          ]
         }
       ],
       "fonts": [
         "Noto Sans Georgian SemiBold"
       ],
       "limitations": [
-        "No TEXT property: the label cannot be overridden and its text is fixed per variant. Detaching or editing internal layers is not permitted without explicit designer approval.",
+        "No TEXT property: the label cannot be overridden and its text is fixed per variant. Detaching or editing internal layers is not permitted.",
         "Only 28 of 42 axis combinations exist (3 × 7 × 2); e.g. 'Small' exists only with Text=False. Every requested combination must match an existing variant name before use.",
-        "Icon-swap target (Instance#7056:29) has no registry entries yet, so swaps are blocked until icon components are registered and approved."
+        "Icon instance swap (Instance#7056:29) is not approved — default icon only."
       ],
       "instanceSwapAllowed": {},
       "nestedContent": "",
       "requiredBindings": [],
-      "usageRestrictions": "",
+      "usageRestrictions": "All 28 existing variant combinations; icon visibility via Show Icon#7056:0. No text override (not exposed). No icon instance swaps. No detaching or editing internal layers.",
       "verification": {
         "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, section 4:15",
         "PASS": [
@@ -215,7 +255,8 @@
           "font Noto Sans Georgian SemiBold available and loaded",
           "linked instance placed (4:21)",
           "variant switch to Property=Filled, Category=Success, Text=True",
-          "still linked after all changes (independent audit)"
+          "still linked after all changes (independent audit)",
+          "read-only re-verification 2026-10-21 (scoped search + linked instance in target zzGuTpXzrcglX1zlOd4IuR): key and libraryUpdatedAt unchanged; 28 variant names, 0 duplicates, 0 malformed, identical to the 28 children of source 66:1419 (get_metadata, same run); property keys exact (Show Icon#7056:0, Instance#7056:29)"
         ],
         "UNVERIFIED": [
           "text override (no TEXT property — limitation)",
@@ -225,20 +266,16 @@
         ]
       },
       "approval": {
-        "by": "",
-        "quote": "",
-        "at": "",
-        "scope": ""
+        "by": "Designer (geocellandroid@gmail.com)",
+        "quote": "I confirm that `ds.button` and `ds.badge` are the intended components from Silknet New DS. ds.badge: All 28 existing variant combinations. Icon visibility via `Show Icon#7056:0`. No text override. No icon instance swaps. No detaching or editing internal layers.",
+        "at": "2026-10-21",
+        "scope": "variants: all 28 existing combinations of Property × Category × Text; properties: Show Icon#7056:0 (true/false); not approved: text override (not exposed), Instance#7056:29 swap, detaching, internal-layer edits; source-node mapping stays UNVERIFIED"
       },
       "replacedBy": "",
       "unverified": [
-        "identityLink (sourceNodeId 66:1419 is a structural match only)",
-        "variants",
-        "states",
-        "sizes",
-        "modes",
-        "requiredBindings",
-        "approval"
+        "identityLink (66:1419 is a structural match only; the designer confirmed the intended component, not the node mapping)",
+        "modes (not part of the approval scope)",
+        "requiredBindings"
       ]
     }
   ],
