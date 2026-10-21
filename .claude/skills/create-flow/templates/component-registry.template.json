@@ -1,0 +1,92 @@
+{
+  "$comment": "Approved-component registry TEMPLATE for /create-flow. Copy to the designer-approved registry path before use. This is an approval manifest, not a second source of truth: Figma file ymEnGYUGvRRVKhHiUSGMVF remains authoritative. Never fill a field with a guessed value — leave it empty and list it under `unverified`.",
+  "registryVersion": 1,
+  "revision": "",
+  "updatedAt": "",
+  "source": {
+    "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
+    "libraryName": "Silknet New DS",
+    "libraryKey": "",
+    "libraryKeyObservedAt": ""
+  },
+  "_fieldGuide": {
+    "id": "Stable registry ID, e.g. 'ds.button'. Never reuse an ID for a different component.",
+    "role": "Human-readable role, e.g. 'Primary action button'.",
+    "status": "One of: proposed | approved | deprecated | blocked. Only 'approved' may be placed in new flows.",
+    "assetType": "'component_set' or 'component', exactly as returned by search_design_system.",
+    "componentSetKey / componentKey": "Import key copied verbatim from a scoped search_design_system result. Empty if not observed.",
+    "sourceNodeId": "Main component / component-set node ID in the source file (e.g. '5681:4769'). Empty until confirmed.",
+    "identityLink": "How key and sourceNodeId were linked: 'designer-confirmed' | 'unverified'. No read-only tool returns both together.",
+    "libraryUpdatedAt": "The asset's updatedAt from search_design_system at inspection time.",
+    "inspectedAt": "ISO timestamp of the read-only inspection (get_metadata / get_design_context / get_variable_defs / get_screenshot).",
+    "variants": "Map of VARIANT property name → list of allowed values (exact source spelling). Omit values the designer did not approve.",
+    "states / sizes / modes": "Allowed states, sizes, and variable modes (e.g. Light/Dark) for this entry.",
+    "properties": "Approved non-variant component properties: name (with #id suffix if known), type TEXT | BOOLEAN | INSTANCE_SWAP, and allowed values or 'any text'.",
+    "instanceSwapAllowed": "For INSTANCE_SWAP slots: list of registry IDs allowed as swap targets.",
+    "nestedContent": "Permitted nested-content usage (e.g. slot accepts list-item only).",
+    "requiredBindings": "Variables/styles the entry relies on (name + key) — evidence from get_variable_defs.",
+    "usageRestrictions": "Free text: where/how this may or may not be used.",
+    "approval": "{ by, quote, at, scope } — the designer's actual words and what they cover. Empty means NOT approved.",
+    "replacedBy": "For deprecated entries: registry ID of the approved replacement (requires its own approval).",
+    "unverified": "List of fields/claims not yet backed by evidence."
+  },
+  "components": [],
+  "variables": [],
+  "styles": [],
+  "exampleShapes": {
+    "$comment": "Shapes only — every value is a placeholder in angle brackets. Do not copy these placeholders into real entries.",
+    "component": {
+      "id": "<ds.registry-id>",
+      "role": "<role>",
+      "status": "proposed",
+      "assetType": "<component_set | component>",
+      "componentSetKey": "",
+      "componentKey": "",
+      "sourceNodeId": "",
+      "identityLink": "unverified",
+      "libraryUpdatedAt": "",
+      "inspectedAt": "",
+      "variants": {},
+      "states": [],
+      "sizes": [],
+      "modes": [],
+      "properties": [],
+      "instanceSwapAllowed": {},
+      "nestedContent": "",
+      "requiredBindings": [],
+      "usageRestrictions": "",
+      "approval": { "by": "", "quote": "", "at": "", "scope": "" },
+      "replacedBy": "",
+      "unverified": ["componentSetKey", "sourceNodeId", "variants", "approval"]
+    },
+    "variable": {
+      "id": "<var.registry-id>",
+      "name": "<exact source name, e.g. Collection path>",
+      "collection": "<Tokens | ...>",
+      "key": "",
+      "type": "<COLOR | FLOAT | STRING | BOOLEAN>",
+      "scopes": [],
+      "status": "proposed",
+      "approval": { "by": "", "quote": "", "at": "", "scope": "" },
+      "unverified": ["key", "approval"]
+    },
+    "style": {
+      "id": "<style.registry-id>",
+      "name": "<exact source name>",
+      "styleType": "<TEXT | EFFECT | FILL>",
+      "key": "",
+      "status": "proposed",
+      "approval": { "by": "", "quote": "", "at": "", "scope": "" },
+      "unverified": ["key", "approval"]
+    }
+  },
+  "exceptions": [],
+  "_exceptionShape": {
+    "id": "<exc-id>",
+    "property": "<exact property/value>",
+    "affectedNodes": [],
+    "reason": "",
+    "approval": { "by": "", "quote": "", "at": "", "scope": "" },
+    "resolutionCondition": ""
+  }
+}

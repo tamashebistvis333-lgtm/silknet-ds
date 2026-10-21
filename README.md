@@ -142,6 +142,10 @@ npm run dev          # Ladle playground at http://localhost:61000
 
 Components require interpretation, not just data transfer. Open Claude Code in this repo and use `/sync-component <name> <figma-url>`. See `CLAUDE.md` for the full playbook.
 
+### For designers — generate a Figma flow
+
+Use `/create-flow <flow brief> [target Figma file URL]` to build an editable product flow in a **separate** Figma file from approved Silknet New DS component instances and variables. The source library is never written to and no code is generated. The skill stops for your approval at each gate (target file, approved components, screen map, capability test, each screen) and reports PASS / FAIL / UNVERIFIED. See the governance section of `CLAUDE.md` and `.claude/skills/create-flow/SKILL.md`.
+
 ### For developers — consume in another app
 
 ```bash
@@ -181,7 +185,8 @@ silknet-ds/
 ├── scripts/                   Token pipeline + Swift package generator
 ├── build.js                   Style Dictionary multi-platform build
 ├── CLAUDE.md                  AI playbook for component updates
-└── .claude/commands/          Custom Claude Code slash commands
+├── .claude/commands/          Custom Claude Code slash commands
+└── .claude/skills/            Claude Code skills (/create-flow)
 ```
 
 ## Tech
