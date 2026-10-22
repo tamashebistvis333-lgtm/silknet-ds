@@ -171,7 +171,8 @@ before that) and pass the session ID on every file tool call.
 | Variant | value not in the entry's `variants` (an **empty** `variants` map approves nothing); value not in `variantOptions`; the full combination does not exist as a variant name in the imported set; the entry has a non-empty `variantCombinations` and the full variant name is not in it |
 | Property | key not in the entry's `properties` (exact key, rule 8) **and** its value differs from the component default (an unapproved property left at its default is not an override); value outside its `allowed`; INSTANCE_SWAP target not in `instanceSwapAllowed` |
 | Nested | the entry has `nestedDependencies` for the placed variant and a built-in nested instance does not match it (different component or variant, any override, an unlisted nested instance, a listed dependency missing, or a `mustRemainHidden` dependency that is visible); without `nestedDependencies`, any override on a built-in nested instance |
-| Slot content | an instance placed directly in a `SLOT` has no `approved` entry of its own, or is outside that entry's variants, `variantCombinations` or properties; the slot reports `limitViolations` |
+| Slot content | the host entry has a `slots` rule for the slot (matched by slot path, never by child node IDs) and a child is neither its `defaultContent` at that position (same key and variant, no overrides) nor an allowed replacement (`allowReplacement`, own `approved` entry listed in `allowedContent`, within that entry's variants, `variantCombinations` and properties); content changed or removed when replacement is not allowed; outside `minChildren` / `maxChildren`; a non-instance child; untouched content that differs from `defaultContent` (stale rule); any override on slot content other than property values and layer name. Without a rule: the instance has no `approved` entry of its own or is outside that entry's scope; the slot reports `limitViolations`. Slot content is audited recursively against its own entry (its nested dependencies, slots and slot hosts); a visible slot inside slot content without a rule of its own is rejected |
+| Slot host | the instance that owns an edited slot carries a `componentProperties` override that is not explained by approved slot content: the host is not a listed nested dependency, has other overridden fields or problems, has a non-`SLOT` property changed (swap or edit), or owns a slot without a rule or with a slot/content problem |
 | Empty slot / placeholder | a visible `SLOT` reports `limitViolations` (e.g. empty below its minimum); any visible fill bound to a `Pink/*` placeholder variable. A slot hidden by its host's own property (e.g. `Slot#8218:12 = false`) is not checked |
 | Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
 | Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
@@ -264,7 +265,8 @@ For each approved screen, in plan order:
    - never changes built-in nested instances (variant, swap, visibility or any other
      override) and leaves unapproved properties at their defaults; fills a `SLOT` only by
      appending instances of `approved` entries (never via `setProperties`), within that
-     entry's own approved variants and properties; never leaves a visible slot empty or a
+     entry's own approved variants and properties, and only where the host entry has a
+     `slots` rule that allows the replacement; never leaves a visible slot empty or a
      `Pink/*` placeholder visible — an unused slot is hidden with its host's own approved
      property instead;
    - returns every created/mutated node ID and a component-usage list.

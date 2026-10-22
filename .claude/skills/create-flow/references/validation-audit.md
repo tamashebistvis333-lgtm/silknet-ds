@@ -10,8 +10,8 @@ Replace the constants with literal values from this run:
 - `TARGET_KEY` — the Gate A target key.
 - `ROOT_ID` — the screen frame, flow wrapper, or test section to audit.
 - `APPROVED` — from the registry: for every `approved` component entry,
-  `{ "<componentSetKey or componentKey>": { id: "<registry id>", variants: { "<axis>": [allowed…] }, variantCombinations: ["<exact variant name>", …], properties: ["<exact key e.g. Label#2022:15>", …], nestedDependencies: { "<variant name>": [{ sourceId, key, variant, mustRemainHidden }, …] } } }`.
-  Copy `variantCombinations` and `nestedDependencies` only when the entry has them;
+  `{ "<componentSetKey or componentKey>": { id: "<registry id>", variants: { "<axis>": [allowed…] }, variantCombinations: ["<exact variant name>", …], properties: ["<exact key e.g. Label#2022:15>", …], nestedDependencies: { "<variant name>": [{ sourceId, key, variant, mustRemainHidden }, …] }, slots: { "<variant name>": [{ slot, defaultContent: [{ key, variant }], allowReplacement, allowedContent: ["<registry id>", …], minChildren, maxChildren }, …] } } }`.
+  Copy `variantCombinations`, `nestedDependencies` and `slots` only when the entry has them;
   `variantCombinations` limits the allowed combinations to those exact names.
   Property keys are the exact Figma keys (rule 8), never `get_design_context` names.
 - `APPROVED_VARIABLE_KEYS`, `APPROVED_STYLE_KEYS` — keys allowed for bindings and styles.
@@ -52,9 +52,42 @@ How instances are scoped:
   dependency (same key, same variant name), carry no overrides, and stay hidden when the
   dependency says `mustRemainHidden`. Without a dependency list, the nested instance must
   carry no overrides (backward compatible).
-- **Slot content** (direct child of a `SLOT` node that is not a listed dependency): checked
-  against its **own** registry entry like a top-level instance, plus the slot's
-  `limitViolations`. Instances inside slot content must carry no overrides.
+- **Slot rules** (`slots`): a `SLOT` inside the top-level instance is matched to a rule by its
+  stable layer path (`slot`, e.g. `7000:3166;7000:3114` — the slot's ID without the
+  `I<top>;` prefix), never by the file-local IDs of its children. Each direct child is:
+  - **default content** when it matches `defaultContent` at the same position by component
+    key and variant name — it must carry no overrides;
+  - otherwise a **replacement**: allowed only when `allowReplacement` is true, the instance
+    has its own `approved` entry whose `id` is in `allowedContent`, and it passes that
+    entry's variants, `variantCombinations` and properties. Its only allowed overrides are
+    `componentProperties` (property values, checked above) and `name` (layer name); any other
+    is `slot-content-override`.
+  Slot-level problems go to `slotViolations`: a non-instance child, content changed while
+  `allowReplacement` is false (including removed content), fewer than `minChildren`
+  (visible slots only) or more than `maxChildren` children, and `slot-default-mismatch` —
+  the slot host carries no slot edit, yet its content differs from `defaultContent` (the
+  registry no longer matches the library default; re-inspect).
+- **Slot hosts**: putting content into a slot records a `componentProperties` override on
+  the instance that owns the slot (e.g. the List-slot inside list-item). That override is
+  authorized — and not reported as `nested-override` — only when all of these hold: the
+  host is a matched nested dependency with no other problem, `componentProperties` is its
+  only overridden field, every non-`SLOT`, non-variant property of the host is at its
+  default (no swaps or property edits), and every slot it owns has a rule with no slot-level
+  or content problem. The decision and its reasons are in `slotHostOverrides`.
+- **Slot content without a rule** (direct child of a `SLOT` that has no matching rule and is
+  not a listed dependency): checked against its **own** registry entry like a top-level
+  instance, plus the slot's `limitViolations`, and the same `slot-content-override` rule. Its
+  host's slot edit stays a `nested-override`.
+- **Nested slot content (recursive):** every instance placed in a slot is audited again as its
+  own root, against its **own** entry — its `nestedDependencies`, its `slots` rules (paths are
+  relative to the content instance) and its slot hosts — with `depth` > 0 on every record. Any
+  failure inside it adds `slot-content-internal-problems` to the content, which also blocks its
+  host's slot-edit authorization. A visible slot inside slot content whose entry has no rule for
+  it is rejected as `nested-slot-without-rule`; nested slots are never assumed valid. Hidden
+  slots (by a property or any ancestor, including hidden slot content) are not limit-checked.
+  Instances below a non-instance slot child are `inside-slot-content` and must carry no overrides.
+- **`SLOT` properties** (`type: "SLOT"`) are not checked as properties; slot content is
+  governed by the rules above. They are listed in `slotProperties`.
 - **Slots and placeholders**: every effectively visible `SLOT` inside a top-level instance
   must have no `limitViolations` — an empty visible slot below its minimum is reported in
   `slotViolations`. Slots hidden by a property or an ancestor are listed in `hiddenSlots`
@@ -101,26 +134,29 @@ async function resolve(n) {
   return { main, set, key: set ? set.key : main ? main.key : null };
 }
 const propsOf = n => { const o = {}; for (const [k, p] of Object.entries(n.componentProperties || {})) o[k] = p.value; return o; };
+const typesOf = n => { const o = {}; for (const [k, p] of Object.entries(n.componentProperties || {})) o[k] = p.type; return o; };
 // Variant, combination and property scope of one instance against its own registry entry.
-function scopeCheck(entry, main, set, props) {
-  const variantViolations = [], propertyViolations = [], propertiesAtDefault = [];
+// SLOT properties are skipped here: slot content is checked by slot rules / slot-content scope.
+function scopeCheck(entry, main, set, props, types = {}) {
+  const variantViolations = [], propertyViolations = [], propertiesAtDefault = [], slotProperties = [];
   if (entry.variants) for (const [ax, allowed] of Object.entries(entry.variants))
     if (ax in props && !allowed.includes(props[ax])) variantViolations.push(`${ax}=${props[ax]}`);
   if (entry.variantCombinations && entry.variantCombinations.length && main && !entry.variantCombinations.includes(main.name))
     variantViolations.push(`combination ${main.name}`); // resolved variant name, not just axis values
   const defs = main ? (set || main).componentPropertyDefinitions : {};
   for (const k of Object.keys(props)) {
+    if (types[k] === "SLOT") { slotProperties.push(k); continue; }
     if (!k.includes("#") || (entry.properties || []).includes(k)) continue; // variants and approved properties
     if (defs[k] && props[k] === defs[k].defaultValue) propertiesAtDefault.push(k); // unchanged default: not an override
     else propertyViolations.push(`${k}=${JSON.stringify(props[k])}`);
   }
-  return { variantViolations, propertyViolations, propertiesAtDefault };
+  return { variantViolations, propertyViolations, propertiesAtDefault, slotProperties };
 }
 
 const instances = [], frames = [], texts = [], literalPaints = [], containment = [], overlapPairs = [], nestedInstances = [], missingDependencies = [];
-const slotViolations = [], hiddenSlots = [], placeholderVisible = [], skippedFixtures = [];
+const slotViolations = [], hiddenSlots = [], placeholderVisible = [], skippedFixtures = [], slotHostOverrides = [];
 // Visible from `n` up to (not including) `stop`; null `stop` walks to the page.
-const visibleUpTo = (n, stop) => { for (let p = n; p && p !== stop && p.type !== "PAGE"; p = p.parent) if (p.visible === false) return false; return true; };
+const visibleUpTo = (n, stop) => { for (let p = n; p && (!stop || p.id !== stop.id) && p.type !== "PAGE"; p = p.parent) if (p.visible === false) return false; return true; };
 async function pinkFills(n) {
   const out = [];
   for (const p of paintsOf(n, "fills")) if (p.visible !== false && p.opacity !== 0 && p.boundVariables && p.boundVariables.color) {
@@ -142,11 +178,52 @@ async function auditSlots(top, fixture) {
     if (visible) for (const v of await pinkFills(n)) placeholderVisible.push({ id: n.id, top: top.id, name: n.name, variable: v, fixture });
   }
 }
-// Nested instances of one top-level instance, hidden ones included.
-async function auditNested(top, topEntry, topVariant, fixture) {
+// Nested instances of one instance, hidden ones included. Called for each top-level instance (depth 0) and
+// recursively for each instance placed in a slot, which is validated against its own entry (depth > 0).
+// Returns true when anything inside `top` failed.
+async function auditNested(top, topEntry, topVariant, fixture, depth = 0, parentOverrides = [], topHidden = false) {
   const deps = topEntry && topEntry.nestedDependencies ? topEntry.nestedDependencies[topVariant] || null : null;
-  const seen = new Set(), prefix = `I${top.id};`, topOverrides = top.overrides || [];
+  const rules = topEntry && topEntry.slots ? topEntry.slots[topVariant] || [] : [];
+  const prefix = (top.id.startsWith("I") ? top.id : `I${top.id}`) + ";"; // layer paths below `top`
+  const seen = new Set(), topOverrides = [...parentOverrides, ...(top.overrides || [])], records = [], hostsHere = [];
+  // Inside an instance placed in a slot below `top`: handled by the recursive call for that content.
+  const insideContent = n => { for (let p = n.parent; p && p.id !== top.id; p = p.parent) if (p.type === "INSTANCE" && p.parent && p.parent.type === "SLOT") return true; return false; };
+  const fieldsOf = n => [...new Set([...topOverrides.filter(o => o.id === n.id), ...(n.overrides || []).filter(o => o.id === n.id)].flatMap(o => o.overriddenFields))];
+  // Slot rules, matched by the slot's stable layer path inside the top-level instance (never by child IDs)
+  const slotInfo = new Map();
+  for (const s of top.findAllWithCriteria({ types: ["SLOT"] })) {
+    if (insideContent(s)) continue;
+    const path = s.id.startsWith(prefix) ? s.id.slice(prefix.length) : null;
+    const rule = path ? rules.find(r => r.slot === path) || null : null;
+    let host = s.parent; while (host && host.type !== "INSTANCE") host = host.parent;
+    const info = { id: s.id, path, rule, host: host ? host.id : null, problems: [] };
+    slotInfo.set(s.id, info);
+    const slotVisible = !topHidden && visibleUpTo(top, null) && visibleUpTo(s, top);
+    if (!rule) {
+      // A visible slot inside slot content must have a rule of its own; nested slots are never assumed valid.
+      if (depth > 0 && slotVisible) {
+        info.problems.push("nested-slot-without-rule");
+        slotViolations.push({ id: s.id, top: top.id, name: s.name, path, children: s.children.length, problem: "slot-rule", problems: info.problems, depth, fixture });
+      }
+      continue;
+    }
+    const def = rule.defaultContent || [], items = [];
+    for (const c of s.children) {
+      if (c.type !== "INSTANCE") { info.problems.push(`slot-non-instance-content ${c.id}`); items.push(null); continue; }
+      const { main, key } = await resolve(c); items.push({ key, variant: main && main.name });
+    }
+    const matchesDefault = items.length === def.length && items.every((it, i) => it && it.key === def[i].key && it.variant === def[i].variant);
+    const hostEdited = host && host.id !== top.id ? fieldsOf(host).includes("componentProperties") : null; // top-level hosts do not report slot edits
+    if (!matchesDefault && !rule.allowReplacement) info.problems.push("slot-content-changed");
+    if (!matchesDefault && hostEdited === false) info.problems.push("slot-default-mismatch");
+    if (rule.minChildren != null && s.children.length < rule.minChildren && slotVisible)
+      info.problems.push(`slot-below-registry-min ${s.children.length}<${rule.minChildren}`);
+    if (rule.maxChildren != null && s.children.length > rule.maxChildren) info.problems.push(`slot-above-registry-max ${s.children.length}>${rule.maxChildren}`);
+    if (info.problems.length) slotViolations.push({ id: s.id, top: top.id, name: s.name, path, children: s.children.length, problem: "slot-rule", problems: info.problems, depth, fixture });
+  }
+  const hostIds = new Set([...slotInfo.values()].map(i => i.host));
   for (const n of top.findAllWithCriteria({ types: ["INSTANCE"] })) {
+    if (insideContent(n)) continue;
     const { main, set, key } = await resolve(n);
     const path = []; let hiddenByAncestor = false, slot = null, slotItem = null;
     for (let c = n, p = n.parent; p && p.id !== top.id; c = p, p = p.parent) {
@@ -154,15 +231,34 @@ async function auditNested(top, topEntry, topVariant, fixture) {
       if (p.visible === false) hiddenByAncestor = true;
       if (p.type === "SLOT" && !slot) { slot = p; slotItem = c; }
     }
-    const effectiveVisible = n.visible && !hiddenByAncestor;
+    const effectiveVisible = n.visible && !hiddenByAncestor && !topHidden;
     const sourceId = n.id.startsWith(prefix) ? n.id.slice(prefix.length) : null;
     // Overrides on this nested instance, as reported by the top-level instance and by the instance itself
     const fromTop = topOverrides.filter(o => o.id === n.id).flatMap(o => o.overriddenFields);
     const fromSelf = (n.overrides || []).filter(o => o.id === n.id).flatMap(o => o.overriddenFields);
     const overriddenFields = [...new Set([...fromTop, ...fromSelf])];
+    const contentOverrides = overriddenFields.filter(f => f !== "componentProperties" && f !== "name"); // slot content: property values (checked below) and layer name only
     const dep = deps && sourceId ? deps.find(d => d.sourceId === sourceId) : null;
+    const rule = slotItem === n && slotInfo.has(slot.id) ? slotInfo.get(slot.id).rule : null;
     const problems = []; let scope;
-    if (dep) {
+    if (rule) {
+      const d = (rule.defaultContent || [])[slot.children.findIndex(c => c.id === n.id)]; // node wrappers are not identity-stable
+      if (d && key === d.key && main && main.name === d.variant) {
+        scope = "slot-default-content";
+        if (overriddenFields.length) problems.push(`nested-override ${overriddenFields.join(",")}`);
+      } else {
+        scope = "slot-replacement";
+        const entry = key ? APPROVED[key] : undefined;
+        if (contentOverrides.length) problems.push(`slot-content-override ${contentOverrides.join(",")}`);
+        if (!rule.allowReplacement) problems.push("slot-replacement-not-allowed");
+        if (!entry || !main || main.remote !== true) problems.push("slot-content-unapproved");
+        else {
+          if (!(rule.allowedContent || []).includes(entry.id)) problems.push(`slot-content-not-allowed ${entry.id}`);
+          const r = scopeCheck(entry, main, set, propsOf(n), typesOf(n)); problems.push(...r.variantViolations, ...r.propertyViolations);
+        }
+      }
+      if (slot.limitViolations && slot.limitViolations.length) problems.push(`slot-limit ${slot.limitViolations.join(",")}`);
+    } else if (dep) {
       scope = `nested-dependency-of:${topEntry.id}`; seen.add(dep.sourceId);
       if (key !== dep.key) problems.push(`nested-component-changed ${key}`);
       if (!main || main.name !== dep.variant) problems.push(`nested-variant-changed ${main && main.name}`);
@@ -171,11 +267,12 @@ async function auditNested(top, topEntry, topVariant, fixture) {
     } else if (slotItem === n) {
       scope = "slot-content";
       const entry = key ? APPROVED[key] : undefined;
+      if (contentOverrides.length) problems.push(`slot-content-override ${contentOverrides.join(",")}`);
       if (!entry || !main || main.remote !== true) problems.push("slot-content-unapproved");
-      else { const r = scopeCheck(entry, main, set, propsOf(n)); problems.push(...r.variantViolations, ...r.propertyViolations); }
+      else { const r = scopeCheck(entry, main, set, propsOf(n), typesOf(n)); problems.push(...r.variantViolations, ...r.propertyViolations); }
       if (slot.limitViolations && slot.limitViolations.length) problems.push(`slot-limit ${slot.limitViolations.join(",")}`);
     } else if (slotItem) {
-      scope = "inside-slot-content";
+      scope = "inside-slot-content"; // below a non-instance slot child
       if (overriddenFields.length) problems.push(`nested-override ${overriddenFields.join(",")}`);
     } else if (deps) {
       scope = "unexpected-nested"; problems.push("unexpected-nested-instance");
@@ -183,12 +280,44 @@ async function auditNested(top, topEntry, topVariant, fixture) {
       scope = "nested-unlisted";
       if (overriddenFields.length) problems.push(`nested-override ${overriddenFields.join(",")}`);
     }
-    nestedInstances.push({ id: n.id, top: top.id, sourceId, path: path.join(" / "), name: n.name, visible: n.visible, hiddenByAncestor,
+    // Slot content is validated recursively against its own entry: its nested instances and its own slots.
+    if (slotItem === n && await auditNested(n, key ? APPROVED[key] : undefined, main && main.name, fixture, depth + 1, topOverrides, !effectiveVisible))
+      problems.push("slot-content-internal-problems");
+    // Non-SLOT, non-variant properties of a slot host that differ from the component default
+    let hostPropsChanged = null;
+    if (hostIds.has(n.id)) {
+      const defs = main ? (set || main).componentPropertyDefinitions : {}, props = propsOf(n), types = typesOf(n);
+      hostPropsChanged = Object.keys(props).filter(k => types[k] !== "SLOT" && types[k] !== "VARIANT" && (!defs[k] || props[k] !== defs[k].defaultValue));
+    }
+    records.push({ id: n.id, top: top.id, sourceId, path: path.join(" / "), name: n.name, visible: n.visible, hiddenByAncestor,
       main: main && main.name, remote: main && main.remote, assetType: set ? "COMPONENT_SET" : "COMPONENT", key, setName: set && set.name,
       scope, registryId: key && APPROVED[key] ? APPROVED[key].id : null, overriddenFields,
-      overrideEvidence: { fromTop, fromSelf }, problems, fixture });
+      overrideEvidence: { fromTop, fromSelf }, slot: slot ? slot.id : null, hostPropsChanged, depth, problems, fixture });
   }
-  if (deps) for (const d of deps) if (!seen.has(d.sourceId)) missingDependencies.push({ top: top.id, sourceId: d.sourceId, key: d.key, fixture });
+  // A slot host's componentProperties override is authorized only when it results from approved slot content.
+  for (const rec of records) {
+    const hosted = [...slotInfo.values()].filter(i => i.host === rec.id);
+    if (!hosted.length || !rec.overriddenFields.includes("componentProperties")) continue;
+    const reasons = [];
+    if (!rec.scope.startsWith("nested-dependency-of")) reasons.push("host-not-a-listed-dependency");
+    const otherFields = rec.overriddenFields.filter(f => f !== "componentProperties");
+    if (otherFields.length) reasons.push(`host-other-overrides ${otherFields.join(",")}`);
+    const otherProblems = rec.problems.filter(p => !p.startsWith("nested-override"));
+    if (otherProblems.length) reasons.push(`host-problems ${otherProblems.join(",")}`);
+    if (rec.hostPropsChanged.length) reasons.push(`host-properties-changed ${rec.hostPropsChanged.join(",")}`);
+    for (const i of hosted) {
+      if (!i.rule) reasons.push(`slot-without-rule ${i.path}`);
+      else if (i.problems.length) reasons.push(`slot-problems ${i.path}`);
+      if (records.some(r => r.slot === i.id && r.problems.length)) reasons.push(`slot-content-problems ${i.path}`);
+    }
+    if (!reasons.length) rec.problems = rec.problems.filter(p => p !== "nested-override componentProperties");
+    const h = { id: rec.id, top: top.id, sourceId: rec.sourceId, authorized: !reasons.length, reasons, depth, fixture };
+    slotHostOverrides.push(h); hostsHere.push(h);
+  }
+  nestedInstances.push(...records);
+  const missing = deps ? deps.filter(d => !seen.has(d.sourceId)) : [];
+  for (const d of missing) missingDependencies.push({ top: top.id, sourceId: d.sourceId, key: d.key, depth, fixture });
+  return records.some(r => r.problems.length) || [...slotInfo.values()].some(i => i.problems.length) || missing.length > 0 || hostsHere.some(h => !h.authorized);
 }
 async function visit(node, fixture) {
   if (node !== root && EXCLUDED_ROOTS.includes(node.id)) {
@@ -204,7 +333,7 @@ async function visit(node, fixture) {
     const { main, set, key } = await resolve(node);
     const props = propsOf(node);
     const entry = key ? APPROVED[key] : undefined;
-    const r = entry ? scopeCheck(entry, main, set, props) : { variantViolations: [], propertyViolations: [], propertiesAtDefault: [] };
+    const r = entry ? scopeCheck(entry, main, set, props, typesOf(node)) : { variantViolations: [], propertyViolations: [], propertiesAtDefault: [], slotProperties: [] };
     const fonts = new Set();
     for (const t of node.findAllWithCriteria({ types: ["TEXT"] }))
       for (const s of t.getStyledTextSegments(["fontName"])) fonts.add(`${s.fontName.family} ${s.fontName.style}`);
@@ -293,6 +422,7 @@ const summarize = keep => {
     hiddenDependencyVisible: N.filter(n => n.problems.includes("hidden-dependency-visible")).map(n => n.id),
     nestedUnlinked: N.filter(n => n.remote !== true || !n.key).map(n => n.id),
     slotViolations: slotViolations.filter(keep), placeholderVisible: placeholderVisible.filter(keep),
+    unauthorizedSlotHostOverrides: slotHostOverrides.filter(keep).filter(h => !h.authorized),
   };
 };
 return {
@@ -305,7 +435,7 @@ return {
   nestedInstances,
   nestedHidden: nestedInstances.filter(n => n.visible === false || n.hiddenByAncestor).map(n => n.id),
   nestedNotInRegistry: nestedInstances.filter(n => counted(n) && !n.registryId && !n.scope.startsWith("nested-dependency-of")).map(n => ({ id: n.id, name: n.name, key: n.key })),
-  hiddenSlots,
+  hiddenSlots, slotHostOverrides,
   fixtureFindings: AUDIT_MODE === "full" ? summarize(x => !!x.fixture) : null,
   preservationDiffs, snapshot,
 };
@@ -321,7 +451,10 @@ return {
 | V3 variants / properties | any `variantViolations` or `propertyViolations` (only properties whose value differs from the component default; unchanged ones are in `propertiesAtDefault` and are not violations) | registry entry lacks `variants` / `properties` for something in use |
 | V3 nested scope | any `nestedViolations` (changed nested component or variant, nested override, unexpected nested instance, unapproved slot content, slot limit) or `missingDependencies` | the top-level entry has no `nestedDependencies` for that variant and the nested content matters to the flow |
 | V3 hidden dependencies | any `hiddenDependencyVisible` | — |
-| V3 slots | any `slotViolations` (a visible slot outside its limits — an empty visible slot below its minimum is `empty-visible-slot`); slots in `hiddenSlots` are ignored | — |
+| V3 slots | any `slotViolations` (a visible slot outside its limits — an empty visible slot below its minimum is `empty-visible-slot`; a slot that breaks its registry rule is `slot-rule` with `problems`); limit checks ignore slots in `hiddenSlots` | — |
+| V3 slot content | any `nestedViolations` with scope `slot-default-content` (an override on default content) or `slot-replacement` (replacement not allowed, content not in `allowedContent`, unapproved, or outside its own entry's variants, combinations or properties) | the host entry has no `slots` rule for a slot the flow edits — the edit is then reported as a `nested-override` on its host |
+| V3 slot hosts | any `unauthorizedSlotHostOverrides`; `slotHostOverrides` with `authorized: true` are slot edits, not overrides | — |
+| V3 nested slots | any record with `depth` > 0 that has problems (`slot-content-internal-problems` on its content), or a `nested-slot-without-rule` slot violation | — |
 | V5 placeholders | any `placeholderVisible` (a visible fill bound to a `Pink/*` placeholder variable) | — |
 | Fixtures | in `compliance` mode, `ROOT_ID` inside an `EXCLUDED_ROOTS` section (the script refuses it) | `skippedFixtures` is not empty while the flow under audit was expected inside that root — report it |
 | V4 Auto Layout | structural frame in `nonAutoLayoutFrames` or control in `absoluteChildren` without an approved exception | — |
