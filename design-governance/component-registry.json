@@ -898,7 +898,7 @@
       "requiredBindings": [],
       "usageRestrictions": "Variants: Horizontal padding=No / Yes. Approved overrides: Body#7001:9, Additional top#7001:7, Additional bottom#7001:8 (any text; long-text wrapping UNVERIFIED), Show top#7001:10, Show bottom#7001:11, Left slot#7001:12, Right slot#7001:13 (true/false). Left slot: airplane unchanged, no replacement or swap. Right slot: default Badge unchanged, or replaced by exactly one ds.toggle in its approved combinations (active=yes, selected=false|true, error=false); no Badge replacement. Visible slots need at least 1 child; hidden slots are not checked. No overrides inside nested instances, no detaching, no internal-layer edits.",
       "verification": {
-        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, frame 56:264 (Batch 2 Stage 2: L1–L5); 2026-10-22, target zzGuTpXzrcglX1zlOd4IuR, section 73:844 (r7 evidence: T1)",
+        "capabilityTest": "2026-10-21, target zzGuTpXzrcglX1zlOd4IuR, frame 56:264 (Batch 2 Stage 2: L1–L5); 2026-10-22, target zzGuTpXzrcglX1zlOd4IuR, section 73:844 (r7 evidence: T1); 2026-10-22, target zzGuTpXzrcglX1zlOd4IuR, section 77:858 (r7 evidence: T2)",
         "PASS": [
           "import by key (remote: true); scoped search key and updatedAt 2026-08-27T06:59:04Z (2026-10-22)",
           "property definitions read from the imported set (2026-10-22): 3 TEXT, 4 BOOLEAN, Horizontal padding VARIANT (No, Yes)",
@@ -907,14 +907,14 @@
           "L4a right-slot Badge replaced by ds.toggle (active=yes, selected=true, error=false): slot edit authorized by the slot audit; L4b replace then resetSlot() restores default",
           "default slot content matched by slot path + key + variant on all list-items (audit 2026-10-22)",
           "effective slot minimum 1: all 26 List-slot slots read back — 0 children → BELOW_MIN, 1 child → none (2026-10-22)",
-          "T1 2026-10-22 (section 73:844, list-item 73:822): right-slot Badge replaced by ds.toggle active=yes, selected=false, error=false; read back linked (remote: true, set 1b57d0d6…), no overrides on the Toggle, slot limitViolations [] ; independent audit with the r7 scope: 0 violations, host I73:822;7000:3166 slot edit authorized; 6 pre-existing sections unchanged (fingerprints)"
+          "T1 2026-10-22 (section 73:844, list-item 73:822): right-slot Badge replaced by ds.toggle active=yes, selected=false, error=false; read back linked (remote: true, set 1b57d0d6…), no overrides on the Toggle, slot limitViolations [] ; independent audit with the r7 scope: 0 violations, host I73:822;7000:3166 slot edit authorized; 6 pre-existing sections unchanged (fingerprints)",
+          "T2 2026-10-22 (section 77:858, list-item 77:836, Horizontal padding=Yes): right-slot Badge (slot 7001:1400;7000:3114) replaced by ds.toggle active=yes, selected=true, error=false; read back linked (remote: true, set 1b57d0d6…), approved combination, no overrides on the Toggle, slot limitViolations []; independent audit with the committed r7 scope: 0 violations, host I77:836;7001:1400 slot edit authorized; 7 pre-existing sections unchanged (fingerprints)"
         ],
         "UNVERIFIED": [
           "sourceNodeId",
           "long-text wrapping of TEXT properties",
           "maxChildren (not exposed)",
-          "requiredBindings (not read)",
-          "ds.toggle as right-slot replacement in Horizontal padding=Yes (slot 7001:1400;7000:3114): rule mirrors the tested No variant; only the default Badge was read back there (L1 56:266)"
+          "requiredBindings (not read)"
         ]
       },
       "approval": {
