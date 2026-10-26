@@ -21,10 +21,12 @@ jobs:
 
       - run: npm ci
 
-      # Unit tests for the /create-flow read-only audit (references/validation-audit.md).
-      # They run the exact script from the md against a mocked Figma node tree; no Figma access.
-      - name: Test create-flow audit
-        run: node --test .claude/skills/create-flow/tests/validation-audit.test.mjs
+      # Unit tests for the /create-flow read-only audit (references/validation-audit.md), incl. the
+      # r8 sizing / visual-integrity checks, plus the registry schema, semantic checks and r7
+      # preservation. The audit tests run the exact script from the md against a mocked Figma
+      # node tree; no Figma access.
+      - name: Test create-flow audit and design-governance registry
+        run: npm run test:governance
 
       # Note: we deliberately skip `npm run import` here — that step reads
       # from the designer's local ~/Desktop/Tokens/. CI uses the already-

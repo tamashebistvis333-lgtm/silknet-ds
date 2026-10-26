@@ -67,3 +67,44 @@ applies the style to a text node) in the sandbox, and approval is recorded on th
   reported, but it does not block use unless the designer asks for node-level proof.
 - **Never** edit the registry to make a flow pass: no widening of allowed values, no
   approval without a quote, no guessed keys.
+
+## Sizing rules (`layout`, since r8)
+
+Component instances keep their native sizing. A component may additionally allow horizontal
+`FILL` only through a `layout` rule on its entry (shape: `layout-governance.schema.json`):
+
+1. **Evidence first.** Run the layout sizing test from
+   `.claude/skills/create-flow/references/capability-test.md` (approved target, separate page)
+   for every variant and parent context you want to allow. Record native sizing per variant
+   (`nativeByVariant`), the tested variants (`fill.variantCombinations`), the tested context and
+   inner widths (`fill.contexts`) and any extra own-override fields `FILL` adds.
+2. **Add the rule as `"status": "proposed"` with `"approval": null`.** A proposed rule grants
+   nothing: the audit treats the component as native-only.
+3. **Regression.** Run the audit's positive and negative layout cases (CI) and, with designer
+   approval, the Figma regression page.
+4. **Designer approval.** Record `layout.approval` (`by`, `quote`, `at`, `scope`) and set
+   `"status": "approved"` in a separate commit. The entry's r7 `approval` is never edited for this.
+
+Never add arbitrary widths or heights, vertical `FILL`, untested contexts or variants, or
+character limits. Long-text limits are `contentConstraints` (line and container rules per text
+layer), each linked to an issue in `design-system-issues.md` when it is a library defect.
+
+The r8 evidence page `🧪 r8 layout capability` (`100:1240`, section `100:1241`) in the
+Playground is permanent; do not modify or delete it.
+
+## Validation
+
+```bash
+npm run test:governance
+```
+
+Runs the audit tests (`.claude/skills/create-flow/tests/`), the registry tests
+(`design-governance/tests/`) and `scripts/validate-registry.mjs` (schema + semantic checks).
+Before merging a registry change, also compare with the base branch:
+
+```bash
+node design-governance/scripts/validate-registry.mjs --baseline-ref origin/main
+```
+
+`scripts/build-audit-constants.mjs` prints the `APPROVED` constants for the audit script from
+the registry.

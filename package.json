@@ -29,7 +29,8 @@
     "build:playground-data": "node scripts/build-playground-data.js",
     "build:playground": "npm run build:packages && npm run build -w @silknet-ds/playground",
     "dev": "npm run dev -w @silknet-ds/playground",
-    "typecheck": "npm run typecheck -w @silknet-ds/react"
+    "typecheck": "npm run typecheck -w @silknet-ds/react",
+    "test:governance": "node --test .claude/skills/create-flow/tests/validation-audit.test.mjs .claude/skills/create-flow/tests/layout-rules.test.mjs design-governance/tests/registry.test.mjs && node design-governance/scripts/validate-registry.mjs"
   },
   "devDependencies": {
     "style-dictionary": "^4.3.0"
