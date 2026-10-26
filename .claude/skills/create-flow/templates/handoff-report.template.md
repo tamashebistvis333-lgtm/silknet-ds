@@ -3,6 +3,8 @@
 ## Summary
 
 - **Overall technical result:** <PASS | FAIL | UNVERIFIED>
+- **Audit result class:** <COMPLIANT | COMPLIANT_WITH_VISUAL_DEFECTS | NON_COMPLIANT> — compliance <PASS/FAIL/UNVERIFIED>, visual integrity <PASS/FAIL/UNVERIFIED> (reported separately; a visual defect is never hidden by compliance)
+- **Technically compliant but visually defective:** <none | node IDs + defect (e.g. C-INPUT-TEXT-1L / DS-01)>
 - **Designer review:** <pending | approved "<quote>" at <time>> (recorded separately; never upgrades missing evidence)
 - **Code generated:** no — <or: yes, under approval "<quote>", scope …>
 - **Repository files touched:** <none | registry at <path> (approved "<quote>")>
@@ -53,7 +55,11 @@
 | V12 | Component fonts available and loaded | write-call font report + audit `fontsInUse` | <…> | <…> | <…> |
 | V13 | Links, variants, bindings, styles, modes, reactions preserved after modifications | audit `preservationDiffs` vs previous snapshot | <…> | <…> | <…> |
 | V14 | Results taken from an independent read-only audit | separate `use_figma` read call | <…> | <…> | <…> |
-| V15 | Prototype playback (if in scope) | designer presents the prototype | <…> | <…> | <…> |
+| V15 | Instance sizing native or approved FILL; no explicit resize | audit `sizingViolations`, `sizingUnverified` | <…> | <…> | <…> |
+| V16 | No overrides on the instance itself beyond name / size (/ FILL extras) | audit `selfOverrideViolations` | <…> | <…> | <…> |
+| V17 | Text inside its containers; possible cut-off reviewed | audit `textOverflow`, `possibleTruncation` + screenshot | <…> | <…> | <…> |
+| V18 | Component content constraints | audit `contentConstraintViolations`, `contentConstraintUnverified` | <…> | <…> | <…> |
+| V19 | Prototype playback (if in scope) | designer presents the prototype | <…> | <…> | <…> |
 
 Rules for this table: one result per row — `PASS`, `FAIL`, or `UNVERIFIED`, never a mix.
 `PASS` only with evidence from this run's independent audit. Anything not exercised is

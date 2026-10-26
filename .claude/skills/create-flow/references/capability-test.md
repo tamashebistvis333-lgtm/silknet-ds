@@ -288,3 +288,28 @@ return { createdNodeIds: created, frameB: frameB.id, results };
   and wait for approval before cleaning up or retrying.
 - Record the library `updatedAt` timestamps of the test assets. A later run may reuse
   these results only while those timestamps are unchanged.
+
+## Layout sizing test (r8)
+
+Run only with designer approval of the target, a **new separate page**, and the components /
+variants / widths to test. It provides the evidence for a registry `layout` rule (README,
+"Sizing rules"). Reference run: 2026-10-26, page `🧪 r8 layout capability` (`100:1240`,
+section `100:1241`), kept as permanent evidence.
+
+1. One write call: assert the target, create the page and a section, and one vertical Auto
+   Layout frame per viewport width (e.g. 320 / 393 / 430) with groups bound to approved spacing
+   variables. Validate every import, variant name and property key **before** creating anything.
+2. Per component and variant: one native instance, one `FILL` instance, and one `FILL`
+   instance with long text in each TEXT property that matters (use the product language). Use
+   only approved variants and properties; fill slots only with approved replacements.
+3. Record per instance, before and after `layoutSizingHorizontal = "FILL"`: component key and
+   variant, `remote`, `layoutSizingHorizontal/Vertical`, width/height vs the variant's own size,
+   parent inner width, the instance's own `overrides` fields, nested overrides,
+   `componentProperties` (must be unchanged), slot contents, and text layers that leave their
+   containers.
+4. Register the section as an evidence root in `EXCLUDED_ROOTS` (`validation-audit.md`), run
+   the independent audit on it in `negative-regression` mode, take one screenshot per
+   viewport, and re-hash existing pages for preservation.
+5. Report per component: `FILL` accepted, link intact, own-override fields added, long-text
+   behaviour, native fit per width. Draft the `layout` rule as `proposed` and list everything
+   not exercised under `layout.verification.UNVERIFIED`.

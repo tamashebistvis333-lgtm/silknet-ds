@@ -111,6 +111,9 @@ Supporting files (read when the step says so):
     bindings, applied text/effect styles, explicit variable modes, and prototype
     reactions. Any operation that would break one of these is a `FAIL` and must not be
     used as a fix. Layout fixes change only position/size of frames and containers.
+    Component instances keep their native sizing; the only sizing change allowed on an
+    instance is horizontal `FILL` where the entry's `layout` rule is `approved` (Step 3,
+    V15). Never resize an instance to an arbitrary width or height.
 
 Prerequisite skills (Figma plugin rules): load `figma:figma-design-to-code` before any
 `get_design_context` call; load `figma:figma-use` **and** `figma:figma-generate-design`
@@ -176,6 +179,9 @@ before that) and pass the session ID on every file tool call.
 | Empty slot / placeholder | a visible `SLOT` reports `limitViolations` (e.g. empty below its minimum); any visible fill bound to a `Pink/*` placeholder variable. A slot hidden by its host's own property (e.g. `Slot#8218:12 = false`) is not checked |
 | Variable | key not in `variables` with `status: "approved"` + approval quote; the binding (node type + property, and `layoutMode` where listed) is not in the entry's `approvedUsage` — declared `scopes` alone never authorize a use; an explicit mode selection that the approval does not cover |
 | Style | key not in `styles` with `status: "approved"` + approval quote; wrong `styleType`; node type / property not in the entry's `approvedUsage` |
+| Sizing (r8) | an explicit resize — the instance's sizing mode differs from its variant's, or a `FIXED` axis differs from the variant **and** that dimension is overridden (size changes from text, properties or Auto Layout on a `HUG` axis are not resizes); horizontal `FILL` unless the entry's `layout.status` is `"approved"`, the variant is in `layout.fill.variantCombinations` and the parent matches a `layout.fill.contexts` entry (vertical Auto Layout `FRAME`, no wrap, listed cross-axis alignment, child not absolute); any vertical sizing other than native; `min/max` width or height; rotation. A `FIXED` change without override evidence, a stale `nativeByVariant` or a parent width outside `testedInnerWidth` is `UNVERIFIED`, not a rejection |
+| Own overrides (r8) | a field overridden on the instance itself other than `name`, `width`, `height`, `componentProperties`, or — with approved `FILL` — `layout.fill.extraOverrideFields` |
+| Content constraint (r8) | a placed text breaks the entry's `contentConstraints` rule for that variant (`SINGLE_LINE`, `MAX_LINES`, `FIT_CONTAINER`). This is a **visual defect**, reported separately from compliance (`COMPLIANT_WITH_VISUAL_DEFECTS`); there are no character limits. Pick shorter approved text or report the limitation — never resize, detach or edit internals to make text fit |
 
 `proposed`, `deprecated`, and `blocked` entries are never placed; a `deprecated` entry's
 `replacedBy` must itself be approved.
@@ -260,6 +266,11 @@ For each approved screen, in plan order:
    - sets the approved variable mode on the screen frame if a mode is in scope;
    - places every frame fully inside its parent and sizes containers to content plus
      margins (rule 10);
+   - keeps every instance at its native size; sets `layoutSizingHorizontal = "FILL"` only
+     when the entry's `layout.status` is `"approved"` and the variant and parent context are
+     listed in its `layout.fill` (Step 3, Sizing). A native instance wider than its
+     container is a visual defect to report, not something to fix by resizing; generated
+     container frames may use `FILL` (layout-only, rule 12);
    - never detaches, never edits main components, never edits nested layers outside
      approved overrides, never uses literal colors/sizes where a token exists;
    - never changes built-in nested instances (variant, swap, visibility or any other
@@ -300,7 +311,17 @@ output), result, remediation. Mandatory checks:
 | V12 | Fonts used by placed instances/text were available and loaded | write-call font report + audit `fontName` read-back |
 | V13 | Linked state preserved after every modification (links, variants, bindings, styles, modes, reactions) | audit read-back compared with the previous audit |
 | V14 | Results come from an independent read-only audit, not the write script | separate `use_figma` read call output |
-| V15 | Prototype playback (if in scope) | designer presents the prototype → UNVERIFIED until done; a stored reaction alone is PASS only for "link stored" |
+| V15 | Instance sizing is native or approved `FILL` in a tested context; no explicit resize | audit: `sizing`, `sizingViolations`, `sizingUnverified` |
+| V16 | No overrides on the instance itself beyond name, size and (with `FILL`) the listed extra fields | audit: `selfOverrideViolations` |
+| V17 | Visible text stays inside its containers; possible cut-off is reviewed on the screenshot | audit: `textOverflow`, `possibleTruncation` |
+| V18 | Component-specific content constraints hold | audit: `contentConstraintViolations`, `contentConstraintUnverified` |
+| V19 | Prototype playback (if in scope) | designer presents the prototype → UNVERIFIED until done; a stored reaction alone is PASS only for "link stored" |
+
+V11 also covers the content box: `layoutContainment` lists nodes outside their Auto Layout
+parent's padding, with native and available width. Report the audit's two results
+separately — `compliance` (V2–V6, V15, V16) and `visualIntegrity` (V11, V17, V18) — with its
+`resultClass`. `COMPLIANT_WITH_VISUAL_DEFECTS` (listed in
+`technicallyCompliantButVisuallyDefective`) is a FAIL for the screen, never a PASS.
 
 A screenshot never proves provenance or bindings; structure never proves visual quality.
 
@@ -339,6 +360,23 @@ evidence for that run, not permanent facts.
 | Semantic color (`Background/surface`, `Text/default`) + spacing (`Digits/spacing/4` on gap **and** padding) bindings | PASS | Bind containers to Tokens |
 | Text style `Subtitle/Subtitle 2` | PASS | Apply library text styles by key |
 | `Tokens` collection modes `Light` / `Dark`; explicit Dark on a frame | PASS | Mode per frame |
-| Prototype reaction stored (ON_CLICK → NAVIGATE) | PASS (stored) / UNVERIFIED (playback) | V15 |
+| Prototype reaction stored (ON_CLICK → NAVIGATE) | PASS (stored) / UNVERIFIED (playback) | V19 |
 | Frame placed by fixed offset outside its section | caused a FAIL | Rule 10, V11 |
 | `read-only mode` error on a file the account could not edit | permission blocker | Gate A note |
+
+## Validated findings (layout capability test, 2026-10-26)
+
+Recorded in target `zzGuTpXzrcglX1zlOd4IuR`, page `🧪 r8 layout capability` (`100:1240`,
+section `100:1241`, kept as permanent evidence), for `ds.button`, `ds.divider`,
+`ds.navigation-header`, `ds.list-item` and `ds.input` at 320 / 393 / 430 px. Registry r8 records
+them as `layout` rules with status `proposed` — no `FILL` permission is active until the designer
+approves a rule.
+
+| Finding | Status then | Consequence for this skill |
+|---|---|---|
+| Horizontal `FILL` in a vertical Auto Layout frame keeps the library link, key, variant and properties | PASS | `FILL` can become an approved sizing option per entry (V15) |
+| `FILL` records `width`/`height` overrides (Button also `primaryAxisSizingMode`) | PASS (recorded) | Size overrides are not evidence of resizing on their own (V15, V16) |
+| Text, property and Auto Layout changes also record `width`/`height` overrides | PASS (recorded) | Classify by sizing mode and variant geometry, not by override fields |
+| Native widths (390 header, 358 list-item / Input) overflow a 320 px screen | caused FAILs | V11 content box; `FILL` is needed for narrow screens once approved |
+| Long Input value wraps out of the fixed-height field; long Button label overflows at 288 | caused FAILs | V18 constraints `C-INPUT-TEXT-1L` (DS-01), `C-BTN-LABEL-1L` |
+| Long header title is cut off with an ellipsis at 2 lines | visual defect / UNVERIFIED | V17 `possibleTruncation`, `C-NAV-TITLE-2L` |

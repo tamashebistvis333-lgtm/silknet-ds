@@ -14,6 +14,13 @@ Replace the constants with literal values from this run:
   Copy `variantCombinations`, `nestedDependencies` and `slots` only when the entry has them;
   `variantCombinations` limits the allowed combinations to those exact names.
   Property keys are the exact Figma keys (rule 8), never `get_design_context` names.
+  Since r8 an entry may also carry `layout` (`status`, `nativeByVariant`, `horizontal`,
+  `vertical`, `fill`) and `contentConstraints`, copied unchanged from the registry.
+  Generate all three constants with
+  `node design-governance/scripts/build-audit-constants.mjs` instead of copying by hand, or the
+  complete ready-to-run audit with `… build-audit-constants.mjs --target <key> --root <id>
+  [--mode <mode>]`: it fills every constant, drops full-line comments and indentation, and
+  fails if the result exceeds `use_figma`'s 50,000-character limit (r8: about 47,500).
 - `APPROVED_VARIABLE_KEYS`, `APPROVED_STYLE_KEYS` — keys allowed for bindings and styles.
 - `PREVIOUS` — optional: the `snapshot` returned by the previous audit, for V13
   (preservation) after a fix or modification.
@@ -26,11 +33,12 @@ Replace the constants with literal values from this run:
     Fixture findings are kept apart in `fixtureFindings` and never counted in the summary.
 - `EXCLUDED_ROOTS` — node IDs of intentionally non-compliant fixture sections (below).
 
-Known fixture sections (target `zzGuTpXzrcglX1zlOd4IuR`, page `🧪 Capability test`):
+Known fixture and evidence sections (target `zzGuTpXzrcglX1zlOd4IuR`):
 
-| Node | Purpose |
-|---|---|
-| `43:206` | `NEGATIVE FIXTURES — INTENTIONALLY NON-COMPLIANT — r6 enforcement` (N1–N5). Keep unchanged; audit only with `negative-regression` or `full`. |
+| Node | Page | Purpose |
+|---|---|---|
+| `43:206` | `🧪 Capability test` | `NEGATIVE FIXTURES — INTENTIONALLY NON-COMPLIANT — r6 enforcement` (N1–N5). Keep unchanged; audit only with `negative-regression` or `full`. |
+| `100:1241` | `🧪 r8 layout capability` (`100:1240`) | r8 layout capability evidence (2026-10-26): native vs FILL at 320/393/430, including intentional native overflow and long-text defects. Permanent evidence — keep unchanged; audit only with `negative-regression` or `full`. |
 
 The script returns facts. **You** decide PASS / FAIL / UNVERIFIED per check (SKILL.md Step 7).
 
@@ -94,6 +102,47 @@ How instances are scoped:
   and ignored. Any effectively visible fill bound to a `Pink/*` variable (the library's
   slot placeholder colour) is reported in `placeholderVisible`.
 
+How sizing and visual integrity are checked (r8). These run on every top-level instance —
+with or without a registry entry — and do not change any r7 check:
+
+- **V15 sizing.** Each axis is classified against the instance's **own variant**, read live
+  (`layoutMode` + `primaryAxisSizingMode` / `counterAxisSizingMode`): `NATIVE` (same sizing
+  mode as the variant; a `HUG` axis may change size with text, properties or Auto Layout —
+  `contentDriven`), `FILL`, `EXPLICIT_MODE_CHANGE` (the sizing mode differs from the
+  variant's), `EXPLICIT_RESIZE` (a `FIXED` axis whose size differs **and** whose dimension is
+  recorded as an override on the instance, unless the size still equals the registry's
+  verified native size), or `GEOMETRY_UNEXPLAINED` (a `FIXED` axis changed without that
+  evidence → `UNVERIFIED`, never `FAIL`). Recorded `width`/`height` overrides alone are not
+  evidence: Figma records them for content-driven changes too. `FILL` is allowed only when the
+  entry's `layout.status` is `"approved"`, the variant is in `layout.fill.variantCombinations`
+  and the parent matches a tested `layout.fill.contexts` entry (parent `FRAME`, vertical
+  Auto Layout, no wrap, listed cross-axis alignment, child not absolute). A parent inner width
+  outside `testedInnerWidth` is `UNVERIFIED`. Vertical sizing must always be `NATIVE`
+  (`layoutGrow = 1` in a vertical parent reads as vertical `FILL`). `min/max` sizes and
+  rotation are rejected. An entry without an approved `layout` allows `NATIVE` only. When the
+  live variant no longer matches `layout.nativeByVariant`, the rule is stale → `UNVERIFIED`.
+- **V16 own overrides.** Fields overridden on the instance itself may only be `name`,
+  `width`, `height`, `componentProperties` (sizes are judged by V15) and, with `FILL`, the
+  entry's `layout.fill.extraOverrideFields` (e.g. Button's `primaryAxisSizingMode`). Any other
+  field (`opacity`, `fills`, padding, radius, …) is a compliance violation.
+- **V11 containment (extended).** Besides the r7 bounding-box check, every visible node in
+  an Auto Layout parent must sit inside the parent's **content box** (minus padding);
+  `layoutContainment` records `nativeWidth`, `parentInnerWidth` and the clipping ancestor.
+- **V17 text overflow.** Every visible text layer — inside instances, slot content and
+  generated text — must sit inside each ancestor up to its top-level instance (or the audit
+  root). `possibleTruncation` lists text with an ending cut-off whose line count reaches
+  `maxLines`; an exact fit looks the same, so it is `UNVERIFIED` until the screenshot is
+  reviewed.
+- **V18 content constraints.** Each `contentConstraints` rule of the entry (per variant,
+  by text-layer path) is evaluated: `SINGLE_LINE`, `MAX_LINES`, `FIT_CONTAINER`. There are
+  no character limits. A violation is a visual defect (or `UNVERIFIED` when the rule says so);
+  an unknown layer path is `UNVERIFIED`.
+- **Two results.** `compliance` (provenance, variants, properties, nested, slots, bindings,
+  styles, V15, V16) and `visualIntegrity` (V11, V17, V18) are reported separately, with
+  `resultClass` = `NON_COMPLIANT`, `COMPLIANT_WITH_VISUAL_DEFECTS` or `COMPLIANT`, and
+  `technicallyCompliantButVisuallyDefective` lists top-level instances with no compliance
+  finding but at least one visual finding.
+
 ```js
 const TARGET_KEY = "<target file key>";
 const ROOT_ID = "<screen / wrapper / section id>";
@@ -102,7 +151,7 @@ const APPROVED_VARIABLE_KEYS = [ /* "<variable key>" */ ];
 const APPROVED_STYLE_KEYS = [ /* "<style key>" */ ];
 const PREVIOUS = null; // or the previous audit's `snapshot`
 const AUDIT_MODE = "compliance"; // "compliance" | "negative-regression" | "full"
-const EXCLUDED_ROOTS = ["43:206"]; // intentionally non-compliant fixture sections
+const EXCLUDED_ROOTS = ["43:206", "100:1241"]; // intentionally non-compliant fixture / evidence sections
 
 if (figma.fileKey !== TARGET_KEY) throw new Error(`Wrong file: ${figma.fileKey}`);
 const root = await figma.getNodeByIdAsync(ROOT_ID);
@@ -155,6 +204,148 @@ function scopeCheck(entry, main, set, props, types = {}) {
 
 const instances = [], frames = [], texts = [], literalPaints = [], containment = [], overlapPairs = [], nestedInstances = [], missingDependencies = [];
 const slotViolations = [], hiddenSlots = [], placeholderVisible = [], skippedFixtures = [], slotHostOverrides = [];
+
+// ---- r8: V15 sizing, V16 own overrides, V11 content-box containment, V17 text overflow, V18 content constraints ----
+const sizing = [], layoutContainment = [], textOverflow = [], possibleTruncation = [], constraintViolations = [], constraintUnverified = [];
+const TOL = 0.5, rnd = v => (typeof v === "number" ? Math.round(v * 100) / 100 : v);
+const axisMode = m => (m === "AUTO" ? "HUG" : "FIXED");
+// The variant's own sizing, read live. Components without Auto Layout are FIXED on both axes.
+function liveNative(main) {
+  if (!main || !main.layoutMode || main.layoutMode === "NONE") return { horizontal: "FIXED", vertical: "FIXED", width: main ? main.width : null, height: main ? main.height : null };
+  const hz = main.layoutMode === "HORIZONTAL";
+  return { horizontal: axisMode(hz ? main.primaryAxisSizingMode : main.counterAxisSizingMode),
+    vertical: axisMode(hz ? main.counterAxisSizingMode : main.primaryAxisSizingMode), width: main.width, height: main.height };
+}
+const ownFields = n => [...new Set((n.overrides || []).filter(o => o.id === n.id).flatMap(o => o.overriddenFields))];
+// One axis. Recorded width/height overrides are NOT evidence on their own: Figma records them for
+// content-driven changes too. A FIXED axis is an explicit resize only when its size differs from the
+// variant AND its dimension is overridden AND it does not still equal the registry's verified native size.
+function classifyAxis(n, nat, axis, fields, reg) {
+  const mode = axis === "h" ? n.layoutSizingHorizontal : n.layoutSizingVertical;
+  if (mode == null) return { cls: "UNREADABLE" };
+  if (mode === "FILL") return { cls: "FILL" };
+  const nMode = axis === "h" ? nat.horizontal : nat.vertical;
+  if (mode !== nMode) return { cls: "EXPLICIT_MODE_CHANGE", evidence: `sizing ${nMode}->${mode}` };
+  const size = axis === "h" ? n.width : n.height, nSize = axis === "h" ? nat.width : nat.height;
+  const dim = axis === "h" ? "width" : "height", regSize = reg ? reg[dim] : null;
+  if (typeof size !== "number" || typeof nSize !== "number" || Math.abs(size - nSize) <= TOL) return { cls: "NATIVE", contentDriven: false };
+  const delta = `${rnd(nSize)}->${rnd(size)}`;
+  if (mode === "HUG") return { cls: "NATIVE", contentDriven: true, delta };
+  if (!fields.includes(dim)) return { cls: "GEOMETRY_UNEXPLAINED", delta, reason: `no ${dim} override recorded` };
+  if (typeof regSize === "number" && Math.abs(size - regSize) <= TOL) return { cls: "GEOMETRY_UNEXPLAINED", delta, reason: "size equals the registry's verified native size; the library variant may have changed" };
+  return { cls: "EXPLICIT_RESIZE", evidence: `${dim} override ${delta}` };
+}
+const innerWidth = p => (p && typeof p.width === "number" ? p.width - (p.paddingLeft || 0) - (p.paddingRight || 0) : null);
+function contextIssues(n, ctx) {
+  const p = n.parent, issues = [];
+  if (!p || p.type !== ctx.parentType) return [`parent-type ${p ? p.type : "none"}`];
+  if (p.layoutMode !== ctx.parentLayoutMode) issues.push(`parent-layout ${p.layoutMode}`);
+  if ((p.layoutWrap || "NO_WRAP") !== ctx.parentLayoutWrap) issues.push(`parent-wrap ${p.layoutWrap}`);
+  if (ctx.parentCounterAxisAlignItems && !ctx.parentCounterAxisAlignItems.includes(p.counterAxisAlignItems)) issues.push(`parent-align ${p.counterAxisAlignItems}`);
+  if ((n.layoutPositioning || "AUTO") !== ctx.childLayoutPositioning) issues.push(`positioning ${n.layoutPositioning}`);
+  return issues;
+}
+function sizingAudit(n, main, entry, fixture) {
+  const layout = entry && entry.layout ? entry.layout : null, variant = main ? main.name : null;
+  const nat = liveNative(main), reg = layout && layout.nativeByVariant ? layout.nativeByVariant[variant] || null : null;
+  const fields = ownFields(n), h = classifyAxis(n, nat, "h", fields, reg), v = classifyAxis(n, nat, "v", fields, reg);
+  const problems = [], unverified = [];
+  if (reg && (reg.horizontal !== nat.horizontal || reg.vertical !== nat.vertical || (reg.width != null && Math.abs(reg.width - nat.width) > TOL) || (reg.height != null && Math.abs(reg.height - nat.height) > TOL)))
+    unverified.push(`layout-rule-stale ${variant}`);
+  const allowedH = layout && layout.status === "approved" ? layout.horizontal.allowed : ["NATIVE"];
+  let context = null;
+  if (h.cls === "FILL") {
+    if (!allowedH.includes("FILL")) problems.push(`sizing-not-allowed FILL (${layout ? `layout ${layout.status}` : "no layout rule"})`);
+    if (layout) {
+      if (!(layout.fill.variantCombinations || []).includes(variant)) problems.push(`fill-variant-untested ${variant}`);
+      const tried = (layout.fill.contexts || []).map(ctx => ({ ctx, issues: contextIssues(n, ctx) }));
+      const match = tried.find(t => !t.issues.length);
+      if (!match) problems.push(`fill-context ${tried.length ? tried[0].issues.join(", ") : "no tested context"}`);
+      else {
+        const w = innerWidth(n.parent), r = match.ctx.testedInnerWidth;
+        context = { id: match.ctx.id, parentInnerWidth: rnd(w) };
+        if (w == null || w < r.min - TOL || w > r.max + TOL) unverified.push(`fill-width-untested ${rnd(w)} (tested ${r.min}-${r.max})`);
+      }
+    }
+  }
+  for (const [ax, c] of [["horizontal", h], ["vertical", v]]) {
+    if (c.cls === "EXPLICIT_MODE_CHANGE" || c.cls === "EXPLICIT_RESIZE") problems.push(`explicit-resize ${ax} ${c.evidence}`);
+    if (c.cls === "GEOMETRY_UNEXPLAINED") unverified.push(`geometry-unexplained ${ax} ${c.delta} (${c.reason})`);
+    if (c.cls === "UNREADABLE") unverified.push(`sizing-unreadable ${ax}`);
+  }
+  if (v.cls === "FILL") problems.push("vertical-sizing FILL");
+  for (const k of ["minWidth", "maxWidth", "minHeight", "maxHeight"]) if (n[k] != null) problems.push(`min-max-size ${k}=${n[k]}`);
+  if (typeof n.rotation === "number" && Math.abs(n.rotation) > 0.01) problems.push(`rotation ${rnd(n.rotation)}`);
+  const allowedOwn = ["name", "width", "height", "componentProperties", ...(h.cls === "FILL" && layout ? layout.fill.extraOverrideFields || [] : [])];
+  const ownOverrideViolations = fields.filter(f => !allowedOwn.includes(f));
+  sizing.push({ id: n.id, name: n.name, variant, registryId: entry ? entry.id : null, layoutStatus: layout ? layout.status : null,
+    horizontal: h, vertical: v, context, nativeWidth: rnd(nat.width), ownFields: fields, ownOverrideViolations, problems, unverified, fixture });
+}
+// V11 extension: the node must sit inside its Auto Layout parent's content box (padding excluded).
+function contentBoxAudit(n, fixture, nativeWidth = null) {
+  const p = n.parent;
+  if (!p || p.type === "PAGE" || !p.layoutMode || p.layoutMode === "NONE" || n.visible === false || layoutPos(n) === "ABSOLUTE") return;
+  const b = box(n), pb = box(p);
+  if (!b || !pb) return;
+  const cb = { x: pb.x + (p.paddingLeft || 0), y: pb.y + (p.paddingTop || 0), w: pb.w - (p.paddingLeft || 0) - (p.paddingRight || 0), h: pb.h - (p.paddingTop || 0) - (p.paddingBottom || 0) };
+  if (inside(b, cb)) return;
+  let clippedBy = null;
+  for (let a = p; a && a.type !== "PAGE"; a = a.parent) if (a.clipsContent && !inside(b, box(a))) { clippedBy = a.id; break; }
+  layoutContainment.push({ id: n.id, name: n.name, parent: p.id, box: b, contentBox: cb, nativeWidth: rnd(nativeWidth), parentInnerWidth: rnd(cb.w), clippedBy, fixture });
+}
+function lineCount(t) {
+  const lh = t.lineHeight, fs = typeof t.fontSize === "number" ? t.fontSize : null;
+  let px = null;
+  if (lh && typeof lh === "object") px = lh.unit === "PIXELS" ? lh.value : lh.unit === "PERCENT" && fs ? (lh.value / 100) * fs : null;
+  return px && typeof t.height === "number" ? Math.max(1, Math.round(t.height / px)) : null;
+}
+// V17: a visible text layer must sit inside every ancestor up to `stop` (its top-level instance or the audit root).
+function textAudit(t, stop, top, fixture) {
+  if (!visibleUpTo(t, null) || typeof t.characters !== "string" || !t.characters.trim()) return;
+  const tb = box(t);
+  if (!tb) return;
+  for (let a = t.parent; a && a.type !== "PAGE"; a = a.parent) {
+    const ab = box(a);
+    if (ab && ab.w > 0 && ab.h > 0 && !inside(tb, ab)) {
+      textOverflow.push({ id: t.id, top, text: t.characters.slice(0, 40), escapes: a.id, ancestor: a.name, clipped: !!a.clipsContent, box: tb, ancestorBox: ab, fixture });
+      break;
+    }
+    if (a.id === stop.id) break;
+  }
+  if (t.textTruncation === "ENDING" && t.maxLines != null) {
+    const lines = lineCount(t);
+    if (lines == null) possibleTruncation.push({ id: t.id, top, reason: "lines-unmeasurable", maxLines: t.maxLines, fixture });
+    else if (lines >= t.maxLines) possibleTruncation.push({ id: t.id, top, reason: "lines-at-max", lines, maxLines: t.maxLines, fixture });
+  }
+}
+// V18: component-specific content constraints, located by text-layer path per variant.
+async function constraintAudit(n, main, entry, fixture) {
+  const variant = main ? main.name : null, prefix = n.id.startsWith("I") ? n.id : `I${n.id}`;
+  for (const c of (entry && entry.contentConstraints) || []) {
+    if (!c.textLayerByVariant || !(variant in c.textLayerByVariant)) continue; // rule not defined for this variant
+    const rec = { id: n.id, constraint: c.id, property: c.property, kind: c.kind, dsIssue: c.dsIssue || null, fixture };
+    const path = c.textLayerByVariant[variant];
+    if (!path) { constraintUnverified.push({ ...rec, reason: "constraint-layer-unknown" }); continue; }
+    const t = await figma.getNodeByIdAsync(`${prefix};${path}`);
+    if (!t || t.type !== "TEXT") { constraintUnverified.push({ ...rec, reason: "constraint-layer-missing" }); continue; }
+    if (!visibleUpTo(t, null)) continue;
+    let container = n;
+    const cPath = c.containerLayerByVariant ? c.containerLayerByVariant[variant] : undefined;
+    if (cPath) {
+      const cn = await figma.getNodeByIdAsync(`${prefix};${cPath}`);
+      if (cn) container = cn; else constraintUnverified.push({ ...rec, reason: "container-layer-missing" });
+    } else if (cPath === null) constraintUnverified.push({ ...rec, reason: "container-layer-unknown (instance bounds used)" });
+    const lines = lineCount(t), problems = [], cb = box(container);
+    if (cb && !inside(box(t), cb)) problems.push(`outside ${container.name}`);
+    if (c.kind === "SINGLE_LINE" || c.kind === "MAX_LINES") {
+      const max = c.kind === "SINGLE_LINE" ? 1 : c.maxLines;
+      if (lines == null) constraintUnverified.push({ ...rec, reason: "lines-unmeasurable" });
+      else if (lines > max) problems.push(`lines ${lines}>${max}`);
+      else if (lines === max && c.kind === "MAX_LINES" && t.textTruncation === "ENDING") constraintUnverified.push({ ...rec, reason: `possible-truncation ${lines}/${max}` });
+    }
+    if (problems.length) (c.onViolation === "UNVERIFIED" ? constraintUnverified : constraintViolations).push({ ...rec, text: t.id, lines, problems });
+  }
+}
 // Visible from `n` up to (not including) `stop`; null `stop` walks to the page.
 const visibleUpTo = (n, stop) => { for (let p = n; p && (!stop || p.id !== stop.id) && p.type !== "PAGE"; p = p.parent) if (p.visible === false) return false; return true; };
 async function pinkFills(n) {
@@ -328,6 +519,7 @@ async function visit(node, fixture) {
   if (node !== root && parent && parent.type !== "PAGE") {
     const ok = inside(box(node), box(parent));
     if (!ok) containment.push({ id: node.id, name: node.name, parent: parent.id, box: box(node), parentBox: box(parent), fixture });
+    if (node.type !== "INSTANCE") contentBoxAudit(node, fixture); // V11 content box (instances: below, with native width)
   }
   if (node.type === "INSTANCE") {
     const { main, set, key } = await resolve(node);
@@ -341,6 +533,10 @@ async function visit(node, fixture) {
       key, registryId: entry ? entry.id : null, properties: props, ...r, fonts: [...fonts], layoutPositioning: layoutPos(node), fixture });
     await auditNested(node, entry, main && main.name, fixture); // nested scope; other library internals are not audited
     await auditSlots(node, fixture); // visible SLOT limits and Pink/* placeholders
+    sizingAudit(node, main, entry, fixture); // V15 + V16 (with or without a registry entry)
+    if (node !== root) contentBoxAudit(node, fixture, liveNative(main).width); // V11 content box
+    for (const t of node.findAllWithCriteria({ types: ["TEXT"] })) textAudit(t, node, node.id, fixture); // V17
+    await constraintAudit(node, main, entry, fixture); // V18
     return;
   }
   if (node.type === "FRAME" || node.type === "GROUP" || node.type === "SECTION") {
@@ -375,6 +571,7 @@ async function visit(node, fixture) {
     for (const p of paintsOf(node, "fills")) fills.push(p.type !== "SOLID" ? p.type : p.boundVariables && p.boundVariables.color ? await vinfo(p.boundVariables.color) : "LITERAL");
     const fonts = [...new Set(node.getStyledTextSegments(["fontName"]).map(s => `${s.fontName.family} ${s.fontName.style}`))];
     texts.push({ id: node.id, name: node.name, parent: parent && parent.id, style, styleMixed: typeof node.textStyleId !== "string", fills, fonts, fixture });
+    textAudit(node, root, null, fixture); // V17 for generated text
   }
   for (const prop of ["fills", "strokes"])
     for (const p of paintsOf(node, prop))
@@ -423,14 +620,46 @@ const summarize = keep => {
     nestedUnlinked: N.filter(n => n.remote !== true || !n.key).map(n => n.id),
     slotViolations: slotViolations.filter(keep), placeholderVisible: placeholderVisible.filter(keep),
     unauthorizedSlotHostOverrides: slotHostOverrides.filter(keep).filter(h => !h.authorized),
+    // r8
+    sizingViolations: sizing.filter(keep).filter(s => s.problems.length).map(s => ({ id: s.id, variant: s.variant, problems: s.problems })),
+    selfOverrideViolations: sizing.filter(keep).filter(s => s.ownOverrideViolations.length).map(s => ({ id: s.id, fields: s.ownOverrideViolations })),
+    sizingUnverified: sizing.filter(keep).filter(s => s.unverified.length).map(s => ({ id: s.id, variant: s.variant, unverified: s.unverified })),
+    layoutContainment: layoutContainment.filter(keep), textOverflow: textOverflow.filter(keep),
+    possibleTruncation: possibleTruncation.filter(keep),
+    contentConstraintViolations: constraintViolations.filter(keep), contentConstraintUnverified: constraintUnverified.filter(keep),
   };
 };
+// r8: compliance and visual integrity are separate results; neither hides the other.
+const COMPLIANCE_KEYS = ["unapprovedInstances", "variantViolations", "propertyViolations", "detachedFrames", "nonAutoLayoutFrames", "absoluteChildren",
+  "literalPaints", "unapprovedBindings", "unapprovedStyles", "textsWithoutStyle", "textsWithLiteralFill", "nestedViolations", "missingDependencies",
+  "hiddenDependencyVisible", "nestedUnlinked", "slotViolations", "placeholderVisible", "unauthorizedSlotHostOverrides", "sizingViolations", "selfOverrideViolations"];
+const VISUAL_KEYS = ["containmentViolations", "overlapPairs", "layoutContainment", "textOverflow", "contentConstraintViolations"];
+function results(S) {
+  const pick = ks => Object.fromEntries(ks.map(k => [k, S[k]]));
+  const count = ks => ks.reduce((n, k) => n + S[k].length, 0);
+  const c = count(COMPLIANCE_KEYS), v = count(VISUAL_KEYS);
+  const cu = S.sizingUnverified.length, vu = S.possibleTruncation.length + S.contentConstraintUnverified.length;
+  const nonCompliantIds = new Set([...S.unapprovedInstances.map(i => i.id), ...S.variantViolations.map(i => i.id), ...S.propertyViolations.map(i => i.id),
+    ...S.absoluteChildren, ...S.nestedViolations.map(n => n.top), ...S.missingDependencies.map(m => m.top), ...S.slotViolations.map(s => s.top),
+    ...S.placeholderVisible.map(p => p.top), ...S.unauthorizedSlotHostOverrides.map(h => h.top), ...S.sizingViolations.map(s => s.id), ...S.selfOverrideViolations.map(s => s.id)]);
+  const visualIds = new Set([...S.containmentViolations.map(x => x.id), ...S.layoutContainment.map(x => x.id), ...S.textOverflow.map(x => x.top),
+    ...S.contentConstraintViolations.map(x => x.id)]);
+  return {
+    compliance: { result: c ? "FAIL" : cu ? "UNVERIFIED" : "PASS", findings: c, unverified: cu, ...pick(COMPLIANCE_KEYS) },
+    visualIntegrity: { result: v ? "FAIL" : vu ? "UNVERIFIED" : "PASS", findings: v, unverified: vu, ...pick(VISUAL_KEYS) },
+    resultClass: c ? "NON_COMPLIANT" : v ? "COMPLIANT_WITH_VISUAL_DEFECTS" : "COMPLIANT",
+    technicallyCompliantButVisuallyDefective: instances.filter(counted).map(i => i.id).filter(id => visualIds.has(id) && !nonCompliantIds.has(id)),
+  };
+}
+const S = summarize(counted);
 return {
   fileKey: figma.fileKey, page: figma.currentPage.name, root: { id: root.id, name: root.name, box: box(root) },
   mode: AUDIT_MODE, excludedRoots: EXCLUDED_ROOTS, skippedFixtures,
   counts: { instances: instances.length, frames: frames.length, texts: texts.length, nested: nestedInstances.length },
   instances, frames, texts,
-  ...summarize(counted),
+  ...S,
+  ...results(S),
+  sizing: sizing.filter(counted),
   fontsInUse: [...new Set([...instances.flatMap(i => i.fonts), ...texts.flatMap(t => t.fonts)])],
   nestedInstances,
   nestedHidden: nestedInstances.filter(n => n.visible === false || n.hiddenByAncestor).map(n => n.id),
@@ -461,7 +690,12 @@ return {
 | V5 bindings | `literalPaints` / `unapprovedBindings` on generated frames without an approved exception | variable could not be resolved (`null`) |
 | V6 text | generated text without a style, with an unapproved style, or with a literal fill (component-owned text is excluded) | style cannot be matched to the registry |
 | V7 visual layout | screenshot shows clipping, overlap, or broken wrapping | no screenshot taken |
-| V11 containment | any `containmentViolations` or `overlapPairs` | node has no bounding box (hidden/zero-size) — report it |
+| V11 containment | any `containmentViolations`, `overlapPairs` or `layoutContainment` (outside the Auto Layout parent's content box; `nativeWidth` vs `parentInnerWidth` shows a native component that does not fit) | node has no bounding box (hidden/zero-size) — report it |
+| V15 sizing | any `sizingViolations`: `explicit-resize`, `sizing-not-allowed FILL` (no approved `layout` rule), `fill-variant-untested`, `fill-context`, `vertical-sizing`, `min-max-size`, `rotation` | any `sizingUnverified`: `geometry-unexplained` (a `FIXED` axis changed without override evidence, or still equal to the verified native size), `layout-rule-stale`, `fill-width-untested`, `sizing-unreadable` |
+| V16 own overrides | any `selfOverrideViolations` | — |
+| V17 text overflow | any `textOverflow` | any `possibleTruncation` until the screenshot shows whether the text is cut off |
+| V18 content constraints | any `contentConstraintViolations` (a visual defect, linked to its `dsIssue`) | any `contentConstraintUnverified` (unknown layer path, unmeasurable lines, possible cut-off, or a rule with `onViolation: "UNVERIFIED"`) |
+| Result class | `resultClass` `NON_COMPLIANT` (compliance FAIL) or `COMPLIANT_WITH_VISUAL_DEFECTS` (visual integrity FAIL; the IDs are in `technicallyCompliantButVisuallyDefective`) | `compliance.result` or `visualIntegrity.result` is `UNVERIFIED` |
 | V12 fonts | a font in `fontsInUse` failed to load or is unavailable in the write-call report | the write call did not report font loading |
 | V13 preservation | any `preservationDiffs` not explained by an approved change | no `PREVIOUS` snapshot to compare against |
 | V14 independent audit | — | this audit was not run, or its output was not used for the report |

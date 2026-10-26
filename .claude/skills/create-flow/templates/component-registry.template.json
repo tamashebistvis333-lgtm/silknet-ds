@@ -1,6 +1,7 @@
 {
   "$comment": "Approved-component registry TEMPLATE for /create-flow. Copy to the designer-approved registry path before use. This is an approval manifest, not a second source of truth: Figma file ymEnGYUGvRRVKhHiUSGMVF remains authoritative. Never fill a field with a guessed value — leave it empty and list it under `unverified`.",
   "registryVersion": 1,
+  "layoutSchemaVersion": 1,
   "revision": "",
   "updatedAt": "",
   "source": {
@@ -40,6 +41,9 @@
     "approval": "{ by, quote, at, scope } — the designer's actual words and what they cover. Empty means NOT approved.",
     "replacedBy": "For deprecated entries: registry ID of the approved replacement (requires its own approval).",
     "unverified": "List of fields/claims not yet backed by evidence.",
+    "layoutSchemaVersion": "Top level, since r8: version of the layout governance fields (currently 1). Shape and rules: design-governance/layout-governance.schema.json, checked by design-governance/scripts/validate-registry.mjs.",
+    "layout": "Optional, since r8: sizing rule for one approved component, from a recorded layout capability test. { status: proposed | approved | blocked, nativeByVariant: { '<variant>': { horizontal: HUG | FIXED, vertical: HUG | FIXED, width, height } } (verified native sizing; width/height only for FIXED axes), horizontal: { allowed: ['NATIVE', 'FILL'] } (must include NATIVE), vertical: { allowed: ['NATIVE'] } (always), fill: { variantCombinations (only tested variants), contexts: [{ id, parentType: FRAME, parentLayoutMode: VERTICAL, parentLayoutWrap: NO_WRAP, parentCounterAxisAlignItems, childLayoutPositioning: AUTO, testedInnerWidth: { min, max }, evidence }], extraOverrideFields (own-override fields FILL adds, e.g. primaryAxisSizingMode) }, verification: { capabilityTest, PASS, UNVERIFIED }, approval } — approval is null unless status is 'approved', which requires { by, quote, at, scope }. No entry, or a status other than 'approved', allows NATIVE only. There are no arbitrary widths or heights.",
+    "contentConstraints": "Optional, since r8: component-specific text limits found by testing — line and container rules, never character counts. [{ id: 'C-…', property (exact TEXT key), textLayerByVariant: { '<variant>': '<layer path>' | null }, containerLayerByVariant (optional, same shape), kind: SINGLE_LINE | MAX_LINES | FIT_CONTAINER, maxLines (integer for MAX_LINES, else null), onViolation: VISUAL_DEFECT | UNVERIFIED, status: verified-limitation | unverified, dsIssue: 'DS-NN' | null (design-governance/design-system-issues.md), evidence }]. A null layer path is UNVERIFIED in the audit.",
     "_blocking": "Blocking for use in a flow: status/approval, key match + freshness (libraryUpdatedAt), approved variants/properties, variant-combination existence, identityLink only if the designer requires node-level proof. Non-blocking (reported as UNVERIFIED): requiredBindings keys, sourceNodeId, fonts of variants not yet exercised (they are loaded and checked at placement time), collectionModes not read directly."
   },
   "components": [],
@@ -103,6 +107,30 @@
       "verification": { "capabilityTest": "", "PASS": [], "UNVERIFIED": [] },
       "approval": { "by": "", "quote": "", "at": "", "scope": "" },
       "unverified": ["key", "approval"]
+    },
+    "layout": {
+      "status": "proposed",
+      "nativeByVariant": { "<exact variant name>": { "horizontal": "<HUG | FIXED>", "vertical": "<HUG | FIXED>", "width": null, "height": null } },
+      "horizontal": { "allowed": ["NATIVE", "FILL"] },
+      "vertical": { "allowed": ["NATIVE"] },
+      "fill": {
+        "variantCombinations": ["<exact tested variant name>"],
+        "contexts": [{ "id": "ctx.vertical-frame.v1", "parentType": "FRAME", "parentLayoutMode": "VERTICAL", "parentLayoutWrap": "NO_WRAP", "parentCounterAxisAlignItems": ["MIN"], "childLayoutPositioning": "AUTO", "testedInnerWidth": { "min": 0, "max": 0 }, "evidence": "<test / node IDs>" }],
+        "extraOverrideFields": []
+      },
+      "verification": { "capabilityTest": "<test / node IDs>", "PASS": [], "UNVERIFIED": [] },
+      "approval": null
+    },
+    "contentConstraint": {
+      "id": "C-<COMPONENT>-<RULE>",
+      "property": "<exact TEXT key>",
+      "textLayerByVariant": { "<exact variant name>": null },
+      "kind": "<SINGLE_LINE | MAX_LINES | FIT_CONTAINER>",
+      "maxLines": null,
+      "onViolation": "VISUAL_DEFECT",
+      "status": "unverified",
+      "dsIssue": null,
+      "evidence": "<test / node IDs>"
     }
   },
   "exceptions": [],

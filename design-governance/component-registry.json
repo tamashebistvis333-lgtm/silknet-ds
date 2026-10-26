@@ -1,8 +1,9 @@
 {
   "$comment": "Approved-component registry for /create-flow. Approval manifest only — Figma file ymEnGYUGvRRVKhHiUSGMVF remains the source of truth. Shape: .claude/skills/create-flow/templates/component-registry.template.json. Edit only with designer approval; process: design-governance/README.md. Empty values are unknown, never defaults: an empty `variants` map approves NO variants, an empty `approval.quote` means NOT approved.",
   "registryVersion": 1,
-  "revision": "r7",
-  "updatedAt": "2026-10-22",
+  "layoutSchemaVersion": 1,
+  "revision": "r8",
+  "updatedAt": "2026-10-26",
   "source": {
     "fileKey": "ymEnGYUGvRRVKhHiUSGMVF",
     "libraryName": "Silknet New DS",
@@ -167,6 +168,87 @@
         "sourceNodeId",
         "modes (not part of the approval scope)",
         "requiredBindings[].key"
+      ],
+      "layout": {
+        "status": "proposed",
+        "nativeByVariant": {
+          "property=primary, size=large, State=default": {
+            "horizontal": "HUG",
+            "vertical": "HUG",
+            "width": null,
+            "height": null
+          }
+        },
+        "horizontal": {
+          "allowed": [
+            "NATIVE",
+            "FILL"
+          ]
+        },
+        "vertical": {
+          "allowed": [
+            "NATIVE"
+          ]
+        },
+        "fill": {
+          "variantCombinations": [
+            "property=primary, size=large, State=default"
+          ],
+          "contexts": [
+            {
+              "id": "ctx.vertical-frame.v1",
+              "parentType": "FRAME",
+              "parentLayoutMode": "VERTICAL",
+              "parentLayoutWrap": "NO_WRAP",
+              "parentCounterAxisAlignItems": [
+                "MIN"
+              ],
+              "childLayoutPositioning": "AUTO",
+              "testedInnerWidth": {
+                "min": 288,
+                "max": 398
+              },
+              "evidence": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)"
+            }
+          ],
+          "extraOverrideFields": [
+            "primaryAxisSizingMode"
+          ]
+        },
+        "verification": {
+          "capabilityTest": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)",
+          "PASS": [
+            "FILL accepted: instance width equals the parent's inner width at every tested width",
+            "Library link intact after FILL: remote main component, same component key and variant, no detach",
+            "componentProperties identical before and after FILL",
+            "Stored own-override fields recorded for native and FILL instances",
+            "FILL at inner widths 288/361/398 (100:1265, 100:1599, 100:1888); FILL adds own override field primaryAxisSizingMode"
+          ],
+          "UNVERIFIED": [
+            "FILL inside SLOT content",
+            "FILL in parents with counterAxisAlignItems other than MIN",
+            "FILL in horizontal or wrapping Auto Layout",
+            "Propagation of library updates to FILL instances",
+            "Dark mode / other variable modes",
+            "The other 67 approved variants (65 share the tested Auto Layout configuration but were not exercised)"
+          ]
+        },
+        "approval": null
+      },
+      "contentConstraints": [
+        {
+          "id": "C-BTN-LABEL-1L",
+          "property": "Label#2022:15",
+          "textLayerByVariant": {
+            "property=primary, size=large, State=default": "27:185"
+          },
+          "kind": "SINGLE_LINE",
+          "maxLines": null,
+          "onViolation": "VISUAL_DEFECT",
+          "status": "verified-limitation",
+          "dsIssue": null,
+          "evidence": "Label text auto-resizes on one line; a long Georgian label at FILL inner width 288 measured 294 px and overflowed the 288 px button (100:1277). Fits at 361 and 398."
+        }
       ]
     },
     {
@@ -343,7 +425,78 @@
       "replacedBy": "",
       "unverified": [
         "sourceNodeId (structural match)"
-      ]
+      ],
+      "layout": {
+        "status": "proposed",
+        "nativeByVariant": {
+          "Alignment=Centered": {
+            "horizontal": "FIXED",
+            "vertical": "HUG",
+            "width": 216,
+            "height": null
+          },
+          "Alignment=Right aligned": {
+            "horizontal": "FIXED",
+            "vertical": "HUG",
+            "width": 216,
+            "height": null
+          }
+        },
+        "horizontal": {
+          "allowed": [
+            "NATIVE",
+            "FILL"
+          ]
+        },
+        "vertical": {
+          "allowed": [
+            "NATIVE"
+          ]
+        },
+        "fill": {
+          "variantCombinations": [
+            "Alignment=Centered",
+            "Alignment=Right aligned"
+          ],
+          "contexts": [
+            {
+              "id": "ctx.vertical-frame.v1",
+              "parentType": "FRAME",
+              "parentLayoutMode": "VERTICAL",
+              "parentLayoutWrap": "NO_WRAP",
+              "parentCounterAxisAlignItems": [
+                "MIN"
+              ],
+              "childLayoutPositioning": "AUTO",
+              "testedInnerWidth": {
+                "min": 288,
+                "max": 398
+              },
+              "evidence": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)"
+            }
+          ],
+          "extraOverrideFields": []
+        },
+        "verification": {
+          "capabilityTest": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)",
+          "PASS": [
+            "FILL accepted: instance width equals the parent's inner width at every tested width",
+            "Library link intact after FILL: remote main component, same component key and variant, no detach",
+            "componentProperties identical before and after FILL",
+            "Stored own-override fields recorded for native and FILL instances",
+            "FILL for both variants at 288/361/398; the 16 px Centered inset is part of the component; Right aligned measures 216x0 and still renders"
+          ],
+          "UNVERIFIED": [
+            "FILL inside SLOT content",
+            "FILL in parents with counterAxisAlignItems other than MIN",
+            "FILL in horizontal or wrapping Auto Layout",
+            "Propagation of library updates to FILL instances",
+            "Dark mode / other variable modes"
+          ]
+        },
+        "approval": null
+      },
+      "contentConstraints": []
     },
     {
       "id": "ds.toggle",
@@ -701,6 +854,85 @@
       "unverified": [
         "sourceNodeId (structural match)",
         "nested Icon library origin"
+      ],
+      "layout": {
+        "status": "proposed",
+        "nativeByVariant": {
+          "Property=Default": {
+            "horizontal": "FIXED",
+            "vertical": "HUG",
+            "width": 390,
+            "height": null
+          }
+        },
+        "horizontal": {
+          "allowed": [
+            "NATIVE",
+            "FILL"
+          ]
+        },
+        "vertical": {
+          "allowed": [
+            "NATIVE"
+          ]
+        },
+        "fill": {
+          "variantCombinations": [
+            "Property=Default"
+          ],
+          "contexts": [
+            {
+              "id": "ctx.vertical-frame.v1",
+              "parentType": "FRAME",
+              "parentLayoutMode": "VERTICAL",
+              "parentLayoutWrap": "NO_WRAP",
+              "parentCounterAxisAlignItems": [
+                "MIN"
+              ],
+              "childLayoutPositioning": "AUTO",
+              "testedInnerWidth": {
+                "min": 320,
+                "max": 430
+              },
+              "evidence": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)"
+            }
+          ],
+          "extraOverrideFields": []
+        },
+        "verification": {
+          "capabilityTest": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)",
+          "PASS": [
+            "FILL accepted: instance width equals the parent's inner width at every tested width",
+            "Library link intact after FILL: remote main component, same component key and variant, no detach",
+            "componentProperties identical before and after FILL",
+            "Stored own-override fields recorded for native and FILL instances",
+            "FILL at inner widths 320/393/430 (100:1330, 100:1653, 100:1942); the title column grows",
+            "Native 390 overflows a 320 container (100:1301)"
+          ],
+          "UNVERIFIED": [
+            "FILL inside SLOT content",
+            "FILL in parents with counterAxisAlignItems other than MIN",
+            "FILL in horizontal or wrapping Auto Layout",
+            "Propagation of library updates to FILL instances",
+            "Dark mode / other variable modes"
+          ]
+        },
+        "approval": null
+      },
+      "contentConstraints": [
+        {
+          "id": "C-NAV-TITLE-2L",
+          "property": "header text#4229:6",
+          "textLayerByVariant": {
+            "Property=Default": "4166:2587"
+          },
+          "kind": "MAX_LINES",
+          "maxLines": 2,
+          "onViolation": "VISUAL_DEFECT",
+          "status": "verified-limitation",
+          "dsIssue": null,
+          "evidence": "A long Georgian title wraps to 2 lines and ends with an ellipsis at 320 and 393 (100:1348, 100:1671); full 2 lines at 430 (100:1960). Height grows 64 -> 72 (content-driven). Title layer 4166:2587 has textTruncation ENDING and maxLines 2 (read from the node, I92:1242;4166:2587)."
+        }
       ]
     },
     {
@@ -927,6 +1159,94 @@
       "unverified": [
         "sourceNodeId",
         "maxChildren"
+      ],
+      "layout": {
+        "status": "proposed",
+        "nativeByVariant": {
+          "Horizontal padding=No": {
+            "horizontal": "FIXED",
+            "vertical": "FIXED",
+            "width": 358,
+            "height": 64
+          },
+          "Horizontal padding=Yes": {
+            "horizontal": "FIXED",
+            "vertical": "FIXED",
+            "width": 358,
+            "height": 64
+          }
+        },
+        "horizontal": {
+          "allowed": [
+            "NATIVE",
+            "FILL"
+          ]
+        },
+        "vertical": {
+          "allowed": [
+            "NATIVE"
+          ]
+        },
+        "fill": {
+          "variantCombinations": [
+            "Horizontal padding=No",
+            "Horizontal padding=Yes"
+          ],
+          "contexts": [
+            {
+              "id": "ctx.vertical-frame.v1",
+              "parentType": "FRAME",
+              "parentLayoutMode": "VERTICAL",
+              "parentLayoutWrap": "NO_WRAP",
+              "parentCounterAxisAlignItems": [
+                "MIN"
+              ],
+              "childLayoutPositioning": "AUTO",
+              "testedInnerWidth": {
+                "min": 288,
+                "max": 398
+              },
+              "evidence": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)"
+            }
+          ],
+          "extraOverrideFields": []
+        },
+        "verification": {
+          "capabilityTest": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)",
+          "PASS": [
+            "FILL accepted: instance width equals the parent's inner width at every tested width",
+            "Library link intact after FILL: remote main component, same component key and variant, no detach",
+            "componentProperties identical before and after FILL",
+            "Stored own-override fields recorded for native and FILL instances",
+            "FILL for No and Yes at 288/361/398 with an approved Toggle in the right slot; slot-host overrides stay authorized",
+            "Native 358 overflows a 288 container (100:1368, 100:1455)",
+            "Body text path 7001:1397 for Horizontal padding=Yes verified read-only 2026-10-26 via componentPropertyReferences"
+          ],
+          "UNVERIFIED": [
+            "FILL inside SLOT content",
+            "FILL in parents with counterAxisAlignItems other than MIN",
+            "FILL in horizontal or wrapping Auto Layout",
+            "Propagation of library updates to FILL instances",
+            "Dark mode / other variable modes"
+          ]
+        },
+        "approval": null
+      },
+      "contentConstraints": [
+        {
+          "id": "C-LIST-BODY-FIT",
+          "property": "Body#7001:9",
+          "textLayerByVariant": {
+            "Horizontal padding=No": "7000:3163",
+            "Horizontal padding=Yes": "7001:1397"
+          },
+          "kind": "FIT_CONTAINER",
+          "maxLines": null,
+          "onViolation": "VISUAL_DEFECT",
+          "status": "verified-limitation",
+          "dsIssue": null,
+          "evidence": "Fixed 64 px row. A long Georgian Body wrapped to 3 lines at 288 and 361 and still fit (100:1431, 100:1739). More lines were not tested. Body text paths 7000:3163 (No) and 7001:1397 (Yes, 6 instances: 100:1455, 100:1490, 100:1763, 100:1787, 100:2052, 100:2076) verified read-only 2026-10-26 via componentPropertyReferences."
+        }
       ]
     },
     {
@@ -1249,6 +1569,103 @@
       "unverified": [
         "sourceNodeId",
         "error icon source node"
+      ],
+      "layout": {
+        "status": "proposed",
+        "nativeByVariant": {
+          "State=Filled": {
+            "horizontal": "FIXED",
+            "vertical": "HUG",
+            "width": 358,
+            "height": null
+          }
+        },
+        "horizontal": {
+          "allowed": [
+            "NATIVE",
+            "FILL"
+          ]
+        },
+        "vertical": {
+          "allowed": [
+            "NATIVE"
+          ]
+        },
+        "fill": {
+          "variantCombinations": [
+            "State=Filled"
+          ],
+          "contexts": [
+            {
+              "id": "ctx.vertical-frame.v1",
+              "parentType": "FRAME",
+              "parentLayoutMode": "VERTICAL",
+              "parentLayoutWrap": "NO_WRAP",
+              "parentCounterAxisAlignItems": [
+                "MIN"
+              ],
+              "childLayoutPositioning": "AUTO",
+              "testedInnerWidth": {
+                "min": 288,
+                "max": 398
+              },
+              "evidence": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)"
+            }
+          ],
+          "extraOverrideFields": []
+        },
+        "verification": {
+          "capabilityTest": "r8 layout capability test 2026-10-26 — target zzGuTpXzrcglX1zlOd4IuR, page 100:1240 (permanent evidence), section 100:1241; viewport frames 100:1242 (320), 100:1584 (393), 100:1873 (430)",
+          "PASS": [
+            "FILL accepted: instance width equals the parent's inner width at every tested width",
+            "Library link intact after FILL: remote main component, same component key and variant, no detach",
+            "componentProperties identical before and after FILL",
+            "Stored own-override fields recorded for native and FILL instances",
+            "FILL for State=Filled at 288/361/398 (100:1544, 100:1833, 100:2122)",
+            "Native 358 overflows a 288 container (100:1516)",
+            "Field container path 2035:2137 for C-INPUT-TEXT-1L verified read-only 2026-10-26 (fixed-height ancestor of the layer bound to Text#2036:245)"
+          ],
+          "UNVERIFIED": [
+            "FILL inside SLOT content",
+            "FILL in parents with counterAxisAlignItems other than MIN",
+            "FILL in horizontal or wrapping Auto Layout",
+            "Propagation of library updates to FILL instances",
+            "Dark mode / other variable modes",
+            "FILL for State=Default, Error and Disabled"
+          ]
+        },
+        "approval": null
+      },
+      "contentConstraints": [
+        {
+          "id": "C-INPUT-TEXT-1L",
+          "property": "Text#2036:245",
+          "textLayerByVariant": {
+            "State=Filled": "2051:3015"
+          },
+          "containerLayerByVariant": {
+            "State=Filled": "2035:2137"
+          },
+          "kind": "SINGLE_LINE",
+          "maxLines": null,
+          "onViolation": "VISUAL_DEFECT",
+          "status": "verified-limitation",
+          "dsIssue": "DS-01",
+          "evidence": "A long value wraps to 3 lines at 288 and 2 lines at 361/398 while the field stays 52 px high; the label is pushed above the field (100:1564, 100:1853, 100:2142). Same at native width. Field container 2035:2137 (FRAME \"Input\", fixed height 52) verified read-only 2026-10-26 as the fixed-height ancestor of the layer bound to Text#2036:245 on 7 instances (92:1364, 100:1516, 100:1544, 100:1564, 100:1813, 100:1853, 100:2142)."
+        },
+        {
+          "id": "C-INPUT-LABEL-FIT",
+          "property": "Label#2036:236",
+          "textLayerByVariant": {
+            "State=Filled": "2051:3014"
+          },
+          "kind": "FIT_CONTAINER",
+          "maxLines": null,
+          "onViolation": "UNVERIFIED",
+          "status": "unverified",
+          "dsIssue": null,
+          "evidence": "Long labels were not tested."
+        }
       ]
     }
   ],
